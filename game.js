@@ -307,9 +307,10 @@ class HighScoreManager {
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `token ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json',
+                    'X-GitHub-Api-Version': '2022-11-28',
                     'User-Agent': 'BinaryTreeGame'
                 },
                 body: JSON.stringify({
@@ -325,8 +326,20 @@ class HighScoreManager {
                 console.log('Successfully saved to Gist directly!');
                 return true;
             } else {
-                const error = await response.text();
-                console.error('Failed to save to Gist:', error);
+                const errorText = await response.text();
+                let errorData;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch {
+                    errorData = { message: errorText };
+                }
+                
+                if (response.status === 401) {
+                    console.error('Token authentication failed. Token may be invalid or expired.');
+                    console.error('Error:', errorData.message || errorText);
+                } else {
+                    console.error('Failed to save to Gist:', errorData.message || errorText);
+                }
                 return false;
             }
         } catch (error) {
