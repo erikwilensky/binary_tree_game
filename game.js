@@ -231,19 +231,33 @@ class HighScoreManager {
 
     async loadScores() {
         try {
-            const response = await fetch(`https://api.github.com/gists/${this.gistId}`);
+            // Use raw Gist URL - no API rate limits, works for public Gists
+            const rawUrl = `https://gist.githubusercontent.com/erikwilensky/${this.gistId}/raw/gistfile1.txt`;
+            
+            const response = await fetch(rawUrl, {
+                cache: 'no-cache' // Always get fresh data
+            });
+            
             if (response.ok) {
-                const gist = await response.json();
-                const content = gist.files[this.filename]?.content || '{}';
-                this.scores = JSON.parse(content);
-                localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
+                const content = await response.text();
+                try {
+                    this.scores = JSON.parse(content || '{}');
+                    localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
+                    console.log('Loaded scores from Gist');
+                } catch (parseError) {
+                    console.warn('Failed to parse Gist content, using localStorage');
+                    const stored = localStorage.getItem('binaryTreeHighScores');
+                    this.scores = stored ? JSON.parse(stored) : {};
+                }
             } else {
                 // Fallback to localStorage
+                console.warn(`Cannot load from Gist (${response.status}). Using localStorage.`);
                 const stored = localStorage.getItem('binaryTreeHighScores');
                 this.scores = stored ? JSON.parse(stored) : {};
             }
         } catch (error) {
             console.error('Failed to load scores:', error);
+            // Fallback to localStorage
             const stored = localStorage.getItem('binaryTreeHighScores');
             this.scores = stored ? JSON.parse(stored) : {};
         }
