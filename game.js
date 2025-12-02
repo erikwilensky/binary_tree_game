@@ -232,10 +232,11 @@ class HighScoreManager {
     async loadScores() {
         try {
             // Load from JSONBin.io
+            // Try X-Access-Key first (for private bins), then X-Master-Key
             const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
             const response = await fetch(url, {
                 headers: {
-                    'X-Master-Key': this.apiKey
+                    'X-Access-Key': this.apiKey
                 },
                 cache: 'no-cache'
             });
@@ -247,7 +248,8 @@ class HighScoreManager {
                 console.log('Loaded scores from JSONBin');
             } else {
                 // Fallback to localStorage
-                console.warn(`Cannot load from JSONBin (${response.status}). Using localStorage.`);
+                const errorText = await response.text();
+                console.warn(`Cannot load from JSONBin (${response.status}):`, errorText);
                 const stored = localStorage.getItem('binaryTreeHighScores');
                 this.scores = stored ? JSON.parse(stored) : {};
             }
@@ -265,12 +267,13 @@ class HighScoreManager {
         
         try {
             // Save to JSONBin.io
+            // Try X-Access-Key first (for private bins), then X-Master-Key
             const url = `https://api.jsonbin.io/v3/b/${this.binId}`;
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Master-Key': this.apiKey
+                    'X-Access-Key': this.apiKey
                 },
                 body: JSON.stringify(scores)
             });
@@ -278,8 +281,8 @@ class HighScoreManager {
             if (response.ok) {
                 console.log('Successfully saved to JSONBin!');
             } else {
-                const error = await response.text();
-                console.warn('Failed to save to JSONBin:', error);
+                const errorText = await response.text();
+                console.error('Failed to save to JSONBin:', response.status, errorText);
             }
         } catch (error) {
             console.error('Error saving to JSONBin:', error);
