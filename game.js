@@ -286,8 +286,12 @@ class HighScoreManager {
 
     async saveToGistDirect(scores) {
         // Direct save using GitHub API (requires token)
-        // This is a temporary solution - use serverless function for production
-        const token = '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';
+        // NOTE: Token should be set via environment variable or serverless function
+        // For now, this function is disabled - use the serverless function instead
+        return false;
+        
+        // Uncomment and set your token here if needed (NOT RECOMMENDED):
+        // const token = 'YOUR_TOKEN_HERE';
         
         try {
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {

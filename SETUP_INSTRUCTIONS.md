@@ -67,7 +67,7 @@ This uses a serverless function to keep the token secure.
    - Scroll down to "Environment Variables"
    - Click "Add New"
    - Name: `GITHUB_TOKEN`
-   - Value: `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`
+   - Value: `YOUR_GITHUB_TOKEN_HERE` (use your actual token)
    - Click "Add"
 
 5. **Deploy**:

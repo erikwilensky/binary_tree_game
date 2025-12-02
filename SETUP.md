@@ -9,7 +9,7 @@
 3. Import your `binary_tree_game` repository
 4. In "Environment Variables", add:
    - Name: `GITHUB_TOKEN`
-   - Value: `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`
+   - Value: `YOUR_GITHUB_TOKEN_HERE` (use your actual token)
 5. Click "Deploy"
 
 ### Step 2: Update game.js

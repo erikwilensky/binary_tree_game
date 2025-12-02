@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const { scores, gistId, filename } = req.body;
     
     // Use environment variable for token (set this in Vercel/Netlify dashboard)
-    const token = process.env.GITHUB_TOKEN || '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';
+    const token = process.env.GITHUB_TOKEN;
 
     if (!token) {
         return res.status(500).json({ error: 'GitHub token not configured' });
