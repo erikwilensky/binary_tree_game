@@ -14,17 +14,31 @@ class UIController {
         this.resetAnswerBtn = document.getElementById('reset-answer-btn');
         this.timerDisplay = document.getElementById('timer');
         this.treeVisualization = document.getElementById('tree-visualization');
+        this.treeHeightDisplay = document.getElementById('tree-height');
         this.nodePool = document.getElementById('node-pool');
         this.answerSlots = document.getElementById('answer-slots');
         this.feedback = document.getElementById('feedback');
         this.correctCount = document.getElementById('correct-count');
         this.totalCount = document.getElementById('total-count');
+        this.highScoresDisplay = document.getElementById('high-scores-display');
+        this.highScoreModal = document.getElementById('high-score-modal');
+        this.initialsInput = document.getElementById('initials-input');
+        this.submitInitialsBtn = document.getElementById('submit-initials-btn');
     }
 
     initializeEventListeners() {
         this.newGameBtn.addEventListener('click', () => this.startNewGame());
         this.checkAnswerBtn.addEventListener('click', () => this.checkAnswer());
         this.resetAnswerBtn.addEventListener('click', () => this.resetAnswer());
+        this.submitInitialsBtn.addEventListener('click', () => this.submitInitials());
+        this.initialsInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.submitInitials();
+            }
+        });
+        this.initialsInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
+        });
     }
 
     startNewGame() {
@@ -39,6 +53,7 @@ class UIController {
         this.hideFeedback();
         this.startTimer(gameData.timeRemaining);
         this.updateScore();
+        this.updateHighScoresDisplay();
     }
 
     renderTree(tree) {
@@ -47,6 +62,11 @@ class UIController {
         if (!tree || !tree.root) return;
         
         const height = tree.getHeight();
+        const nodeDepths = tree.getNodeDepths();
+        
+        // Display tree height
+        this.treeHeightDisplay.textContent = height - 1; // Height is number of edges from root to deepest leaf
+        
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '100%');
         svg.setAttribute('height', '400');
@@ -58,11 +78,12 @@ class UIController {
         // Draw edges first
         this.drawEdges(svg, tree.root, positions);
         
-        // Draw nodes
+        // Draw nodes with depth labels
         nodes.forEach(node => {
             const pos = positions.get(node);
+            const depth = nodeDepths.get(node) || 0;
             if (pos) {
-                this.drawNode(svg, node.value, pos.x, pos.y);
+                this.drawNode(svg, node.value, pos.x, pos.y, depth);
             }
         });
         
@@ -119,7 +140,7 @@ class UIController {
         }
     }
 
-    drawNode(svg, value, x, y) {
+    drawNode(svg, value, x, y, depth) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
@@ -129,18 +150,31 @@ class UIController {
         circle.setAttribute('stroke', 'white');
         circle.setAttribute('stroke-width', '2');
         
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', x);
-        text.setAttribute('y', y + 5);
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('fill', 'white');
-        text.setAttribute('font-size', '16');
-        text.setAttribute('font-weight', 'bold');
-        text.textContent = value;
+        // Node value text
+        const valueText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        valueText.setAttribute('x', x);
+        valueText.setAttribute('y', y + 5);
+        valueText.setAttribute('text-anchor', 'middle');
+        valueText.setAttribute('fill', 'white');
+        valueText.setAttribute('font-size', '16');
+        valueText.setAttribute('font-weight', 'bold');
+        valueText.textContent = value;
+        
+        // Depth label (below the node)
+        const depthLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        depthLabel.setAttribute('x', x);
+        depthLabel.setAttribute('y', y + 45);
+        depthLabel.setAttribute('text-anchor', 'middle');
+        depthLabel.setAttribute('fill', '#764ba2');
+        depthLabel.setAttribute('font-size', '12');
+        depthLabel.setAttribute('font-weight', '600');
+        depthLabel.setAttribute('class', 'depth-label');
+        depthLabel.textContent = `d:${depth}`;
         
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.appendChild(circle);
-        group.appendChild(text);
+        group.appendChild(valueText);
+        group.appendChild(depthLabel);
         svg.appendChild(group);
     }
 
@@ -264,12 +298,19 @@ class UIController {
         
         if (result.correct) {
             this.showFeedback('Correct! Well done!', 'correct');
+            
+            // Check for high score
+            const currentHigh = highScoreManager.getHighScore(gameState.difficulty, gameState.traversalType);
+            if (!currentHigh || result.timeRemaining > currentHigh.time) {
+                this.showHighScoreModal(result.timeRemaining);
+            }
         } else {
             const correctStr = result.correctAnswer.join(' → ');
             this.showFeedback(`Incorrect. Correct answer: ${correctStr}`, 'incorrect');
         }
         
         this.updateScore();
+        this.updateHighScoresDisplay();
         
         // Disable further interactions
         const nodes = this.nodePool.querySelectorAll('.draggable-node');
@@ -332,11 +373,93 @@ class UIController {
         this.correctCount.textContent = score.correct;
         this.totalCount.textContent = score.total;
     }
+
+    showHighScoreModal(timeRemaining) {
+        this.highScoreModal.classList.remove('hidden');
+        this.initialsInput.value = '';
+        this.initialsInput.focus();
+        this.pendingTimeRemaining = timeRemaining;
+    }
+
+    hideHighScoreModal() {
+        this.highScoreModal.classList.add('hidden');
+        this.pendingTimeRemaining = null;
+    }
+
+    submitInitials() {
+        const initials = this.initialsInput.value.trim();
+        if (initials.length < 1) {
+            alert('Please enter at least one initial');
+            return;
+        }
+        
+        if (this.pendingTimeRemaining !== null) {
+            highScoreManager.setHighScore(
+                gameState.difficulty,
+                gameState.traversalType,
+                initials,
+                this.pendingTimeRemaining
+            );
+            this.hideHighScoreModal();
+            this.updateHighScoresDisplay();
+        }
+    }
+
+    updateHighScoresDisplay() {
+        const allScores = highScoreManager.getAllHighScores();
+        const difficulties = ['easy', 'medium', 'hard', 'expert'];
+        const traversalTypes = [
+            { key: 'inorder', label: 'In-Order' },
+            { key: 'preorder', label: 'Pre-Order' },
+            { key: 'postorder', label: 'Post-Order' }
+        ];
+        
+        this.highScoresDisplay.innerHTML = '';
+        
+        difficulties.forEach(difficulty => {
+            const difficultyDiv = document.createElement('div');
+            difficultyDiv.className = 'high-score-category';
+            
+            const difficultyLabel = document.createElement('h3');
+            difficultyLabel.textContent = difficulty.charAt(0).toUpperCase() + difficulty.slice(1);
+            difficultyDiv.appendChild(difficultyLabel);
+            
+            traversalTypes.forEach(traversal => {
+                const key = `${difficulty}_${traversal.key}`;
+                const score = allScores[key];
+                
+                const scoreRow = document.createElement('div');
+                scoreRow.className = 'high-score-row';
+                
+                const traversalLabel = document.createElement('span');
+                traversalLabel.className = 'traversal-label';
+                traversalLabel.textContent = traversal.label + ':';
+                
+                const scoreValue = document.createElement('span');
+                scoreValue.className = 'high-score-value';
+                
+                if (score) {
+                    scoreValue.textContent = `${score.initials} - ${score.time}s`;
+                } else {
+                    scoreValue.textContent = '---';
+                    scoreValue.style.color = '#999';
+                }
+                
+                scoreRow.appendChild(traversalLabel);
+                scoreRow.appendChild(scoreValue);
+                difficultyDiv.appendChild(scoreRow);
+            });
+            
+            this.highScoresDisplay.appendChild(difficultyDiv);
+        });
+    }
 }
 
 // Initialize UI when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const ui = new UIController();
+    // Display high scores
+    ui.updateHighScoresDisplay();
     // Auto-start first game
     ui.startNewGame();
 });

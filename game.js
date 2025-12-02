@@ -116,6 +116,15 @@ class BinaryTree {
         this.getAllNodes(node.right, result);
         return result;
     }
+
+    // Calculate depth of each node (distance from root)
+    getNodeDepths(node = this.root, depth = 0, depths = new Map()) {
+        if (node === null) return depths;
+        depths.set(node, depth);
+        this.getNodeDepths(node.left, depth + 1, depths);
+        this.getNodeDepths(node.right, depth + 1, depths);
+        return depths;
+    }
 }
 
 // Game State Manager
@@ -215,6 +224,51 @@ class GameState {
     }
 }
 
+// High Score Manager
+class HighScoreManager {
+    constructor() {
+        this.storageKey = 'binaryTreeHighScores';
+    }
+
+    getHighScores() {
+        const stored = localStorage.getItem(this.storageKey);
+        return stored ? JSON.parse(stored) : {};
+    }
+
+    saveHighScores(scores) {
+        localStorage.setItem(this.storageKey, JSON.stringify(scores));
+    }
+
+    getHighScore(difficulty, traversalType) {
+        const scores = this.getHighScores();
+        const key = `${difficulty}_${traversalType}`;
+        return scores[key] || null;
+    }
+
+    setHighScore(difficulty, traversalType, initials, timeRemaining) {
+        const scores = this.getHighScores();
+        const key = `${difficulty}_${traversalType}`;
+        const currentHigh = scores[key];
+        
+        // Higher time remaining = better score
+        if (!currentHigh || timeRemaining > currentHigh.time) {
+            scores[key] = {
+                initials: initials.toUpperCase().substring(0, 2),
+                time: timeRemaining,
+                date: new Date().toISOString()
+            };
+            this.saveHighScores(scores);
+            return true;
+        }
+        return false;
+    }
+
+    getAllHighScores() {
+        return this.getHighScores();
+    }
+}
+
 // Create global game state instance
 const gameState = new GameState();
+const highScoreManager = new HighScoreManager();
 

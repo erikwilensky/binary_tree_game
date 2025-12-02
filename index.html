@@ -42,7 +42,13 @@
 
         <div class="game-area">
             <div class="tree-container">
-                <h2>Binary Tree</h2>
+                <div class="tree-header">
+                    <h2>Binary Tree</h2>
+                    <div class="tree-info">
+                        <span class="tree-info-label">Height:</span>
+                        <span id="tree-height" class="tree-info-value">-</span>
+                    </div>
+                </div>
                 <div id="tree-visualization" class="tree-visualization"></div>
             </div>
 
@@ -71,6 +77,23 @@
             <div class="score-item">
                 <span class="score-label">Total:</span>
                 <span id="total-count" class="score-value">0</span>
+            </div>
+        </div>
+
+        <div class="high-scores-section">
+            <h2>High Scores</h2>
+            <div id="high-scores-display" class="high-scores-display"></div>
+        </div>
+    </div>
+
+    <!-- High Score Modal -->
+    <div id="high-score-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>New High Score!</h2>
+            <p>Enter your initials:</p>
+            <input type="text" id="initials-input" maxlength="2" placeholder="AA" autofocus>
+            <div class="modal-buttons">
+                <button id="submit-initials-btn" class="btn btn-primary">Submit</button>
             </div>
         </div>
     </div>
