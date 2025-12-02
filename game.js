@@ -286,12 +286,31 @@ class HighScoreManager {
 
     async saveToGistDirect(scores) {
         // Direct save using GitHub API (requires token)
-        // NOTE: Token should be set via environment variable or serverless function
-        // For now, this function is disabled - use the serverless function instead
-        return false;
+        // Token is loaded from config.js (gitignored) or localStorage
+        let token = null;
         
-        // Uncomment and set your token here if needed (NOT RECOMMENDED):
-        // const token = 'YOUR_TOKEN_HERE';
+        // Try to get token from global config (if config.js exists)
+        if (typeof GITHUB_TOKEN !== 'undefined') {
+            token = GITHUB_TOKEN;
+        }
+        // Try to get from localStorage (set via browser console: localStorage.setItem('github_token', 'your_token'))
+        else if (localStorage.getItem('github_token')) {
+            token = localStorage.getItem('github_token');
+        }
+        // Fallback: try to read from a script tag (for local testing)
+        else {
+            const tokenScript = document.querySelector('script[data-github-token]');
+            if (tokenScript) {
+                token = tokenScript.getAttribute('data-github-token');
+            }
+        }
+        
+        if (!token) {
+            console.warn('GitHub token not found. High scores saved locally only.');
+            console.log('To enable Gist saving, set token in browser console:');
+            console.log('localStorage.setItem("github_token", "your_token_here")');
+            return false;
+        }
         
         try {
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {

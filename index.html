@@ -92,6 +92,12 @@
         </div>
     </div>
 
+    <!-- Optional: Add token here for local testing (remove before committing!) -->
+    <!-- <script data-github-token="YOUR_TOKEN_HERE"></script> -->
+    
+    <!-- Load config.js if it exists (gitignored, won't be in repo) -->
+    <script src="config.js" onerror="console.log('config.js not found - using localStorage for token')"></script>
+    
     <script src="game.js"></script>
     <script src="ui.js"></script>
 </body>
