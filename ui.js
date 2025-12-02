@@ -25,6 +25,10 @@ class UIController {
         this.highScoreModal = document.getElementById('high-score-modal');
         this.initialsInput = document.getElementById('initials-input');
         this.submitInitialsBtn = document.getElementById('submit-initials-btn');
+        this.gamesToday = document.getElementById('games-today');
+        this.gamesWeek = document.getElementById('games-week');
+        this.uniquePlayers = document.getElementById('unique-players');
+        this.totalGames = document.getElementById('total-games');
     }
 
     initializeEventListeners() {
@@ -287,6 +291,10 @@ class UIController {
         const result = gameState.checkAnswer();
         this.stopTimer();
         
+        // Record game play (without initials for now, will update if high score is set)
+        statsManager.recordGame();
+        this.updateStats();
+        
         if (result.correct) {
             this.showFeedback('Correct! Well done!', 'correct');
             
@@ -391,8 +399,21 @@ class UIController {
                 initials,
                 this.pendingTimeRemaining
             );
+            
+            // Update the last game record with initials
+            const stats = statsManager.getStats();
+            if (stats.games.length > 0) {
+                stats.games[stats.games.length - 1].initials = initials.toUpperCase();
+                if (!(stats.players instanceof Set)) {
+                    stats.players = new Set(stats.players || []);
+                }
+                stats.players.add(initials.toUpperCase());
+                statsManager.saveStats(stats);
+            }
+            
             this.hideHighScoreModal();
             this.updateHighScoresDisplay();
+            this.updateStats();
         }
     }
 
@@ -444,13 +465,22 @@ class UIController {
             this.highScoresDisplay.appendChild(difficultyDiv);
         });
     }
+
+    updateStats() {
+        const stats = statsManager.getAllStats();
+        this.gamesToday.textContent = stats.today;
+        this.gamesWeek.textContent = stats.week;
+        this.uniquePlayers.textContent = stats.uniquePlayers;
+        this.totalGames.textContent = stats.total;
+    }
 }
 
 // Initialize UI when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const ui = new UIController();
-    // Display high scores
+    // Display high scores and stats
     ui.updateHighScoresDisplay();
+    ui.updateStats();
     // Auto-start first game
     ui.startNewGame();
 });

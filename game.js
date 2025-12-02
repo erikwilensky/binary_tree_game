@@ -268,7 +268,97 @@ class HighScoreManager {
     }
 }
 
+// Statistics Manager
+class StatsManager {
+    constructor() {
+        this.storageKey = 'binaryTreeStats';
+    }
+
+    getStats() {
+        const stored = localStorage.getItem(this.storageKey);
+        return stored ? JSON.parse(stored) : { games: [], players: new Set() };
+    }
+
+    saveStats(stats) {
+        // Convert Set to Array for JSON storage
+        const statsToSave = {
+            games: stats.games,
+            players: Array.from(stats.players)
+        };
+        localStorage.setItem(this.storageKey, JSON.stringify(statsToSave));
+    }
+
+    recordGame(initials = null) {
+        const stats = this.getStats();
+        
+        // Restore Set from Array
+        if (!(stats.players instanceof Set)) {
+            stats.players = new Set(stats.players || []);
+        }
+        
+        const gameRecord = {
+            timestamp: new Date().toISOString(),
+            initials: initials || 'ANON'
+        };
+        
+        stats.games.push(gameRecord);
+        
+        if (initials) {
+            stats.players.add(initials.toUpperCase());
+        }
+        
+        this.saveStats(stats);
+    }
+
+    getGamesToday() {
+        const stats = this.getStats();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        return stats.games.filter(game => {
+            const gameDate = new Date(game.timestamp);
+            gameDate.setHours(0, 0, 0, 0);
+            return gameDate.getTime() === today.getTime();
+        }).length;
+    }
+
+    getGamesThisWeek() {
+        const stats = this.getStats();
+        const now = new Date();
+        const weekAgo = new Date(now);
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        
+        return stats.games.filter(game => {
+            const gameDate = new Date(game.timestamp);
+            return gameDate >= weekAgo;
+        }).length;
+    }
+
+    getUniquePlayers() {
+        const stats = this.getStats();
+        if (!(stats.players instanceof Set)) {
+            stats.players = new Set(stats.players || []);
+        }
+        return stats.players.size;
+    }
+
+    getTotalGames() {
+        const stats = this.getStats();
+        return stats.games.length;
+    }
+
+    getAllStats() {
+        return {
+            today: this.getGamesToday(),
+            week: this.getGamesThisWeek(),
+            uniquePlayers: this.getUniquePlayers(),
+            total: this.getTotalGames()
+        };
+    }
+}
+
 // Create global game state instance
 const gameState = new GameState();
 const highScoreManager = new HighScoreManager();
+const statsManager = new StatsManager();
 
