@@ -137,6 +137,7 @@ class GameState {
         this.userAnswer = [];
         this.timer = null;
         this.timeRemaining = 0;
+        this.initialTime = 0;
         this.isGameActive = false;
         this.correctCount = 0;
         this.totalCount = 0;
@@ -158,7 +159,8 @@ class GameState {
             hard: 30,
             expert: 20
         };
-        this.timeRemaining = timers[difficulty] || 45;
+        this.initialTime = timers[difficulty] || 45;
+        this.timeRemaining = this.initialTime;
         
         return {
             tree: this.tree,
@@ -195,11 +197,15 @@ class GameState {
         
         this.isGameActive = false;
         
+        // Calculate time taken
+        const timeTaken = this.initialTime - this.timeRemaining;
+        
         return {
             correct: isCorrect,
             userAnswer: [...this.userAnswer],
             correctAnswer: [...this.correctAnswer],
-            timeRemaining: this.timeRemaining
+            timeRemaining: this.timeRemaining,
+            timeTaken: timeTaken
         };
     }
 
@@ -245,16 +251,16 @@ class HighScoreManager {
         return scores[key] || null;
     }
 
-    setHighScore(difficulty, traversalType, initials, timeRemaining) {
+    setHighScore(difficulty, traversalType, initials, timeTaken) {
         const scores = this.getHighScores();
         const key = `${difficulty}_${traversalType}`;
         const currentHigh = scores[key];
         
-        // Higher time remaining = better score
-        if (!currentHigh || timeRemaining > currentHigh.time) {
+        // Lower time taken = better score
+        if (!currentHigh || timeTaken < currentHigh.time) {
             scores[key] = {
                 initials: initials.toUpperCase().substring(0, 2),
-                time: timeRemaining,
+                time: timeTaken,
                 date: new Date().toISOString()
             };
             this.saveHighScores(scores);

@@ -298,10 +298,10 @@ class UIController {
         if (result.correct) {
             this.showFeedback('Correct! Well done!', 'correct');
             
-            // Check for high score
+            // Check for high score (lower time taken is better)
             const currentHigh = highScoreManager.getHighScore(gameState.difficulty, gameState.traversalType);
-            if (!currentHigh || result.timeRemaining > currentHigh.time) {
-                this.showHighScoreModal(result.timeRemaining);
+            if (!currentHigh || result.timeTaken < currentHigh.time) {
+                this.showHighScoreModal(result.timeTaken);
             }
         } else {
             const correctStr = result.correctAnswer.join(' → ');
@@ -373,16 +373,16 @@ class UIController {
         this.totalCount.textContent = score.total;
     }
 
-    showHighScoreModal(timeRemaining) {
+    showHighScoreModal(timeTaken) {
         this.highScoreModal.classList.remove('hidden');
         this.initialsInput.value = '';
         this.initialsInput.focus();
-        this.pendingTimeRemaining = timeRemaining;
+        this.pendingTimeTaken = timeTaken;
     }
 
     hideHighScoreModal() {
         this.highScoreModal.classList.add('hidden');
-        this.pendingTimeRemaining = null;
+        this.pendingTimeTaken = null;
     }
 
     submitInitials() {
@@ -392,12 +392,12 @@ class UIController {
             return;
         }
         
-        if (this.pendingTimeRemaining !== null) {
+        if (this.pendingTimeTaken !== null) {
             highScoreManager.setHighScore(
                 gameState.difficulty,
                 gameState.traversalType,
                 initials,
-                this.pendingTimeRemaining
+                this.pendingTimeTaken
             );
             
             // Update the last game record with initials
