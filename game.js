@@ -299,7 +299,12 @@ class HighScoreManager {
     async getHighScore(difficulty, traversalType) {
         const scores = await this.getHighScores();
         const key = `${difficulty}_${traversalType}`;
-        return scores[key] || null;
+        const score = scores[key];
+        // Return null if score doesn't exist, is empty object, or missing required properties
+        if (!score || !score.initials || score.time === undefined) {
+            return null;
+        }
+        return score;
     }
 
     async setHighScore(difficulty, traversalType, initials, timeTaken) {
