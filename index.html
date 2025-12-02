@@ -13,70 +13,95 @@
             <p class="subtitle">Drag nodes into the correct traversal order</p>
         </header>
 
-        <div class="game-controls">
+        <div class="app-menu">
             <div class="control-group">
-                <label for="traversal-type">Traversal Type:</label>
-                <select id="traversal-type">
-                    <option value="inorder">In-Order</option>
-                    <option value="preorder">Pre-Order</option>
-                    <option value="postorder">Post-Order</option>
+                <label for="app-select">Practice Area:</label>
+                <select id="app-select">
+                    <option value="binary">Binary Tree Traversal</option>
+                    <option value="python">Python Algorithm Tracing (coming soon)</option>
                 </select>
             </div>
-
-            <div class="control-group">
-                <label for="difficulty">Difficulty:</label>
-                <select id="difficulty">
-                    <option value="easy">Easy (3-5 nodes, 60s)</option>
-                    <option value="medium">Medium (6-9 nodes, 45s)</option>
-                    <option value="hard">Hard (10-15 nodes, 30s)</option>
-                    <option value="expert">Expert (15+ nodes, 20s)</option>
-                </select>
-            </div>
-
-            <button id="new-game-btn" class="btn btn-primary">New Game</button>
         </div>
 
-        <div class="timer-container">
-            <div id="timer" class="timer">--:--</div>
-        </div>
+        <!-- Binary tree traversal app -->
+        <div id="binary-tree-app" class="app-section">
+            <div class="game-controls">
+                <div class="control-group">
+                    <label for="traversal-type">Traversal Type:</label>
+                    <select id="traversal-type">
+                        <option value="inorder">In-Order</option>
+                        <option value="preorder">Pre-Order</option>
+                        <option value="postorder">Post-Order</option>
+                    </select>
+                </div>
 
-        <div class="game-area">
-            <div class="tree-container">
-                <h2>Binary Tree</h2>
-                <div id="tree-visualization" class="tree-visualization"></div>
+                <div class="control-group">
+                    <label for="difficulty">Difficulty:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy (3-5 nodes, 60s)</option>
+                        <option value="medium">Medium (6-9 nodes, 90s)</option>
+                        <option value="hard">Hard (10-15 nodes, 120s)</option>
+                        <option value="expert">Expert (15+ nodes, 150s)</option>
+                    </select>
+                </div>
+
+                <button id="new-game-btn" class="btn btn-primary">New Game</button>
             </div>
 
-            <div class="answer-area">
-                <h2>Your Answer</h2>
-                <div id="answer-slots" class="answer-slots"></div>
-                <div class="answer-controls">
-                    <button id="check-answer-btn" class="btn btn-success">Check Answer</button>
-                    <button id="reset-answer-btn" class="btn btn-secondary">Reset</button>
+            <div class="timer-container">
+                <div id="timer" class="timer">--:--</div>
+            </div>
+
+            <div class="game-area">
+                <div class="tree-container">
+                    <h2>Binary Tree</h2>
+                    <div id="tree-visualization" class="tree-visualization"></div>
+                </div>
+
+                <div class="answer-area">
+                    <h2>Your Answer</h2>
+                    <div id="answer-slots" class="answer-slots"></div>
+                    <div class="answer-controls">
+                        <button id="check-answer-btn" class="btn btn-success">Check Answer</button>
+                        <button id="reset-answer-btn" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+
+                <div class="node-pool">
+                    <h2>Available Nodes</h2>
+                    <div id="node-pool" class="node-pool-container"></div>
                 </div>
             </div>
 
-            <div class="node-pool">
-                <h2>Available Nodes</h2>
-                <div id="node-pool" class="node-pool-container"></div>
+            <div id="feedback" class="feedback hidden"></div>
+
+            <div class="score-container">
+                <div class="score-item">
+                    <span class="score-label">Correct:</span>
+                    <span id="correct-count" class="score-value">0</span>
+                </div>
+                <div class="score-item">
+                    <span class="score-label">Total:</span>
+                    <span id="total-count" class="score-value">0</span>
+                </div>
+            </div>
+
+            <div class="high-scores-section">
+                <h2>High Scores</h2>
+                <div id="high-scores-display" class="high-scores-display"></div>
             </div>
         </div>
 
-        <div id="feedback" class="feedback hidden"></div>
-
-        <div class="score-container">
-            <div class="score-item">
-                <span class="score-label">Correct:</span>
-                <span id="correct-count" class="score-value">0</span>
-            </div>
-            <div class="score-item">
-                <span class="score-label">Total:</span>
-                <span id="total-count" class="score-value">0</span>
-            </div>
-        </div>
-
-        <div class="high-scores-section">
-            <h2>High Scores</h2>
-            <div id="high-scores-display" class="high-scores-display"></div>
+        <!-- Python algorithm tracing app (placeholder) -->
+        <div id="python-tracing-app" class="app-section app-section-hidden">
+            <h2>Python Algorithm Tracing Practice</h2>
+            <p>
+                This section will let students practice tracing Python algorithms step-by-step,
+                predicting variable values and outputs as the code runs.
+            </p>
+            <p>
+                For now, continue using the Binary Tree Traversal practice from the menu above.
+            </p>
         </div>
     </div>
 

@@ -7,6 +7,11 @@ class UIController {
     }
 
     initializeElements() {
+        // App switching
+        this.appSelect = document.getElementById('app-select');
+        this.binaryApp = document.getElementById('binary-tree-app');
+        this.pythonApp = document.getElementById('python-tracing-app');
+
         this.traversalSelect = document.getElementById('traversal-type');
         this.difficultySelect = document.getElementById('difficulty');
         this.newGameBtn = document.getElementById('new-game-btn');
@@ -26,6 +31,10 @@ class UIController {
     }
 
     initializeEventListeners() {
+        if (this.appSelect) {
+            this.appSelect.addEventListener('change', () => this.switchApp());
+        }
+
         this.newGameBtn.addEventListener('click', () => this.startNewGame());
         this.checkAnswerBtn.addEventListener('click', () => this.checkAnswer());
         this.resetAnswerBtn.addEventListener('click', () => this.resetAnswer());
@@ -38,6 +47,28 @@ class UIController {
         this.initialsInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, '');
         });
+    }
+
+    switchApp() {
+        if (!this.appSelect || !this.binaryApp || !this.pythonApp) return;
+
+        const selected = this.appSelect.value;
+
+        if (selected === 'binary') {
+            this.binaryApp.classList.remove('app-section-hidden');
+            this.pythonApp.classList.add('app-section-hidden');
+            // Ensure UI is up to date when returning to the binary game
+            this.updateScore();
+            this.updateHighScoresDisplay();
+        } else if (selected === 'python') {
+            // Hide binary game UI, show Python tracing placeholder
+            this.binaryApp.classList.add('app-section-hidden');
+            this.pythonApp.classList.remove('app-section-hidden');
+
+            // Pause any running game visually
+            this.stopTimer();
+            this.hideFeedback();
+        }
     }
 
     async startNewGame() {
