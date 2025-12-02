@@ -221,37 +221,40 @@ class GameState {
     }
 }
 
-// High Score Manager - Uses GitHub Gist for shared storage
+// High Score Manager - Uses JSONBin.io for shared storage (free, no auth needed)
 class HighScoreManager {
     constructor() {
-        this.gistId = 'd7d2b1f53b815c55770761c18fdfd534';
-        this.filename = 'gistfile1.txt';
+        // Replace with your JSONBin.io bin ID after creating one
+        // Go to https://jsonbin.io, create a free account, create a bin, copy the bin ID
+        this.binId = 'YOUR_BIN_ID_HERE';
+        this.apiKey = '$2b$10$YOUR_API_KEY_HERE'; // Optional: for private bins
         this.scores = {};
     }
 
     async loadScores() {
         try {
-            // Use raw Gist URL - no API rate limits, works for public Gists
-            const rawUrl = `https://gist.githubusercontent.com/erikwilensky/${this.gistId}/raw/gistfile1.txt`;
+            // Load from JSONBin.io (public bin, no auth needed)
+            const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
+            const headers = {};
             
-            const response = await fetch(rawUrl, {
-                cache: 'no-cache' // Always get fresh data
+            // Only add API key if provided (for private bins)
+            if (this.apiKey && !this.apiKey.includes('YOUR_API_KEY')) {
+                headers['X-Master-Key'] = this.apiKey;
+            }
+            
+            const response = await fetch(url, {
+                headers: headers,
+                cache: 'no-cache'
             });
             
             if (response.ok) {
-                const content = await response.text();
-                try {
-                    this.scores = JSON.parse(content || '{}');
-                    localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
-                    console.log('Loaded scores from Gist');
-                } catch (parseError) {
-                    console.warn('Failed to parse Gist content, using localStorage');
-                    const stored = localStorage.getItem('binaryTreeHighScores');
-                    this.scores = stored ? JSON.parse(stored) : {};
-                }
+                const data = await response.json();
+                this.scores = data.record || {};
+                localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
+                console.log('Loaded scores from JSONBin');
             } else {
                 // Fallback to localStorage
-                console.warn(`Cannot load from Gist (${response.status}). Using localStorage.`);
+                console.warn(`Cannot load from JSONBin (${response.status}). Using localStorage.`);
                 const stored = localStorage.getItem('binaryTreeHighScores');
                 this.scores = stored ? JSON.parse(stored) : {};
             }
@@ -267,84 +270,39 @@ class HighScoreManager {
         this.scores = scores;
         localStorage.setItem('binaryTreeHighScores', JSON.stringify(scores));
         
-        // Try to save to Gist via serverless function
-        // Update this URL after deploying to Vercel/Netlify
-        // For now, using direct save (see saveToGistDirect function below)
-        const serverlessUrl = 'https://your-function.vercel.app/api/save-scores';
-        
-        // Also try direct save (for testing - remove in production)
-        await this.saveToGistDirect(scores);
-        
-        // Try serverless function as backup
         try {
-            const response = await fetch(serverlessUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    scores: scores,
-                    gistId: this.gistId,
-                    filename: this.filename
-                })
-            });
+            // Save to JSONBin.io
+            const url = `https://api.jsonbin.io/v3/b/${this.binId}`;
+            const headers = {
+                'Content-Type': 'application/json'
+            };
             
-            if (response.ok) {
-                console.log('Successfully saved to Gist via serverless function!');
-            }
-        } catch (error) {
-            // Serverless function not set up yet - that's okay
-            console.log('Serverless function not available, using direct save');
-        }
-    }
-
-    async saveToGistDirect(scores) {
-        // Direct save using GitHub API (requires token)
-        // Token is hardcoded for this educational game
-        const token = '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';
-        
-        try {
-            // Try to update the Gist directly
-            const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github.v3+json',
-                    'User-Agent': 'BinaryTreeGame'
-                },
-                body: JSON.stringify({
-                    files: {
-                        [this.filename]: {
-                            content: JSON.stringify(scores, null, 2)
-                        }
-                    }
-                })
-            });
-            
-            if (response.ok) {
-                console.log('Successfully saved to Gist directly!');
-                return true;
+            // Only add API key if provided (for private bins)
+            if (this.apiKey && !this.apiKey.includes('YOUR_API_KEY')) {
+                headers['X-Master-Key'] = this.apiKey;
             } else {
-                const errorText = await response.text();
-                let errorData;
-                try {
-                    errorData = JSON.parse(errorText);
-                } catch {
-                    errorData = { message: errorText };
-                }
-                
-                if (response.status === 401) {
-                    console.error('Token authentication failed. Token may be invalid or expired.');
-                    console.error('Error:', errorData.message || errorText);
-                } else {
-                    console.error('Failed to save to Gist:', errorData.message || errorText);
-                }
-                return false;
+                // For public bins, we can use a simpler approach
+                // But JSONBin.io requires auth for writes, so we'll use a public read-only approach
+                // and save locally
+                console.log('JSONBin API key not configured. Scores saved locally only.');
+                console.log('To enable shared storage, set up JSONBin.io and add your bin ID and API key.');
+                return;
+            }
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: headers,
+                body: JSON.stringify(scores)
+            });
+            
+            if (response.ok) {
+                console.log('Successfully saved to JSONBin!');
+            } else {
+                const error = await response.text();
+                console.warn('Failed to save to JSONBin:', error);
             }
         } catch (error) {
-            console.error('Error saving to Gist:', error);
-            return false;
+            console.error('Error saving to JSONBin:', error);
         }
     }
 
