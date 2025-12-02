@@ -155,9 +155,9 @@ class GameState {
         // Set timer based on difficulty
         const timers = {
             easy: 60,
-            medium: 45,
-            hard: 30,
-            expert: 20
+            medium: 90,
+            hard: 120,
+            expert: 150
         };
         this.initialTime = timers[difficulty] || 45;
         this.timeRemaining = this.initialTime;
