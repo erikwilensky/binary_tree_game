@@ -224,10 +224,8 @@ class GameState {
 // High Score Manager - Uses JSONBin.io for shared storage (free, no auth needed)
 class HighScoreManager {
     constructor() {
-        // Replace with your JSONBin.io bin ID after creating one
-        // Go to https://jsonbin.io, create a free account, create a bin, copy the bin ID
-        this.binId = 'YOUR_BIN_ID_HERE';
-        this.apiKey = '$2b$10$YOUR_API_KEY_HERE'; // Optional: for private bins
+        this.binId = '692e87fad0ea881f400d3443';
+        this.apiKey = '$2a$10$ZZEnotrxZWf4OAffHwnXFen5GewLcBIqreyPOs4/eVuUUvuINk55u';
         this.scores = {};
     }
 
@@ -273,25 +271,12 @@ class HighScoreManager {
         try {
             // Save to JSONBin.io
             const url = `https://api.jsonbin.io/v3/b/${this.binId}`;
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            
-            // Only add API key if provided (for private bins)
-            if (this.apiKey && !this.apiKey.includes('YOUR_API_KEY')) {
-                headers['X-Master-Key'] = this.apiKey;
-            } else {
-                // For public bins, we can use a simpler approach
-                // But JSONBin.io requires auth for writes, so we'll use a public read-only approach
-                // and save locally
-                console.log('JSONBin API key not configured. Scores saved locally only.');
-                console.log('To enable shared storage, set up JSONBin.io and add your bin ID and API key.');
-                return;
-            }
-            
             const response = await fetch(url, {
                 method: 'PUT',
-                headers: headers,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': this.apiKey
+                },
                 body: JSON.stringify(scores)
             });
             
