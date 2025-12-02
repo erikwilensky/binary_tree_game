@@ -14,8 +14,6 @@ class UIController {
         this.resetAnswerBtn = document.getElementById('reset-answer-btn');
         this.timerDisplay = document.getElementById('timer');
         this.treeVisualization = document.getElementById('tree-visualization');
-        this.treeHeightDisplay = document.getElementById('tree-height');
-        this.treeDepthDisplay = document.getElementById('tree-depth');
         this.nodePool = document.getElementById('node-pool');
         this.answerSlots = document.getElementById('answer-slots');
         this.feedback = document.getElementById('feedback');
@@ -25,10 +23,6 @@ class UIController {
         this.highScoreModal = document.getElementById('high-score-modal');
         this.initialsInput = document.getElementById('initials-input');
         this.submitInitialsBtn = document.getElementById('submit-initials-btn');
-        this.gamesToday = document.getElementById('games-today');
-        this.gamesWeek = document.getElementById('games-week');
-        this.uniquePlayers = document.getElementById('unique-players');
-        this.totalGames = document.getElementById('total-games');
     }
 
     initializeEventListeners() {
@@ -46,7 +40,7 @@ class UIController {
         });
     }
 
-    startNewGame() {
+    async startNewGame() {
         const traversalType = this.traversalSelect.value;
         const difficulty = this.difficultySelect.value;
         
@@ -58,7 +52,7 @@ class UIController {
         this.hideFeedback();
         this.startTimer(gameData.timeRemaining);
         this.updateScore();
-        this.updateHighScoresDisplay();
+        await this.updateHighScoresDisplay();
     }
 
     renderTree(tree) {
@@ -67,15 +61,6 @@ class UIController {
         if (!tree || !tree.root) return;
         
         const height = tree.getHeight();
-        const nodeDepths = tree.getNodeDepths();
-        
-        // Calculate maximum depth
-        const maxDepth = Math.max(...Array.from(nodeDepths.values()));
-        
-        // Display tree height and max depth
-        this.treeHeightDisplay.textContent = height - 1; // Height is number of edges from root to deepest leaf
-        this.treeDepthDisplay.textContent = maxDepth; // Maximum depth in the tree
-        
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '100%');
         svg.setAttribute('height', '400');
@@ -285,21 +270,17 @@ class UIController {
         });
     }
 
-    checkAnswer() {
+    async checkAnswer() {
         if (!gameState.isGameActive) return;
         
         const result = gameState.checkAnswer();
         this.stopTimer();
         
-        // Record game play (without initials for now, will update if high score is set)
-        statsManager.recordGame();
-        this.updateStats();
-        
         if (result.correct) {
             this.showFeedback('Correct! Well done!', 'correct');
             
-            // Check for high score (lower time taken is better)
-            const currentHigh = highScoreManager.getHighScore(gameState.difficulty, gameState.traversalType);
+            // Check for high score
+            const currentHigh = await highScoreManager.getHighScore(gameState.difficulty, gameState.traversalType);
             if (!currentHigh || result.timeTaken < currentHigh.time) {
                 this.showHighScoreModal(result.timeTaken);
             }
@@ -309,7 +290,7 @@ class UIController {
         }
         
         this.updateScore();
-        this.updateHighScoresDisplay();
+        await this.updateHighScoresDisplay();
         
         // Disable further interactions
         const nodes = this.nodePool.querySelectorAll('.draggable-node');
@@ -385,7 +366,7 @@ class UIController {
         this.pendingTimeTaken = null;
     }
 
-    submitInitials() {
+    async submitInitials() {
         const initials = this.initialsInput.value.trim();
         if (initials.length < 1) {
             alert('Please enter at least one initial');
@@ -393,32 +374,20 @@ class UIController {
         }
         
         if (this.pendingTimeTaken !== null) {
-            highScoreManager.setHighScore(
+            await highScoreManager.setHighScore(
                 gameState.difficulty,
                 gameState.traversalType,
                 initials,
                 this.pendingTimeTaken
             );
             
-            // Update the last game record with initials
-            const stats = statsManager.getStats();
-            if (stats.games.length > 0) {
-                stats.games[stats.games.length - 1].initials = initials.toUpperCase();
-                if (!(stats.players instanceof Set)) {
-                    stats.players = new Set(stats.players || []);
-                }
-                stats.players.add(initials.toUpperCase());
-                statsManager.saveStats(stats);
-            }
-            
             this.hideHighScoreModal();
-            this.updateHighScoresDisplay();
-            this.updateStats();
+            await this.updateHighScoresDisplay();
         }
     }
 
-    updateHighScoresDisplay() {
-        const allScores = highScoreManager.getAllHighScores();
+    async updateHighScoresDisplay() {
+        const allScores = await highScoreManager.getAllHighScores();
         const difficulties = ['easy', 'medium', 'hard', 'expert'];
         const traversalTypes = [
             { key: 'inorder', label: 'In-Order' },
@@ -465,23 +434,14 @@ class UIController {
             this.highScoresDisplay.appendChild(difficultyDiv);
         });
     }
-
-    updateStats() {
-        const stats = statsManager.getAllStats();
-        this.gamesToday.textContent = stats.today;
-        this.gamesWeek.textContent = stats.week;
-        this.uniquePlayers.textContent = stats.uniquePlayers;
-        this.totalGames.textContent = stats.total;
-    }
 }
 
 // Initialize UI when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const ui = new UIController();
-    // Display high scores and stats
-    ui.updateHighScoresDisplay();
-    ui.updateStats();
+    // Load and display high scores
+    await ui.updateHighScoresDisplay();
     // Auto-start first game
-    ui.startNewGame();
+    await ui.startNewGame();
 });
 

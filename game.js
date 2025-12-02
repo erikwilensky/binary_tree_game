@@ -116,15 +116,6 @@ class BinaryTree {
         this.getAllNodes(node.right, result);
         return result;
     }
-
-    // Calculate depth of each node (distance from root)
-    getNodeDepths(node = this.root, depth = 0, depths = new Map()) {
-        if (node === null) return depths;
-        depths.set(node, depth);
-        this.getNodeDepths(node.left, depth + 1, depths);
-        this.getNodeDepths(node.right, depth + 1, depths);
-        return depths;
-    }
 }
 
 // Game State Manager
@@ -230,141 +221,79 @@ class GameState {
     }
 }
 
-// High Score Manager
+// High Score Manager - Uses GitHub Gist for shared storage
 class HighScoreManager {
     constructor() {
-        this.storageKey = 'binaryTreeHighScores';
+        this.gistId = 'd7d2b1f53b815c55770761c18fdfd534';
+        this.filename = 'highscores.json';
+        this.scores = {};
     }
 
-    getHighScores() {
-        const stored = localStorage.getItem(this.storageKey);
-        return stored ? JSON.parse(stored) : {};
+    async loadScores() {
+        try {
+            const response = await fetch(`https://api.github.com/gists/${this.gistId}`);
+            if (response.ok) {
+                const gist = await response.json();
+                const content = gist.files[this.filename]?.content || '{}';
+                this.scores = JSON.parse(content);
+                localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
+            } else {
+                // Fallback to localStorage
+                const stored = localStorage.getItem('binaryTreeHighScores');
+                this.scores = stored ? JSON.parse(stored) : {};
+            }
+        } catch (error) {
+            console.error('Failed to load scores:', error);
+            const stored = localStorage.getItem('binaryTreeHighScores');
+            this.scores = stored ? JSON.parse(stored) : {};
+        }
     }
 
-    saveHighScores(scores) {
-        localStorage.setItem(this.storageKey, JSON.stringify(scores));
+    async saveScores(scores) {
+        this.scores = scores;
+        localStorage.setItem('binaryTreeHighScores', JSON.stringify(scores));
+        
+        // Try to save to Gist (requires GitHub token - see README)
+        // For now, just use localStorage as shared storage
+        // Users can manually sync or you can set up a serverless function
     }
 
-    getHighScore(difficulty, traversalType) {
-        const scores = this.getHighScores();
+    async getHighScores() {
+        if (Object.keys(this.scores).length === 0) {
+            await this.loadScores();
+        }
+        return this.scores;
+    }
+
+    async getHighScore(difficulty, traversalType) {
+        const scores = await this.getHighScores();
         const key = `${difficulty}_${traversalType}`;
         return scores[key] || null;
     }
 
-    setHighScore(difficulty, traversalType, initials, timeTaken) {
-        const scores = this.getHighScores();
+    async setHighScore(difficulty, traversalType, initials, timeTaken) {
+        const scores = await this.getHighScores();
         const key = `${difficulty}_${traversalType}`;
         const currentHigh = scores[key];
         
-        // Lower time taken = better score
         if (!currentHigh || timeTaken < currentHigh.time) {
             scores[key] = {
                 initials: initials.toUpperCase().substring(0, 2),
                 time: timeTaken,
                 date: new Date().toISOString()
             };
-            this.saveHighScores(scores);
+            await this.saveScores(scores);
             return true;
         }
         return false;
     }
 
-    getAllHighScores() {
-        return this.getHighScores();
-    }
-}
-
-// Statistics Manager
-class StatsManager {
-    constructor() {
-        this.storageKey = 'binaryTreeStats';
-    }
-
-    getStats() {
-        const stored = localStorage.getItem(this.storageKey);
-        return stored ? JSON.parse(stored) : { games: [], players: new Set() };
-    }
-
-    saveStats(stats) {
-        // Convert Set to Array for JSON storage
-        const statsToSave = {
-            games: stats.games,
-            players: Array.from(stats.players)
-        };
-        localStorage.setItem(this.storageKey, JSON.stringify(statsToSave));
-    }
-
-    recordGame(initials = null) {
-        const stats = this.getStats();
-        
-        // Restore Set from Array
-        if (!(stats.players instanceof Set)) {
-            stats.players = new Set(stats.players || []);
-        }
-        
-        const gameRecord = {
-            timestamp: new Date().toISOString(),
-            initials: initials || 'ANON'
-        };
-        
-        stats.games.push(gameRecord);
-        
-        if (initials) {
-            stats.players.add(initials.toUpperCase());
-        }
-        
-        this.saveStats(stats);
-    }
-
-    getGamesToday() {
-        const stats = this.getStats();
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        return stats.games.filter(game => {
-            const gameDate = new Date(game.timestamp);
-            gameDate.setHours(0, 0, 0, 0);
-            return gameDate.getTime() === today.getTime();
-        }).length;
-    }
-
-    getGamesThisWeek() {
-        const stats = this.getStats();
-        const now = new Date();
-        const weekAgo = new Date(now);
-        weekAgo.setDate(weekAgo.getDate() - 7);
-        
-        return stats.games.filter(game => {
-            const gameDate = new Date(game.timestamp);
-            return gameDate >= weekAgo;
-        }).length;
-    }
-
-    getUniquePlayers() {
-        const stats = this.getStats();
-        if (!(stats.players instanceof Set)) {
-            stats.players = new Set(stats.players || []);
-        }
-        return stats.players.size;
-    }
-
-    getTotalGames() {
-        const stats = this.getStats();
-        return stats.games.length;
-    }
-
-    getAllStats() {
-        return {
-            today: this.getGamesToday(),
-            week: this.getGamesThisWeek(),
-            uniquePlayers: this.getUniquePlayers(),
-            total: this.getTotalGames()
-        };
+    async getAllHighScores() {
+        return await this.getHighScores();
     }
 }
 
 // Create global game state instance
 const gameState = new GameState();
 const highScoreManager = new HighScoreManager();
-const statsManager = new StatsManager();
 

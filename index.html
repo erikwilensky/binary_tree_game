@@ -27,9 +27,9 @@
                 <label for="difficulty">Difficulty:</label>
                 <select id="difficulty">
                     <option value="easy">Easy (3-5 nodes, 60s)</option>
-                    <option value="medium">Medium (6-9 nodes, 90s)</option>
-                    <option value="hard">Hard (10-15 nodes, 120s)</option>
-                    <option value="expert">Expert (15+ nodes, 150s)</option>
+                    <option value="medium">Medium (6-9 nodes, 45s)</option>
+                    <option value="hard">Hard (10-15 nodes, 30s)</option>
+                    <option value="expert">Expert (15+ nodes, 20s)</option>
                 </select>
             </div>
 
@@ -42,19 +42,7 @@
 
         <div class="game-area">
             <div class="tree-container">
-                <div class="tree-header">
-                    <h2>Binary Tree</h2>
-                    <div class="tree-info">
-                        <div class="tree-info-item" title="Height: The number of edges on the longest path from the root node to a leaf node">
-                            <span class="tree-info-label">Height:</span>
-                            <span id="tree-height" class="tree-info-value">-</span>
-                        </div>
-                        <div class="tree-info-item" title="Depth: The number of edges from the root node to a specific node (shown is the maximum depth)">
-                            <span class="tree-info-label">Depth:</span>
-                            <span id="tree-depth" class="tree-info-value">-</span>
-                        </div>
-                    </div>
-                </div>
+                <h2>Binary Tree</h2>
                 <div id="tree-visualization" class="tree-visualization"></div>
             </div>
 
@@ -83,28 +71,6 @@
             <div class="score-item">
                 <span class="score-label">Total:</span>
                 <span id="total-count" class="score-value">0</span>
-            </div>
-        </div>
-
-        <div class="stats-section">
-            <h2>Statistics</h2>
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <span class="stat-label">Games Today</span>
-                    <span id="games-today" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Games This Week</span>
-                    <span id="games-week" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Unique Players</span>
-                    <span id="unique-players" class="stat-value">0</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Total Games</span>
-                    <span id="total-games" class="stat-value">0</span>
-                </div>
             </div>
         </div>
 
