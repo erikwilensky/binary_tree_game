@@ -225,7 +225,7 @@ class GameState {
 class HighScoreManager {
     constructor() {
         this.gistId = 'd7d2b1f53b815c55770761c18fdfd534';
-        this.filename = 'highscores.json';
+        this.filename = 'gistfile1.txt';
         this.scores = {};
     }
 
