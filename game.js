@@ -301,7 +301,7 @@ class HighScoreManager {
     async saveToGistDirect(scores) {
         // Direct save using GitHub API (requires token)
         // Token is hardcoded for this educational game
-        const token = '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';
+        const token = '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';
         
         try {
             // First verify token works by checking user
