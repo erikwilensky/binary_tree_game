@@ -304,6 +304,21 @@ class HighScoreManager {
         const token = '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';
         
         try {
+            // First verify token works by checking user
+            const userCheck = await fetch('https://api.github.com/user', {
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            
+            if (!userCheck.ok) {
+                console.error('Token validation failed. Status:', userCheck.status);
+                const errorText = await userCheck.text();
+                console.error('Error:', errorText);
+                return false;
+            }
+            
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
                 method: 'PATCH',
                 headers: {

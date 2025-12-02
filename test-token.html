@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test GitHub Token</title>
+</head>
+<body>
+    <h1>Testing GitHub Token</h1>
+    <button onclick="testToken()">Test Token</button>
+    <div id="result"></div>
+    
+    <script>
+        async function testToken() {
+            const token = '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';
+            const gistId = 'd7d2b1f53b815c55770761c18fdfd534';
+            
+            try {
+                // Test 1: Check token validity
+                const userResponse = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                const userData = await userResponse.json();
+                document.getElementById('result').innerHTML += `<p>User: ${userData.login || 'Error: ' + JSON.stringify(userData)}</p>`;
+                
+                // Test 2: Check Gist access
+                const gistResponse = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                const gistData = await gistResponse.json();
+                document.getElementById('result').innerHTML += `<p>Gist Access: ${gistResponse.ok ? 'OK' : 'FAILED - ' + JSON.stringify(gistData)}</p>`;
+                
+                // Test 3: Try to update Gist
+                const updateResponse = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            'gistfile1.txt': {
+                                content: JSON.stringify({ test: 'test' }, null, 2)
+                            }
+                        }
+                    })
+                });
+                
+                const updateData = await updateResponse.json();
+                document.getElementById('result').innerHTML += `<p>Update Gist: ${updateResponse.ok ? 'OK' : 'FAILED - ' + JSON.stringify(updateData)}</p>`;
+                
+            } catch (error) {
+                document.getElementById('result').innerHTML += `<p>Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
+
