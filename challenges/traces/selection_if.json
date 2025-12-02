@@ -1,0 +1,43 @@
+{
+  "steps": [
+    {
+      "step_index": 1,
+      "line_number": 2,
+      "variables": {
+        "x": 7,
+        "result": 0
+      }
+    },
+    {
+      "step_index": 2,
+      "line_number": 3,
+      "variables": {
+        "x": 7,
+        "result": 0
+      },
+      "condition_results": {
+        "x > 5": true
+      }
+    },
+    {
+      "step_index": 3,
+      "line_number": 4,
+      "variables": {
+        "x": 7,
+        "result": 14
+      },
+      "condition_results": {
+        "x > 5": true
+      }
+    },
+    {
+      "step_index": 4,
+      "line_number": 6,
+      "variables": {
+        "x": 7,
+        "result": 14
+      }
+    }
+  ]
+}
+

@@ -447,6 +447,184 @@ header h1 {
     font-size: 1em;
 }
 
+/* Python tracing app styles */
+
+.python-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.python-left-panel,
+.python-right-panel {
+    background: #f7fafc;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.python-control-bar {
+    margin-bottom: 15px;
+}
+
+.python-code-panel {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.python-code-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.python-code-title {
+    font-weight: 600;
+    color: #667eea;
+}
+
+.python-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #ebf4ff;
+    color: #4c51bf;
+}
+
+.python-tag.secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.python-code-block {
+    background: #1a202c;
+    color: #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: "Consolas", "Fira Code", monospace;
+    font-size: 0.9em;
+    max-height: 350px;
+    overflow: auto;
+}
+
+.python-meta-panel h3 {
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+.python-meta-panel p {
+    color: #4a5568;
+    margin-bottom: 4px;
+}
+
+.python-inputs {
+    font-family: "Consolas", monospace;
+    font-size: 0.9em;
+}
+
+.python-trace-panel {
+    margin-top: 15px;
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.python-trace-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.python-trace-header h3 {
+    color: #2d3748;
+}
+
+.python-trace-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.python-trace-table-wrapper {
+    max-height: 320px;
+    overflow: auto;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.python-trace-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.python-trace-table th,
+.python-trace-table td {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 6px 8px;
+    font-size: 0.85em;
+    text-align: left;
+}
+
+.python-trace-table th {
+    background: #edf2f7;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.python-trace-table td input {
+    width: 100%;
+    padding: 4px 6px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e0;
+    font-size: 0.85em;
+    font-family: inherit;
+}
+
+.python-trace-table td input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+}
+
+.trace-cell-correct {
+    background: #c6f6d5;
+}
+
+.trace-cell-incorrect {
+    background: #fed7d7;
+}
+
+.python-trace-feedback {
+    margin-top: 10px;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.python-trace-feedback.good {
+    color: #2f855a;
+}
+
+.python-trace-feedback.bad {
+    color: #c53030;
+}
+
+@media (max-width: 1024px) {
+    .python-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 .modal {
     position: fixed;
     top: 0;

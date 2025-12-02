@@ -18,7 +18,7 @@
                 <label for="app-select">Practice Area:</label>
                 <select id="app-select">
                     <option value="binary">Binary Tree Traversal</option>
-                    <option value="python">Python Algorithm Tracing (coming soon)</option>
+                    <option value="python">Python Algorithm Tracing</option>
                 </select>
             </div>
         </div>
@@ -92,16 +92,55 @@
             </div>
         </div>
 
-        <!-- Python algorithm tracing app (placeholder) -->
+        <!-- Python algorithm tracing app -->
         <div id="python-tracing-app" class="app-section app-section-hidden">
             <h2>Python Algorithm Tracing Practice</h2>
-            <p>
-                This section will let students practice tracing Python algorithms step-by-step,
-                predicting variable values and outputs as the code runs.
-            </p>
-            <p>
-                For now, continue using the Binary Tree Traversal practice from the menu above.
-            </p>
+            <div class="python-layout">
+                <div class="python-left-panel">
+                    <div class="python-control-bar">
+                        <div class="control-group">
+                            <label for="python-challenge-select">Choose challenge:</label>
+                            <select id="python-challenge-select">
+                                <!-- Populated by python-trace-ui.js -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="python-code-panel">
+                        <div class="python-code-header">
+                            <span class="python-code-title">Python code</span>
+                            <span id="python-difficulty-tag" class="python-tag"></span>
+                            <span id="python-topic-tag" class="python-tag secondary"></span>
+                        </div>
+                        <pre class="python-code-block"><code id="python-code-display"></code></pre>
+                    </div>
+                </div>
+
+                <div class="python-right-panel">
+                    <div class="python-meta-panel">
+                        <h3 id="python-challenge-title"></h3>
+                        <p id="python-challenge-description"></p>
+                        <p id="python-challenge-inputs" class="python-inputs"></p>
+                    </div>
+
+                    <div class="python-trace-panel">
+                        <div class="python-trace-header">
+                            <h3>Trace table</h3>
+                            <div class="python-trace-actions">
+                                <button id="python-check-btn" class="btn btn-primary">Check Trace</button>
+                                <button id="python-retry-btn" class="btn btn-secondary">Retry Wrong Cells</button>
+                            </div>
+                        </div>
+                        <div class="python-trace-table-wrapper">
+                            <table id="python-trace-table" class="python-trace-table">
+                                <thead id="python-trace-head"></thead>
+                                <tbody id="python-trace-body"></tbody>
+                            </table>
+                        </div>
+                        <div id="python-trace-feedback" class="python-trace-feedback"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -125,6 +164,7 @@
     
     <script src="game.js"></script>
     <script src="ui.js"></script>
+    <script src="python-trace-ui.js"></script>
 </body>
 </html>
 
