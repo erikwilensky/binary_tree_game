@@ -307,10 +307,9 @@ class HighScoreManager {
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
                 method: 'PATCH',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `token ${token}`,
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.github.v3+json',
-                    'X-GitHub-Api-Version': '2022-11-28',
                     'User-Agent': 'BinaryTreeGame'
                 },
                 body: JSON.stringify({
