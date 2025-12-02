@@ -312,7 +312,10 @@ class HighScoreManager {
         const key = `${difficulty}_${traversalType}`;
         const currentHigh = scores[key];
         
-        if (!currentHigh || timeTaken < currentHigh.time) {
+        // Check if current high score is invalid/empty or if new time is better
+        const isNewHighScore = !currentHigh || !currentHigh.time || timeTaken < currentHigh.time;
+        
+        if (isNewHighScore) {
             scores[key] = {
                 initials: initials.toUpperCase().substring(0, 2),
                 time: timeTaken,
