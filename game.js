@@ -253,9 +253,72 @@ class HighScoreManager {
         this.scores = scores;
         localStorage.setItem('binaryTreeHighScores', JSON.stringify(scores));
         
-        // Try to save to Gist (requires GitHub token - see README)
-        // For now, just use localStorage as shared storage
-        // Users can manually sync or you can set up a serverless function
+        // Try to save to Gist via serverless function
+        // Update this URL after deploying to Vercel/Netlify
+        // For now, using direct save (see saveToGistDirect function below)
+        const serverlessUrl = 'https://your-function.vercel.app/api/save-scores';
+        
+        // Also try direct save (for testing - remove in production)
+        await this.saveToGistDirect(scores);
+        
+        // Try serverless function as backup
+        try {
+            const response = await fetch(serverlessUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    scores: scores,
+                    gistId: this.gistId,
+                    filename: this.filename
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Successfully saved to Gist via serverless function!');
+            }
+        } catch (error) {
+            // Serverless function not set up yet - that's okay
+            console.log('Serverless function not available, using direct save');
+        }
+    }
+
+    async saveToGistDirect(scores) {
+        // Direct save using GitHub API (requires token)
+        // This is a temporary solution - use serverless function for production
+        const token = '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';
+        
+        try {
+            const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'BinaryTreeGame'
+                },
+                body: JSON.stringify({
+                    files: {
+                        [this.filename]: {
+                            content: JSON.stringify(scores, null, 2)
+                        }
+                    }
+                })
+            });
+            
+            if (response.ok) {
+                console.log('Successfully saved to Gist directly!');
+                return true;
+            } else {
+                const error = await response.text();
+                console.error('Failed to save to Gist:', error);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error saving to Gist:', error);
+            return false;
+        }
     }
 
     async getHighScores() {

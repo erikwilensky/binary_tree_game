@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/save-scores.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
+

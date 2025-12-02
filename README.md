@@ -7,13 +7,14 @@ An interactive educational game for practicing binary tree traversals (in-order,
 - **Three Traversal Types**: Practice in-order, pre-order, and post-order traversals
 - **Four Difficulty Levels**:
   - Easy: 3-5 nodes, 60 seconds
-  - Medium: 6-9 nodes, 45 seconds
-  - Hard: 10-15 nodes, 30 seconds
-  - Expert: 15+ nodes, 20 seconds
+  - Medium: 6-9 nodes, 90 seconds
+  - Hard: 10-15 nodes, 120 seconds
+  - Expert: 15+ nodes, 150 seconds
 - **Visual Tree Display**: See the binary tree structure clearly
 - **Drag-and-Drop Interface**: Intuitive node arrangement
 - **Timer System**: Countdown timer with visual warnings
 - **Score Tracking**: Track your correct answers and total attempts
+- **Shared High Scores**: High scores are shared across all players via GitHub Gist
 
 ## How to Play
 
@@ -29,6 +30,25 @@ An interactive educational game for practicing binary tree traversals (in-order,
 - **In-Order**: Left subtree → Root → Right subtree
 - **Pre-Order**: Root → Left subtree → Right subtree
 - **Post-Order**: Left subtree → Right subtree → Root
+
+## Setting Up Shared High Scores
+
+The game uses a GitHub Gist to share high scores across all players. To enable writing to the Gist:
+
+### Option 1: Use a Serverless Function (Recommended)
+
+1. Deploy the `api/save-scores.js` function to Vercel, Netlify, or similar
+2. Set `GITHUB_TOKEN` as an environment variable (create a GitHub Personal Access Token with `gist` scope)
+3. Update the `serverlessUrl` in `game.js` to point to your deployed function
+
+### Option 2: Manual Setup
+
+1. Create a public GitHub Gist at https://gist.github.com
+2. Create a file named `highscores.json` with content: `{}`
+3. Copy the Gist ID from the URL
+4. Update `gistId` in `game.js` with your Gist ID
+
+**Note**: Without a serverless function, high scores will only be saved locally. The Gist will be read for displaying shared scores, but new scores won't be written to it.
 
 ## Hosting on GitHub Pages
 
@@ -46,6 +66,7 @@ An interactive educational game for practicing binary tree traversals (in-order,
 - `styles.css` - Game styling and layout
 - `game.js` - Binary tree implementation and game logic
 - `ui.js` - User interface and drag-and-drop functionality
+- `api/save-scores.js` - Serverless function for saving scores to Gist
 
 ## Browser Compatibility
 
@@ -57,4 +78,3 @@ Works in all modern browsers that support:
 ## License
 
 Free to use for educational purposes.
-
