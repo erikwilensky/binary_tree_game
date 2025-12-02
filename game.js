@@ -300,31 +300,8 @@ class HighScoreManager {
 
     async saveToGistDirect(scores) {
         // Direct save using GitHub API (requires token)
-        // Token is loaded from config.js (gitignored) or localStorage
-        let token = null;
-        
-        // Try to get token from global config (if config.js exists)
-        if (typeof GITHUB_TOKEN !== 'undefined') {
-            token = GITHUB_TOKEN;
-        }
-        // Try to get from localStorage (set via browser console: localStorage.setItem('github_token', 'your_token'))
-        else if (localStorage.getItem('github_token')) {
-            token = localStorage.getItem('github_token');
-        }
-        // Fallback: try to read from a script tag (for local testing)
-        else {
-            const tokenScript = document.querySelector('script[data-github-token]');
-            if (tokenScript) {
-                token = tokenScript.getAttribute('data-github-token');
-            }
-        }
-        
-        if (!token) {
-            console.warn('GitHub token not found. High scores saved locally only.');
-            console.log('To enable Gist saving, set token in browser console:');
-            console.log('localStorage.setItem("github_token", "your_token_here")');
-            return false;
-        }
+        // Token is hardcoded for this educational game
+        const token = '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';
         
         try {
             const response = await fetch(`https://api.github.com/gists/${this.gistId}`, {
