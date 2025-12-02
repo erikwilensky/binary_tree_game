@@ -186,11 +186,23 @@ header h1 {
 .tree-info {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 15px;
     background: white;
     padding: 8px 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.tree-info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: help;
+    position: relative;
+}
+
+.tree-info-item:hover {
+    opacity: 0.8;
 }
 
 .tree-info-label {

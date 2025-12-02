@@ -15,6 +15,7 @@ class UIController {
         this.timerDisplay = document.getElementById('timer');
         this.treeVisualization = document.getElementById('tree-visualization');
         this.treeHeightDisplay = document.getElementById('tree-height');
+        this.treeDepthDisplay = document.getElementById('tree-depth');
         this.nodePool = document.getElementById('node-pool');
         this.answerSlots = document.getElementById('answer-slots');
         this.feedback = document.getElementById('feedback');
@@ -64,8 +65,12 @@ class UIController {
         const height = tree.getHeight();
         const nodeDepths = tree.getNodeDepths();
         
-        // Display tree height
+        // Calculate maximum depth
+        const maxDepth = Math.max(...Array.from(nodeDepths.values()));
+        
+        // Display tree height and max depth
         this.treeHeightDisplay.textContent = height - 1; // Height is number of edges from root to deepest leaf
+        this.treeDepthDisplay.textContent = maxDepth; // Maximum depth in the tree
         
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '100%');
@@ -78,12 +83,11 @@ class UIController {
         // Draw edges first
         this.drawEdges(svg, tree.root, positions);
         
-        // Draw nodes with depth labels
+        // Draw nodes
         nodes.forEach(node => {
             const pos = positions.get(node);
-            const depth = nodeDepths.get(node) || 0;
             if (pos) {
-                this.drawNode(svg, node.value, pos.x, pos.y, depth);
+                this.drawNode(svg, node.value, pos.x, pos.y);
             }
         });
         
@@ -140,7 +144,7 @@ class UIController {
         }
     }
 
-    drawNode(svg, value, x, y, depth) {
+    drawNode(svg, value, x, y) {
         const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
@@ -150,31 +154,18 @@ class UIController {
         circle.setAttribute('stroke', 'white');
         circle.setAttribute('stroke-width', '2');
         
-        // Node value text
-        const valueText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        valueText.setAttribute('x', x);
-        valueText.setAttribute('y', y + 5);
-        valueText.setAttribute('text-anchor', 'middle');
-        valueText.setAttribute('fill', 'white');
-        valueText.setAttribute('font-size', '16');
-        valueText.setAttribute('font-weight', 'bold');
-        valueText.textContent = value;
-        
-        // Depth label (below the node)
-        const depthLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        depthLabel.setAttribute('x', x);
-        depthLabel.setAttribute('y', y + 45);
-        depthLabel.setAttribute('text-anchor', 'middle');
-        depthLabel.setAttribute('fill', '#764ba2');
-        depthLabel.setAttribute('font-size', '12');
-        depthLabel.setAttribute('font-weight', '600');
-        depthLabel.setAttribute('class', 'depth-label');
-        depthLabel.textContent = `d:${depth}`;
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y + 5);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', 'white');
+        text.setAttribute('font-size', '16');
+        text.setAttribute('font-weight', 'bold');
+        text.textContent = value;
         
         const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.appendChild(circle);
-        group.appendChild(valueText);
-        group.appendChild(depthLabel);
+        group.appendChild(text);
         svg.appendChild(group);
     }
 
