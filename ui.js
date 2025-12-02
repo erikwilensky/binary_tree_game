@@ -282,7 +282,7 @@ class UIController {
             // Check for high score (always show modal if no high score exists, or if new time is better)
             const currentHigh = await highScoreManager.getHighScore(gameState.difficulty, gameState.traversalType);
             console.log('Current high score:', currentHigh, 'Time taken:', result.timeTaken);
-            if (!currentHigh || (result.timeTaken !== undefined && result.timeTaken < currentHigh.time)) {
+            if (!currentHigh || !currentHigh.time || (result.timeTaken !== undefined && result.timeTaken < currentHigh.time)) {
                 console.log('Showing high score modal');
                 this.showHighScoreModal(result.timeTaken);
             }
@@ -421,7 +421,7 @@ class UIController {
                 const scoreValue = document.createElement('span');
                 scoreValue.className = 'high-score-value';
                 
-                if (score) {
+                if (score && score.initials && score.time !== undefined) {
                     scoreValue.textContent = `${score.initials} - ${score.time}s`;
                 } else {
                     scoreValue.textContent = '---';
