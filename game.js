@@ -231,17 +231,12 @@ class HighScoreManager {
 
     async loadScores() {
         try {
-            // Load from JSONBin.io (public bin, no auth needed)
+            // Load from JSONBin.io
             const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
-            const headers = {};
-            
-            // Only add API key if provided (for private bins)
-            if (this.apiKey && !this.apiKey.includes('YOUR_API_KEY')) {
-                headers['X-Master-Key'] = this.apiKey;
-            }
-            
             const response = await fetch(url, {
-                headers: headers,
+                headers: {
+                    'X-Master-Key': this.apiKey
+                },
                 cache: 'no-cache'
             });
             
