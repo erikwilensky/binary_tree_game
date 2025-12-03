@@ -19,6 +19,7 @@
                 <select id="app-select">
                     <option value="binary">Binary Tree Traversal</option>
                     <option value="python">Python Algorithm Tracing</option>
+                    <option value="converter">Number Conversion</option>
                 </select>
             </div>
         </div>
@@ -89,6 +90,43 @@
             <div class="high-scores-section">
                 <h2>High Scores</h2>
                 <div id="high-scores-display" class="high-scores-display"></div>
+            </div>
+        </div>
+
+        <!-- Number conversion app -->
+        <div id="number-converter-app" class="app-section app-section-hidden">
+            <h2>Number Conversion</h2>
+            <p class="subtitle">Convert between binary, hexadecimal, and denary (decimal) number systems</p>
+            
+            <div class="converter-container">
+                <div class="converter-input-section">
+                    <div class="converter-input-group">
+                        <label for="denary-input">Denary (Decimal):</label>
+                        <input type="number" id="denary-input" placeholder="Enter denary number" min="0" step="1">
+                        <div class="converter-result-label">Result:</div>
+                        <div id="denary-result" class="converter-result">---</div>
+                    </div>
+
+                    <div class="converter-input-group">
+                        <label for="binary-input">Binary:</label>
+                        <input type="text" id="binary-input" placeholder="Enter binary number (0s and 1s)">
+                        <div class="converter-result-label">Result:</div>
+                        <div id="binary-result" class="converter-result">---</div>
+                    </div>
+
+                    <div class="converter-input-group">
+                        <label for="hex-input">Hexadecimal:</label>
+                        <input type="text" id="hex-input" placeholder="Enter hexadecimal number (0-9, A-F)">
+                        <div class="converter-result-label">Result:</div>
+                        <div id="hex-result" class="converter-result">---</div>
+                    </div>
+                </div>
+
+                <div class="converter-controls">
+                    <button id="converter-clear-btn" class="btn btn-secondary">Clear All</button>
+                </div>
+
+                <div id="converter-error" class="converter-error hidden"></div>
             </div>
         </div>
 
@@ -165,6 +203,8 @@
     <script src="game.js"></script>
     <script src="ui.js"></script>
     <script src="python-trace-ui.js"></script>
+    <script src="number-converter.js"></script>
+    <script src="number-converter-ui.js"></script>
 </body>
 </html>
 

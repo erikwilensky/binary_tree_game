@@ -699,3 +699,91 @@ header h1 {
     gap: 10px;
 }
 
+/* Number Converter Styles */
+.converter-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.converter-input-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.converter-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.converter-input-group label {
+    font-weight: 600;
+    color: #555;
+    font-size: 1.1em;
+}
+
+.converter-input-group input {
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.3s;
+}
+
+.converter-input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.converter-result-label {
+    font-weight: 600;
+    color: #666;
+    margin-top: 10px;
+    font-size: 0.9em;
+}
+
+.converter-result {
+    padding: 15px;
+    background: white;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 1.3em;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    color: #667eea;
+    text-align: center;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.converter-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.converter-error {
+    padding: 15px;
+    background: #fed7d7;
+    border: 2px solid #c53030;
+    border-radius: 8px;
+    color: #c53030;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.converter-error.hidden {
+    display: none;
+}
+

@@ -11,6 +11,7 @@ class UIController {
         this.appSelect = document.getElementById('app-select');
         this.binaryApp = document.getElementById('binary-tree-app');
         this.pythonApp = document.getElementById('python-tracing-app');
+        this.converterApp = document.getElementById('number-converter-app');
 
         this.traversalSelect = document.getElementById('traversal-type');
         this.difficultySelect = document.getElementById('difficulty');
@@ -50,21 +51,27 @@ class UIController {
     }
 
     switchApp() {
-        if (!this.appSelect || !this.binaryApp || !this.pythonApp) return;
+        if (!this.appSelect || !this.binaryApp || !this.pythonApp || !this.converterApp) return;
 
         const selected = this.appSelect.value;
 
+        // Hide all apps first
+        this.binaryApp.classList.add('app-section-hidden');
+        this.pythonApp.classList.add('app-section-hidden');
+        this.converterApp.classList.add('app-section-hidden');
+
         if (selected === 'binary') {
             this.binaryApp.classList.remove('app-section-hidden');
-            this.pythonApp.classList.add('app-section-hidden');
             // Ensure UI is up to date when returning to the binary game
             this.updateScore();
             this.updateHighScoresDisplay();
         } else if (selected === 'python') {
-            // Hide binary game UI, show Python tracing placeholder
-            this.binaryApp.classList.add('app-section-hidden');
             this.pythonApp.classList.remove('app-section-hidden');
-
+            // Pause any running game visually
+            this.stopTimer();
+            this.hideFeedback();
+        } else if (selected === 'converter') {
+            this.converterApp.classList.remove('app-section-hidden');
             // Pause any running game visually
             this.stopTimer();
             this.hideFeedback();
