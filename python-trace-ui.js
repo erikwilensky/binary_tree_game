@@ -212,14 +212,14 @@ class PythonTraceController {
                     let isApplicableInStep = false;
                     if (type === 'variable') {
                         const vars = step.variables || {};
-                        isApplicableInStep = colKey in vars;
+                        isApplicableInStep = key in vars;
                     } else if (type === 'condition') {
                         const conds = step.condition_results || {};
-                        isApplicableInStep = colKey in conds;
+                        isApplicableInStep = key in conds;
                     } else if (type === 'output') {
                         isApplicableInStep = step.output !== undefined && step.output !== null;
                     } else if (type === 'meta') {
-                        isApplicableInStep = colKey in step && step[colKey] !== undefined;
+                        isApplicableInStep = key in step && step[key] !== undefined;
                     }
                     
                     if (!isApplicableInStep) {
