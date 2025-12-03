@@ -265,7 +265,7 @@ class PythonTraceController {
         }
 
         let correctCount = 0;
-        const total = inputs.length;
+        let total = inputs.length;
 
         inputs.forEach((input) => {
             const td = input.parentElement;
@@ -301,7 +301,18 @@ class PythonTraceController {
             const studentVal = this.normalizeValue(input.value);
             const expectedNorm = this.normalizeValue(expected);
 
-            if (studentVal === expectedNorm) {
+            // If expected is empty/undefined, this cell is not applicable
+            if (expected === undefined || expected === null || expectedNorm === '') {
+                if (studentVal === '') {
+                    // Both empty - mark as not applicable (greyed out)
+                    td.classList.add('trace-cell-not-applicable');
+                    // Don't count this in total for scoring
+                    total--;
+                } else {
+                    // Student entered something but it's not applicable - mark as incorrect
+                    td.classList.add('trace-cell-incorrect');
+                }
+            } else if (studentVal === expectedNorm) {
                 td.classList.add('trace-cell-correct');
                 correctCount++;
             } else {

@@ -604,6 +604,17 @@ header h1 {
     background: #fed7d7;
 }
 
+.trace-cell-not-applicable {
+    background: #f7fafc;
+    color: #a0aec0;
+}
+
+.trace-cell-not-applicable input {
+    background: #f7fafc;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
 .python-trace-feedback {
     margin-top: 10px;
     font-size: 0.95em;
