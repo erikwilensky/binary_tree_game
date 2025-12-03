@@ -97,36 +97,45 @@
 
         <!-- Number conversion app -->
         <div id="number-converter-app" class="app-section app-section-hidden">
-            <h2>Number Conversion</h2>
+            <h2>Number Conversion Practice</h2>
             <p class="subtitle">Convert between binary, hexadecimal, and denary (decimal) number systems</p>
             
-            <div class="converter-container">
-                <div class="converter-input-section">
-                    <div class="converter-input-group">
-                        <label for="denary-input">Denary (Decimal):</label>
-                        <input type="number" id="denary-input" placeholder="Enter denary number" min="0" step="1">
-                    </div>
-
-                    <div class="converter-equals">=</div>
-
-                    <div class="converter-input-group">
-                        <label for="binary-input">Binary:</label>
-                        <input type="text" id="binary-input" placeholder="Enter binary number (0s and 1s)">
-                    </div>
-
-                    <div class="converter-equals">=</div>
-
-                    <div class="converter-input-group">
-                        <label for="hex-input">Hexadecimal:</label>
-                        <input type="text" id="hex-input" placeholder="Enter hexadecimal number (0-9, A-F)">
+            <div class="converter-quiz-container">
+                <div class="quiz-header">
+                    <div class="quiz-progress">
+                        <span>Question <span id="current-question">1</span> of 10</span>
+                        <span>Score: <span id="quiz-score">0</span>/<span id="quiz-total">0</span></span>
                     </div>
                 </div>
 
-                <div class="converter-controls">
-                    <button id="converter-clear-btn" class="btn btn-secondary">Clear All</button>
+                <div class="quiz-question-area">
+                    <div class="quiz-question">
+                        <p class="question-text">Convert the following number:</p>
+                        <div class="question-display">
+                            <span id="question-value" class="question-value"></span>
+                            <span class="question-format" id="question-format"></span>
+                        </div>
+                        <p class="question-prompt">to <span id="answer-format"></span>:</p>
+                    </div>
+
+                    <div class="quiz-answer-area">
+                        <input type="text" id="quiz-answer-input" placeholder="Enter your answer" autocomplete="off">
+                        <button id="quiz-submit-btn" class="btn btn-primary">Submit Answer</button>
+                    </div>
+
+                    <div id="quiz-feedback" class="quiz-feedback hidden"></div>
                 </div>
 
-                <div id="converter-error" class="converter-error hidden"></div>
+                <div class="quiz-controls">
+                    <button id="quiz-new-btn" class="btn btn-primary">New Quiz</button>
+                    <button id="quiz-next-btn" class="btn btn-secondary hidden">Next Question</button>
+                </div>
+
+                <div id="quiz-results" class="quiz-results hidden">
+                    <h3>Quiz Complete!</h3>
+                    <p>Your score: <span id="final-score">0</span>/10</p>
+                    <button id="quiz-restart-btn" class="btn btn-primary">Start New Quiz</button>
+                </div>
             </div>
         </div>
 
@@ -311,7 +320,8 @@
     <script src="ui.js"></script>
     <script src="python-trace-ui.js"></script>
     <script src="number-converter.js"></script>
-    <script src="number-converter-ui.js"></script>
+    <script src="number-converter-quiz.js"></script>
+    <script src="number-converter-quiz-ui.js"></script>
     <script src="time-complexity-ui.js"></script>
     <script src="sql-practice-ui.js"></script>
 </body>
