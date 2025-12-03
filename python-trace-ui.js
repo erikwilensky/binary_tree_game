@@ -281,28 +281,37 @@ class PythonTraceController {
             if (!step) return;
 
             let expected;
+            let isApplicable = true;
 
             if (colType === 'variable') {
                 const vars = step.variables || {};
+                // Check if the variable key exists in this step
+                isApplicable = colKey in vars;
                 expected = vars[colKey];
             } else if (colType === 'condition') {
                 const conds = step.condition_results || {};
+                // Check if the condition key exists in this step
+                isApplicable = colKey in conds;
                 expected = conds[colKey];
             } else if (colType === 'output') {
+                isApplicable = step.output !== undefined && step.output !== null;
                 expected = step.output;
             } else if (colType === 'meta') {
+                isApplicable = colKey in step && step[colKey] !== undefined;
                 expected = step[colKey];
             } else if (colType === 'line') {
+                isApplicable = true; // Line numbers are always applicable
                 expected = step.line_number;
             } else if (colType === 'step') {
+                isApplicable = true; // Step numbers are always applicable
                 expected = step.step_index != null ? step.step_index : rowIndex + 1;
             }
 
             const studentVal = this.normalizeValue(input.value);
             const expectedNorm = this.normalizeValue(expected);
 
-            // If expected is empty/undefined, this cell is not applicable
-            if (expected === undefined || expected === null || expectedNorm === '') {
+            // If this cell is not applicable for this step, grey it out
+            if (!isApplicable) {
                 if (studentVal === '') {
                     // Both empty - mark as not applicable (greyed out)
                     td.classList.add('trace-cell-not-applicable');
