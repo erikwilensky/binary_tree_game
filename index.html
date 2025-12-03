@@ -21,6 +21,7 @@
                     <option value="python">Python Algorithm Tracing</option>
                     <option value="converter">Number Conversion</option>
                     <option value="complexity">Time Complexity Quiz</option>
+                    <option value="sql">SQL Practice</option>
                 </select>
             </div>
         </div>
@@ -104,22 +105,20 @@
                     <div class="converter-input-group">
                         <label for="denary-input">Denary (Decimal):</label>
                         <input type="number" id="denary-input" placeholder="Enter denary number" min="0" step="1">
-                        <div class="converter-result-label">Result:</div>
-                        <div id="denary-result" class="converter-result">---</div>
                     </div>
+
+                    <div class="converter-equals">=</div>
 
                     <div class="converter-input-group">
                         <label for="binary-input">Binary:</label>
                         <input type="text" id="binary-input" placeholder="Enter binary number (0s and 1s)">
-                        <div class="converter-result-label">Result:</div>
-                        <div id="binary-result" class="converter-result">---</div>
                     </div>
+
+                    <div class="converter-equals">=</div>
 
                     <div class="converter-input-group">
                         <label for="hex-input">Hexadecimal:</label>
                         <input type="text" id="hex-input" placeholder="Enter hexadecimal number (0-9, A-F)">
-                        <div class="converter-result-label">Result:</div>
-                        <div id="hex-result" class="converter-result">---</div>
                     </div>
                 </div>
 
@@ -229,6 +228,65 @@
                 </div>
             </div>
         </div>
+
+        <!-- SQL Practice app -->
+        <div id="sql-practice-app" class="app-section app-section-hidden">
+            <h2>SQL Practice</h2>
+            <p class="subtitle">Write SQL queries to retrieve data from the database schema</p>
+            
+            <div class="sql-practice-container">
+                <div class="sql-control-bar">
+                    <div class="control-group">
+                        <label for="sql-challenge-select">Choose challenge:</label>
+                        <select id="sql-challenge-select">
+                            <!-- Populated by sql-practice-ui.js -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sql-layout">
+                    <div class="sql-left-panel">
+                        <div class="sql-challenge-panel">
+                            <div class="sql-challenge-header">
+                                <h3 id="sql-challenge-title">Challenge</h3>
+                                <div class="sql-tags">
+                                    <span id="sql-difficulty-tag" class="sql-tag"></span>
+                                    <span id="sql-topic-tag" class="sql-tag secondary"></span>
+                                </div>
+                            </div>
+                            <p id="sql-description" class="sql-description"></p>
+                        </div>
+
+                        <div class="sql-schema-panel">
+                            <div class="sql-schema-header">
+                                <h3>Database Schema</h3>
+                            </div>
+                            <div id="sql-schema-display" class="sql-schema-display">
+                                <!-- Schema will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sql-right-panel">
+                        <div class="sql-editor-panel">
+                            <div class="sql-editor-header">
+                                <h3>Write Your SQL Query</h3>
+                            </div>
+                            <div class="sql-editor-wrapper">
+                                <textarea id="sql-editor" class="sql-editor" placeholder="SELECT * FROM employees;"></textarea>
+                                <div id="sql-autocomplete-list" class="sql-autocomplete-list"></div>
+                            </div>
+                            <div id="sql-syntax-alerts" class="sql-syntax-alerts"></div>
+                            <div class="sql-editor-controls">
+                                <button id="sql-check-btn" class="btn btn-primary">Check Query</button>
+                                <button id="sql-clear-btn" class="btn btn-secondary">Clear</button>
+                            </div>
+                            <div id="sql-feedback" class="sql-feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- High Score Modal -->
@@ -255,6 +313,7 @@
     <script src="number-converter.js"></script>
     <script src="number-converter-ui.js"></script>
     <script src="time-complexity-ui.js"></script>
+    <script src="sql-practice-ui.js"></script>
 </body>
 </html>
 

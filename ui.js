@@ -13,6 +13,7 @@ class UIController {
         this.pythonApp = document.getElementById('python-tracing-app');
         this.converterApp = document.getElementById('number-converter-app');
         this.complexityApp = document.getElementById('time-complexity-app');
+        this.sqlApp = document.getElementById('sql-practice-app');
 
         this.traversalSelect = document.getElementById('traversal-type');
         this.difficultySelect = document.getElementById('difficulty');
@@ -69,6 +70,9 @@ class UIController {
         if (this.complexityApp) {
             this.complexityApp.classList.add('app-section-hidden');
         }
+        if (this.sqlApp) {
+            this.sqlApp.classList.add('app-section-hidden');
+        }
 
         if (selected === 'binary') {
             if (this.binaryApp) {
@@ -94,6 +98,13 @@ class UIController {
         } else if (selected === 'complexity') {
             if (this.complexityApp) {
                 this.complexityApp.classList.remove('app-section-hidden');
+            }
+            // Pause any running game visually
+            this.stopTimer();
+            this.hideFeedback();
+        } else if (selected === 'sql') {
+            if (this.sqlApp) {
+                this.sqlApp.classList.remove('app-section-hidden');
             }
             // Pause any running game visually
             this.stopTimer();

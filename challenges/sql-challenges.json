@@ -1,0 +1,181 @@
+[
+  {
+    "id": "sql-001",
+    "title": "Select All Employees",
+    "difficulty": "easy",
+    "topic": "SELECT",
+    "description": "Write a SQL query to retrieve all columns and all rows from the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"},
+            {"name": "hire_date", "type": "DATE"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["employee_id", "first_name", "last_name", "email", "hire_date", "salary"],
+    "sampleData": [
+      {"employee_id": 1, "first_name": "John", "last_name": "Doe", "email": "john.doe@example.com", "hire_date": "2020-01-15", "salary": 50000.00},
+      {"employee_id": 2, "first_name": "Jane", "last_name": "Smith", "email": "jane.smith@example.com", "hire_date": "2019-03-20", "salary": 60000.00}
+    ]
+  },
+  {
+    "id": "sql-002",
+    "title": "Filter Employees by Salary",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to select all employees who have a salary greater than 50000.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"},
+            {"name": "hire_date", "type": "DATE"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["employee_id", "first_name", "last_name", "salary"],
+    "sampleData": [
+      {"employee_id": 2, "first_name": "Jane", "last_name": "Smith", "salary": 60000.00},
+      {"employee_id": 3, "first_name": "Bob", "last_name": "Johnson", "salary": 55000.00}
+    ]
+  },
+  {
+    "id": "sql-003",
+    "title": "Join Employees with Departments",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query to retrieve employee names along with their department names. Use an INNER JOIN between employees and departments tables.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        },
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"},
+            {"name": "location", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "department_name"],
+    "sampleData": [
+      {"first_name": "John", "last_name": "Doe", "department_name": "Engineering"},
+      {"first_name": "Jane", "last_name": "Smith", "department_name": "Marketing"}
+    ]
+  },
+  {
+    "id": "sql-004",
+    "title": "Count Employees by Department",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count the number of employees in each department. Show the department name and the count.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        },
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"},
+            {"name": "location", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_name", "employee_count"],
+    "sampleData": [
+      {"department_name": "Engineering", "employee_count": 5},
+      {"department_name": "Marketing", "employee_count": 3}
+    ]
+  },
+  {
+    "id": "sql-005",
+    "title": "Order Results by Salary",
+    "difficulty": "easy",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to select all employees, ordered by salary in descending order (highest first).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary"],
+    "sampleData": [
+      {"first_name": "Jane", "last_name": "Smith", "salary": 60000.00},
+      {"first_name": "John", "last_name": "Doe", "salary": 50000.00}
+    ]
+  },
+  {
+    "id": "sql-006",
+    "title": "Average Salary by Department",
+    "difficulty": "hard",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to calculate the average salary for each department. Show department name and average salary, ordered by average salary descending.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        },
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_name", "avg_salary"],
+    "sampleData": [
+      {"department_name": "Engineering", "avg_salary": 65000.00},
+      {"department_name": "Marketing", "avg_salary": 55000.00}
+    ]
+  }
+]
+
