@@ -207,6 +207,26 @@ class PythonTraceController {
                     input.dataset.stepIndex = String(rowIndex);
                     input.dataset.colKey = key;
                     input.dataset.colType = type;
+                    
+                    // If this variable/condition doesn't exist in this step, mark as not applicable
+                    let isApplicableInStep = false;
+                    if (type === 'variable') {
+                        const vars = step.variables || {};
+                        isApplicableInStep = colKey in vars;
+                    } else if (type === 'condition') {
+                        const conds = step.condition_results || {};
+                        isApplicableInStep = colKey in conds;
+                    } else if (type === 'output') {
+                        isApplicableInStep = step.output !== undefined && step.output !== null;
+                    } else if (type === 'meta') {
+                        isApplicableInStep = colKey in step && step[colKey] !== undefined;
+                    }
+                    
+                    if (!isApplicableInStep) {
+                        td.classList.add('trace-cell-not-applicable');
+                        input.disabled = true;
+                    }
+                    
                     td.appendChild(input);
                 } else {
                     td.textContent = value;
