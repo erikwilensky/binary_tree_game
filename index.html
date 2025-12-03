@@ -20,6 +20,7 @@
                     <option value="binary">Binary Tree Traversal</option>
                     <option value="python">Python Algorithm Tracing</option>
                     <option value="converter">Number Conversion</option>
+                    <option value="complexity">Time Complexity Quiz</option>
                 </select>
             </div>
         </div>
@@ -180,6 +181,54 @@
                 </div>
             </div>
         </div>
+
+        <!-- Time Complexity Quiz app -->
+        <div id="time-complexity-app" class="app-section app-section-hidden">
+            <h2>Time Complexity Quiz</h2>
+            <p class="subtitle">Select the correct O(n) time complexity notation for each algorithm</p>
+            
+            <div class="complexity-quiz-container">
+                <div class="complexity-quiz-header">
+                    <div class="complexity-question-counter">
+                        <span id="complexity-question-number">1</span> / <span id="complexity-total-questions">0</span>
+                    </div>
+                    <div class="complexity-quiz-controls">
+                        <button id="complexity-shuffle-btn" class="btn btn-secondary">Shuffle Questions</button>
+                    </div>
+                </div>
+
+                <div class="complexity-question-panel">
+                    <div class="complexity-question-title">
+                        <h3 id="complexity-algorithm-title"></h3>
+                        <div class="complexity-tags">
+                            <span id="complexity-difficulty-tag" class="complexity-tag"></span>
+                            <span id="complexity-topic-tag" class="complexity-tag secondary"></span>
+                        </div>
+                    </div>
+
+                    <div class="complexity-code-panel">
+                        <div class="complexity-code-header">
+                            <span class="complexity-code-title">Algorithm Code</span>
+                        </div>
+                        <pre class="complexity-code-block"><code id="complexity-code-display"></code></pre>
+                    </div>
+
+                    <div class="complexity-options-panel">
+                        <h4>What is the time complexity of this algorithm?</h4>
+                        <div id="complexity-options" class="complexity-options-list">
+                            <!-- Options will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div id="complexity-feedback" class="complexity-feedback hidden"></div>
+                </div>
+
+                <div class="complexity-navigation">
+                    <button id="complexity-prev-btn" class="btn btn-secondary">Previous</button>
+                    <button id="complexity-next-btn" class="btn btn-primary">Next</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- High Score Modal -->
@@ -205,6 +254,7 @@
     <script src="python-trace-ui.js"></script>
     <script src="number-converter.js"></script>
     <script src="number-converter-ui.js"></script>
+    <script src="time-complexity-ui.js"></script>
 </body>
 </html>
 

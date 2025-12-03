@@ -787,3 +787,242 @@ header h1 {
     display: none;
 }
 
+/* Time Complexity Quiz Styles */
+.complexity-quiz-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 30px;
+    background: #f7fafc;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.complexity-quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.complexity-question-counter {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.complexity-question-counter span:first-child {
+    font-size: 1.5em;
+    color: #764ba2;
+}
+
+.complexity-question-panel {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    margin-bottom: 20px;
+}
+
+.complexity-question-title {
+    margin-bottom: 20px;
+}
+
+.complexity-question-title h3 {
+    color: #2d3748;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.complexity-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.complexity-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #ebf4ff;
+    color: #4c51bf;
+}
+
+.complexity-tag.secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.complexity-code-panel {
+    background: #1a202c;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.complexity-code-header {
+    margin-bottom: 10px;
+}
+
+.complexity-code-title {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.complexity-code-block {
+    background: transparent;
+    color: #e2e8f0;
+    border-radius: 4px;
+    padding: 0;
+    font-family: "Consolas", "Fira Code", monospace;
+    font-size: 0.9em;
+    line-height: 1.6;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.complexity-options-panel {
+    margin-top: 25px;
+}
+
+.complexity-options-panel h4 {
+    color: #2d3748;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.complexity-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.complexity-option-btn {
+    padding: 15px 20px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    background: white;
+    color: #2d3748;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    font-family: "Consolas", monospace;
+}
+
+.complexity-option-btn:hover:not(:disabled) {
+    border-color: #667eea;
+    background: #ebf4ff;
+    transform: translateX(5px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.complexity-option-btn.selected {
+    border-color: #667eea;
+    background: #ebf4ff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.complexity-option-btn.correct {
+    border-color: #48bb78;
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.complexity-option-btn.incorrect {
+    border-color: #f56565;
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+.complexity-option-btn:disabled {
+    cursor: default;
+}
+
+.complexity-feedback {
+    margin-top: 20px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.complexity-feedback.hidden {
+    display: none;
+}
+
+.complexity-feedback.correct {
+    background: #c6f6d5;
+    color: #22543d;
+    border: 2px solid #48bb78;
+}
+
+.complexity-feedback.incorrect {
+    background: #fed7d7;
+    color: #742a2a;
+    border: 2px solid #f56565;
+}
+
+.complexity-navigation {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.complexity-navigation .btn {
+    flex: 1;
+    max-width: 200px;
+}
+
+.complexity-navigation .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (max-width: 768px) {
+    .complexity-quiz-container {
+        padding: 20px;
+    }
+
+    .complexity-quiz-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .complexity-question-panel {
+        padding: 15px;
+    }
+
+    .complexity-code-block {
+        font-size: 0.8em;
+    }
+
+    .complexity-option-btn {
+        font-size: 1em;
+        padding: 12px 15px;
+    }
+
+    .complexity-navigation {
+        flex-direction: column;
+    }
+
+    .complexity-navigation .btn {
+        max-width: 100%;
+    }
+}
+
