@@ -17,13 +17,21 @@ class SQLPracticeController {
         ];
 
         this.initializeElements();
-        this.initializeEventListeners();
-        this.loadChallenges();
+        if (this.container) {
+            this.initializeEventListeners();
+            this.loadChallenges();
+        } else {
+            console.error('SQL Practice: Container not found, cannot initialize');
+        }
     }
 
     initializeElements() {
         this.appSelect = document.getElementById('app-select');
         this.container = document.getElementById('sql-practice-app');
+
+        if (!this.container) {
+            console.error('SQL Practice app container not found');
+        }
 
         this.challengeSelect = document.getElementById('sql-challenge-select');
         this.challengeTitleEl = document.getElementById('sql-challenge-title');
@@ -37,6 +45,10 @@ class SQLPracticeController {
         this.checkBtn = document.getElementById('sql-check-btn');
         this.clearBtn = document.getElementById('sql-clear-btn');
         this.feedbackEl = document.getElementById('sql-feedback');
+
+        if (!this.challengeSelect || !this.sqlEditor) {
+            console.warn('SQL Practice: Some required elements not found');
+        }
     }
 
     initializeEventListeners() {
@@ -63,7 +75,7 @@ class SQLPracticeController {
 
         // Close autocomplete when clicking outside
         document.addEventListener('click', (e) => {
-            if (this.autocompleteList && 
+            if (this.autocompleteList && this.sqlEditor &&
                 !this.sqlEditor.contains(e.target) && 
                 !this.autocompleteList.contains(e.target)) {
                 this.hideAutocomplete();
@@ -83,10 +95,11 @@ class SQLPracticeController {
         try {
             const response = await fetch('challenges/sql-challenges.json', { cache: 'no-cache' });
             if (!response.ok) {
-                console.warn('Could not load SQL challenges:', response.status);
+                console.error('Could not load SQL challenges:', response.status, response.statusText);
                 return;
             }
             this.challenges = await response.json();
+            console.log('SQL challenges loaded:', this.challenges.length);
             this.populateChallengeSelector();
         } catch (error) {
             console.error('Error loading SQL challenges:', error);
@@ -508,13 +521,11 @@ class SQLPracticeController {
     }
 }
 
-// Initialize when DOM is ready
-let sqlPracticeController;
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        sqlPracticeController = new SQLPracticeController();
-    });
-} else {
-    sqlPracticeController = new SQLPracticeController();
-}
+// Initialize SQL practice UI when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // We can safely construct this even if the SQL app is hidden initially.
+    console.log('Initializing SQL Practice Controller...');
+    const controller = new SQLPracticeController();
+    console.log('SQL Practice Controller initialized:', controller);
+});
 
