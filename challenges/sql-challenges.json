@@ -176,6 +176,1502 @@
       {"department_name": "Engineering", "avg_salary": 65000.00},
       {"department_name": "Marketing", "avg_salary": 55000.00}
     ]
+  },
+  {
+    "id": "sql-007",
+    "title": "Select Specific Columns",
+    "difficulty": "easy",
+    "topic": "SELECT",
+    "description": "Write a SQL query to select only the first_name, last_name, and email columns from the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"},
+            {"name": "hire_date", "type": "DATE"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "email"]
+  },
+  {
+    "id": "sql-008",
+    "title": "Filter by Multiple Conditions",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees with salary between 40000 and 60000 (inclusive).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary"]
+  },
+  {
+    "id": "sql-009",
+    "title": "Filter with AND Condition",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees who have a salary greater than 50000 AND were hired after 2020-01-01.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "hire_date", "type": "DATE"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "hire_date", "salary"]
+  },
+  {
+    "id": "sql-010",
+    "title": "Filter with OR Condition",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees whose first name is 'John' OR last name is 'Smith'.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "email"]
+  },
+  {
+    "id": "sql-011",
+    "title": "Filter with LIKE Pattern",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees whose email contains '@gmail.com'.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "email"]
+  },
+  {
+    "id": "sql-012",
+    "title": "Filter NULL Values",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees who do not have a department assigned (department_id is NULL).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name"]
+  },
+  {
+    "id": "sql-013",
+    "title": "Filter with IN Clause",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees whose department_id is 1, 2, or 3.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "department_id"]
+  },
+  {
+    "id": "sql-014",
+    "title": "Order by Multiple Columns",
+    "difficulty": "easy",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to select employees, ordered first by department_id (ascending), then by salary (descending).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "department_id", "salary"]
+  },
+  {
+    "id": "sql-015",
+    "title": "Limit Results",
+    "difficulty": "easy",
+    "topic": "LIMIT",
+    "description": "Write a SQL query to select the top 5 employees with the highest salaries.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary"]
+  },
+  {
+    "id": "sql-016",
+    "title": "Use Column Aliases",
+    "difficulty": "easy",
+    "topic": "AS",
+    "description": "Write a SQL query to select employee names with aliases: first_name as 'First Name', last_name as 'Last Name'.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["First Name", "Last Name"]
+  },
+  {
+    "id": "sql-017",
+    "title": "LEFT JOIN to Include All Employees",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query using LEFT JOIN to show all employees and their department names, including employees without a department.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        },
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "department_name"]
+  },
+  {
+    "id": "sql-018",
+    "title": "Three Table JOIN",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query to join employees, departments, and locations tables. Show employee name, department name, and location.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        },
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"},
+            {"name": "location_id", "type": "INTEGER", "foreign_key": "locations.location_id"}
+          ]
+        },
+        {
+          "name": "locations",
+          "columns": [
+            {"name": "location_id", "type": "INTEGER", "primary_key": true},
+            {"name": "city", "type": "VARCHAR(100)"},
+            {"name": "country", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "department_name", "city"]
+  },
+  {
+    "id": "sql-019",
+    "title": "Count All Employees",
+    "difficulty": "easy",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to count the total number of employees.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["total_employees"]
+  },
+  {
+    "id": "sql-020",
+    "title": "Find Maximum Salary",
+    "difficulty": "easy",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to find the highest salary in the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["max_salary"]
+  },
+  {
+    "id": "sql-021",
+    "title": "Find Minimum Salary",
+    "difficulty": "easy",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to find the lowest salary in the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["min_salary"]
+  },
+  {
+    "id": "sql-022",
+    "title": "Calculate Total Salary",
+    "difficulty": "easy",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to calculate the sum of all employee salaries.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["total_salary"]
+  },
+  {
+    "id": "sql-023",
+    "title": "Calculate Average Salary",
+    "difficulty": "easy",
+    "topic": "Aggregate Functions",
+    "description": "Write a SQL query to calculate the average salary of all employees.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["avg_salary"]
+  },
+  {
+    "id": "sql-024",
+    "title": "Group by Department with Count",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count employees in each department. Show department_id and the count.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id", "employee_count"]
+  },
+  {
+    "id": "sql-025",
+    "title": "Group by with SUM",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate the total salary for each department.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "salary", "type": "DECIMAL(10,2)"},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id", "total_salary"]
+  },
+  {
+    "id": "sql-026",
+    "title": "HAVING Clause - Filter Groups",
+    "difficulty": "medium",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find departments that have more than 5 employees.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id", "employee_count"]
+  },
+  {
+    "id": "sql-027",
+    "title": "HAVING with Average",
+    "difficulty": "medium",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find departments where the average salary is greater than 60000.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "salary", "type": "DECIMAL(10,2)"},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id", "avg_salary"]
+  },
+  {
+    "id": "sql-028",
+    "title": "DISTINCT Values",
+    "difficulty": "easy",
+    "topic": "DISTINCT",
+    "description": "Write a SQL query to get a list of all unique department_id values from the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id"]
+  },
+  {
+    "id": "sql-029",
+    "title": "Count Distinct Values",
+    "difficulty": "medium",
+    "topic": "DISTINCT",
+    "description": "Write a SQL query to count the number of distinct departments in the employees table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["unique_departments"]
+  },
+  {
+    "id": "sql-030",
+    "title": "Students and Courses - Basic Join",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query to show all students with their enrolled course names. Use INNER JOIN between students and enrollments, then join with courses.",
+    "schema": {
+      "tables": [
+        {
+          "name": "students",
+          "columns": [
+            {"name": "student_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "email", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "enrollments",
+          "columns": [
+            {"name": "enrollment_id", "type": "INTEGER", "primary_key": true},
+            {"name": "student_id", "type": "INTEGER", "foreign_key": "students.student_id"},
+            {"name": "course_id", "type": "INTEGER", "foreign_key": "courses.course_id"},
+            {"name": "enrollment_date", "type": "DATE"}
+          ]
+        },
+        {
+          "name": "courses",
+          "columns": [
+            {"name": "course_id", "type": "INTEGER", "primary_key": true},
+            {"name": "course_name", "type": "VARCHAR(100)"},
+            {"name": "credits", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "course_name"]
+  },
+  {
+    "id": "sql-031",
+    "title": "Count Courses per Student",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count how many courses each student is enrolled in. Show student name and course count.",
+    "schema": {
+      "tables": [
+        {
+          "name": "students",
+          "columns": [
+            {"name": "student_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"}
+          ]
+        },
+        {
+          "name": "enrollments",
+          "columns": [
+            {"name": "enrollment_id", "type": "INTEGER", "primary_key": true},
+            {"name": "student_id", "type": "INTEGER", "foreign_key": "students.student_id"},
+            {"name": "course_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "course_count"]
+  },
+  {
+    "id": "sql-032",
+    "title": "Products and Orders",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query to show all orders with product names and quantities. Join orders with order_items, then with products.",
+    "schema": {
+      "tables": [
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_date", "type": "DATE"},
+            {"name": "customer_id", "type": "INTEGER"}
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_id", "type": "INTEGER", "foreign_key": "orders.order_id"},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        },
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["order_id", "product_name", "quantity"]
+  },
+  {
+    "id": "sql-033",
+    "title": "Total Revenue per Product",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate total revenue (quantity * price) for each product. Show product name and total revenue.",
+    "schema": {
+      "tables": [
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        },
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["product_name", "total_revenue"]
+  },
+  {
+    "id": "sql-034",
+    "title": "Customers with Order Count",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count how many orders each customer has placed. Show customer name and order count.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"},
+            {"name": "email", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"},
+            {"name": "order_date", "type": "DATE"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "order_count"]
+  },
+  {
+    "id": "sql-035",
+    "title": "Filter Groups with HAVING",
+    "difficulty": "medium",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find customers who have placed more than 3 orders.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "order_count"]
+  },
+  {
+    "id": "sql-036",
+    "title": "Books and Authors Join",
+    "difficulty": "medium",
+    "topic": "JOIN",
+    "description": "Write a SQL query to show all books with their author names. Join books with authors table.",
+    "schema": {
+      "tables": [
+        {
+          "name": "books",
+          "columns": [
+            {"name": "book_id", "type": "INTEGER", "primary_key": true},
+            {"name": "title", "type": "VARCHAR(200)"},
+            {"name": "author_id", "type": "INTEGER", "foreign_key": "authors.author_id"},
+            {"name": "publication_year", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        },
+        {
+          "name": "authors",
+          "columns": [
+            {"name": "author_id", "type": "INTEGER", "primary_key": true},
+            {"name": "author_name", "type": "VARCHAR(100)"},
+            {"name": "nationality", "type": "VARCHAR(50)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["title", "author_name", "publication_year"]
+  },
+  {
+    "id": "sql-037",
+    "title": "Books Published After Year",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find all books published after 2010.",
+    "schema": {
+      "tables": [
+        {
+          "name": "books",
+          "columns": [
+            {"name": "book_id", "type": "INTEGER", "primary_key": true},
+            {"name": "title", "type": "VARCHAR(200)"},
+            {"name": "publication_year", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["title", "publication_year", "price"]
+  },
+  {
+    "id": "sql-038",
+    "title": "Average Price by Author",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate the average price of books for each author. Show author name and average price.",
+    "schema": {
+      "tables": [
+        {
+          "name": "books",
+          "columns": [
+            {"name": "book_id", "type": "INTEGER", "primary_key": true},
+            {"name": "title", "type": "VARCHAR(200)"},
+            {"name": "author_id", "type": "INTEGER", "foreign_key": "authors.author_id"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        },
+        {
+          "name": "authors",
+          "columns": [
+            {"name": "author_id", "type": "INTEGER", "primary_key": true},
+            {"name": "author_name", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["author_name", "avg_price"]
+  },
+  {
+    "id": "sql-039",
+    "title": "Employees Hired in Last Year",
+    "difficulty": "medium",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find employees hired in the last 12 months (use CURRENT_DATE - INTERVAL '12 months' or similar date function).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "hire_date", "type": "DATE"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "hire_date"]
+  },
+  {
+    "id": "sql-040",
+    "title": "Top 3 Highest Paid Employees",
+    "difficulty": "easy",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to get the top 3 employees with the highest salaries.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary"]
+  },
+  {
+    "id": "sql-041",
+    "title": "Employees with Manager Names",
+    "difficulty": "hard",
+    "topic": "JOIN",
+    "description": "Write a SQL query to show employees with their manager's name. The employees table has a manager_id that references another employee. Use a self-join.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "manager_id", "type": "INTEGER", "foreign_key": "employees.employee_id"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["employee_name", "manager_name"]
+  },
+  {
+    "id": "sql-042",
+    "title": "Products by Category with Count",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count how many products are in each category.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["category", "product_count"]
+  },
+  {
+    "id": "sql-043",
+    "title": "Average Price by Category",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate the average price for each product category.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["category", "avg_price"]
+  },
+  {
+    "id": "sql-044",
+    "title": "Expensive Products by Category",
+    "difficulty": "hard",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find categories where the average price is greater than 100.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["category", "avg_price"]
+  },
+  {
+    "id": "sql-045",
+    "title": "Orders in Date Range",
+    "difficulty": "easy",
+    "topic": "WHERE",
+    "description": "Write a SQL query to find all orders placed between '2024-01-01' and '2024-12-31'.",
+    "schema": {
+      "tables": [
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_date", "type": "DATE"},
+            {"name": "customer_id", "type": "INTEGER"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["order_id", "order_date", "total_amount"]
+  },
+  {
+    "id": "sql-046",
+    "title": "Monthly Order Totals",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate total sales for each month. Group by year and month from order_date.",
+    "schema": {
+      "tables": [
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_date", "type": "DATE"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["year", "month", "total_sales"]
+  },
+  {
+    "id": "sql-047",
+    "title": "Customers Without Orders",
+    "difficulty": "hard",
+    "topic": "JOIN",
+    "description": "Write a SQL query using LEFT JOIN to find customers who have never placed an order.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"},
+            {"name": "email", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"},
+            {"name": "order_date", "type": "DATE"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "email"]
+  },
+  {
+    "id": "sql-048",
+    "title": "Products Never Ordered",
+    "difficulty": "hard",
+    "topic": "JOIN",
+    "description": "Write a SQL query using LEFT JOIN to find products that have never been ordered.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["product_name", "price"]
+  },
+  {
+    "id": "sql-049",
+    "title": "Students with GPA Above Average",
+    "difficulty": "hard",
+    "topic": "Subqueries",
+    "description": "Write a SQL query to find students whose GPA is above the average GPA of all students. Use a subquery to calculate the average.",
+    "schema": {
+      "tables": [
+        {
+          "name": "students",
+          "columns": [
+            {"name": "student_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "gpa", "type": "DECIMAL(3,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "gpa"]
+  },
+  {
+    "id": "sql-050",
+    "title": "Employees Earning More Than Department Average",
+    "difficulty": "hard",
+    "topic": "Subqueries",
+    "description": "Write a SQL query to find employees who earn more than the average salary of their department.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary", "department_id"]
+  },
+  {
+    "id": "sql-051",
+    "title": "Most Expensive Product in Each Category",
+    "difficulty": "hard",
+    "topic": "Subqueries",
+    "description": "Write a SQL query to find the most expensive product in each category. Use a subquery with MAX.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["category", "product_name", "price"]
+  },
+  {
+    "id": "sql-052",
+    "title": "Second Highest Salary",
+    "difficulty": "hard",
+    "topic": "Subqueries",
+    "description": "Write a SQL query to find the employee with the second highest salary.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "salary"]
+  },
+  {
+    "id": "sql-053",
+    "title": "Total Revenue by Customer",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate total revenue (sum of order amounts) for each customer. Show customer name and total revenue.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "total_revenue"]
+  },
+  {
+    "id": "sql-054",
+    "title": "Top 5 Customers by Revenue",
+    "difficulty": "hard",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to find the top 5 customers by total revenue. Order by total revenue descending and limit to 5.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "total_revenue"]
+  },
+  {
+    "id": "sql-055",
+    "title": "Employees by Job Title",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count employees in each job title.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "job_title", "type": "VARCHAR(100)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["job_title", "employee_count"]
+  },
+  {
+    "id": "sql-056",
+    "title": "Average Salary by Job Title",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate the average salary for each job title.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "job_title", "type": "VARCHAR(100)"},
+            {"name": "salary", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["job_title", "avg_salary"]
+  },
+  {
+    "id": "sql-057",
+    "title": "Departments with No Employees",
+    "difficulty": "hard",
+    "topic": "JOIN",
+    "description": "Write a SQL query using LEFT JOIN to find departments that have no employees assigned.",
+    "schema": {
+      "tables": [
+        {
+          "name": "departments",
+          "columns": [
+            {"name": "department_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "department_id", "type": "INTEGER", "foreign_key": "departments.department_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_name"]
+  },
+  {
+    "id": "sql-058",
+    "title": "Courses with Enrollment Count",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count how many students are enrolled in each course. Show course name and enrollment count.",
+    "schema": {
+      "tables": [
+        {
+          "name": "courses",
+          "columns": [
+            {"name": "course_id", "type": "INTEGER", "primary_key": true},
+            {"name": "course_name", "type": "VARCHAR(100)"},
+            {"name": "credits", "type": "INTEGER"}
+          ]
+        },
+        {
+          "name": "enrollments",
+          "columns": [
+            {"name": "enrollment_id", "type": "INTEGER", "primary_key": true},
+            {"name": "course_id", "type": "INTEGER", "foreign_key": "courses.course_id"},
+            {"name": "student_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["course_name", "enrollment_count"]
+  },
+  {
+    "id": "sql-059",
+    "title": "Popular Courses - More Than 10 Enrollments",
+    "difficulty": "medium",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find courses that have more than 10 students enrolled.",
+    "schema": {
+      "tables": [
+        {
+          "name": "courses",
+          "columns": [
+            {"name": "course_id", "type": "INTEGER", "primary_key": true},
+            {"name": "course_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "enrollments",
+          "columns": [
+            {"name": "enrollment_id", "type": "INTEGER", "primary_key": true},
+            {"name": "course_id", "type": "INTEGER", "foreign_key": "courses.course_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["course_name", "enrollment_count"]
+  },
+  {
+    "id": "sql-060",
+    "title": "Employees with Same Manager",
+    "difficulty": "hard",
+    "topic": "JOIN",
+    "description": "Write a SQL query to find all pairs of employees who have the same manager. Show both employee names and their manager's name.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "manager_id", "type": "INTEGER", "foreign_key": "employees.employee_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["employee1_name", "employee2_name", "manager_name"]
+  },
+  {
+    "id": "sql-061",
+    "title": "Products with Total Sales",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate total sales (quantity * price) for each product. Show product name and total sales, ordered by total sales descending.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["product_name", "total_sales"]
+  },
+  {
+    "id": "sql-062",
+    "title": "Best Selling Products - Top 10",
+    "difficulty": "hard",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to find the top 10 best-selling products by total quantity sold.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["product_name", "total_quantity"]
+  },
+  {
+    "id": "sql-063",
+    "title": "Employees by Age Group",
+    "difficulty": "hard",
+    "topic": "CASE",
+    "description": "Write a SQL query to categorize employees into age groups (20-30, 31-40, 41-50, 50+) based on their birth_date, then count employees in each group.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "birth_date", "type": "DATE"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["age_group", "employee_count"]
+  },
+  {
+    "id": "sql-064",
+    "title": "Orders by Status Count",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to count orders by their status.",
+    "schema": {
+      "tables": [
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_date", "type": "DATE"},
+            {"name": "status", "type": "VARCHAR(50)"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["status", "order_count"]
+  },
+  {
+    "id": "sql-065",
+    "title": "Average Order Value by Month",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate the average order value for each month.",
+    "schema": {
+      "tables": [
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "order_date", "type": "DATE"},
+            {"name": "total_amount", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["year", "month", "avg_order_value"]
+  },
+  {
+    "id": "sql-066",
+    "title": "Employees with Longest Tenure",
+    "difficulty": "medium",
+    "topic": "ORDER BY",
+    "description": "Write a SQL query to find the 5 employees who have been with the company the longest (oldest hire_date).",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "first_name", "type": "VARCHAR(50)"},
+            {"name": "last_name", "type": "VARCHAR(50)"},
+            {"name": "hire_date", "type": "DATE"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["first_name", "last_name", "hire_date"]
+  },
+  {
+    "id": "sql-067",
+    "title": "Products Below Average Price",
+    "difficulty": "hard",
+    "topic": "Subqueries",
+    "description": "Write a SQL query to find products with a price below the average price of all products.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["product_name", "price"]
+  },
+  {
+    "id": "sql-068",
+    "title": "Departments with Above Average Employee Count",
+    "difficulty": "hard",
+    "topic": "HAVING",
+    "description": "Write a SQL query to find departments that have more employees than the average number of employees per department.",
+    "schema": {
+      "tables": [
+        {
+          "name": "employees",
+          "columns": [
+            {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+            {"name": "department_id", "type": "INTEGER"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["department_id", "employee_count"]
+  },
+  {
+    "id": "sql-069",
+    "title": "Customers with Multiple Orders",
+    "difficulty": "medium",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to find customers who have placed 2 or more orders.",
+    "schema": {
+      "tables": [
+        {
+          "name": "customers",
+          "columns": [
+            {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_name", "type": "VARCHAR(100)"}
+          ]
+        },
+        {
+          "name": "orders",
+          "columns": [
+            {"name": "order_id", "type": "INTEGER", "primary_key": true},
+            {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["customer_name", "order_count"]
+  },
+  {
+    "id": "sql-070",
+    "title": "Total Revenue by Product Category",
+    "difficulty": "hard",
+    "topic": "GROUP BY",
+    "description": "Write a SQL query to calculate total revenue for each product category. Join products with order_items.",
+    "schema": {
+      "tables": [
+        {
+          "name": "products",
+          "columns": [
+            {"name": "product_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_name", "type": "VARCHAR(100)"},
+            {"name": "category", "type": "VARCHAR(50)"}
+          ]
+        },
+        {
+          "name": "order_items",
+          "columns": [
+            {"name": "order_item_id", "type": "INTEGER", "primary_key": true},
+            {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+            {"name": "quantity", "type": "INTEGER"},
+            {"name": "price", "type": "DECIMAL(10,2)"}
+          ]
+        }
+      ]
+    },
+    "expectedColumns": ["category", "total_revenue"]
   }
 ]
 
