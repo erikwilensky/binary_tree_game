@@ -1,0 +1,50 @@
+{
+  "steps": [
+    {
+      "step_index": 1,
+      "line_number": 1,
+      "variables": {
+        "a": -5
+      }
+    },
+    {
+      "step_index": 2,
+      "line_number": 2,
+      "variables": {
+        "a": -5,
+        "b": 3
+      }
+    },
+    {
+      "step_index": 3,
+      "line_number": 3,
+      "variables": {
+        "a": -5,
+        "b": 3,
+        "c": -2
+      }
+    },
+    {
+      "step_index": 4,
+      "line_number": 4,
+      "variables": {
+        "a": -5,
+        "b": 3,
+        "c": -2,
+        "d": 4
+      }
+    },
+    {
+      "step_index": 5,
+      "line_number": 5,
+      "variables": {
+        "a": -5,
+        "b": 3,
+        "c": -2,
+        "d": 4,
+        "result": 4
+      }
+    }
+  ]
+}
+

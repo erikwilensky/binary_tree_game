@@ -1,0 +1,50 @@
+{
+  "steps": [
+    {
+      "step_index": 1,
+      "line_number": 1,
+      "variables": {
+        "num": 17
+      }
+    },
+    {
+      "step_index": 2,
+      "line_number": 2,
+      "variables": {
+        "num": 17,
+        "divisor": 5
+      }
+    },
+    {
+      "step_index": 3,
+      "line_number": 3,
+      "variables": {
+        "num": 17,
+        "divisor": 5,
+        "quotient": 3
+      }
+    },
+    {
+      "step_index": 4,
+      "line_number": 4,
+      "variables": {
+        "num": 17,
+        "divisor": 5,
+        "quotient": 3,
+        "remainder": 2
+      }
+    },
+    {
+      "step_index": 5,
+      "line_number": 5,
+      "variables": {
+        "num": 17,
+        "divisor": 5,
+        "quotient": 3,
+        "remainder": 2,
+        "result": 5
+      }
+    }
+  ]
+}
+

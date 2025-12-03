@@ -117,8 +117,13 @@ class PythonTraceController {
         }
 
         if (this.codeDisplay) {
-            // Preserve formatting
-            this.codeDisplay.textContent = challenge.python_code || '';
+            // Add line numbers and preserve formatting
+            const lines = (challenge.python_code || '').split('\n');
+            const numberedCode = lines.map((line, idx) => {
+                const lineNum = (idx + 1).toString().padStart(3, ' ');
+                return `${lineNum} | ${line}`;
+            }).join('\n');
+            this.codeDisplay.textContent = numberedCode;
         }
     }
 
@@ -296,7 +301,7 @@ class PythonTraceController {
             const studentVal = this.normalizeValue(input.value);
             const expectedNorm = this.normalizeValue(expected);
 
-            if (studentVal !== '' && studentVal === expectedNorm) {
+            if (studentVal === expectedNorm) {
                 td.classList.add('trace-cell-correct');
                 correctCount++;
             } else {

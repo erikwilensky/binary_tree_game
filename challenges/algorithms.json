@@ -20,6 +20,242 @@
     }
   },
   {
+    "id": "sequence_subtract",
+    "title": "Subtraction Sequence",
+    "description": "Practice tracing subtraction and division operations.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "a = 20\nb = 8\nc = a - b\nd = c / 2\nresult = d",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "a", "label": "a", "type": "variable", "editable": true },
+        { "key": "b", "label": "b", "type": "variable", "editable": true },
+        { "key": "c", "label": "c", "type": "variable", "editable": true },
+        { "key": "d", "label": "d", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_multiply",
+    "title": "Multiplication Sequence",
+    "description": "Trace calculations involving multiplication and addition.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "x = 3\ny = 4\nz = x * y\nw = z + 5\nresult = w * 2",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "x", "label": "x", "type": "variable", "editable": true },
+        { "key": "y", "label": "y", "type": "variable", "editable": true },
+        { "key": "z", "label": "z", "type": "variable", "editable": true },
+        { "key": "w", "label": "w", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_chain",
+    "title": "Chained Calculations",
+    "description": "Trace a sequence where each step uses the previous result.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "start = 10\nstep1 = start + 5\nstep2 = step1 * 2\nstep3 = step2 - 8\nfinal = step3 / 2",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "start", "label": "start", "type": "variable", "editable": true },
+        { "key": "step1", "label": "step1", "type": "variable", "editable": true },
+        { "key": "step2", "label": "step2", "type": "variable", "editable": true },
+        { "key": "step3", "label": "step3", "type": "variable", "editable": true },
+        { "key": "final", "label": "final", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_modulo",
+    "title": "Modulo Operation",
+    "description": "Practice with modulo (%) and integer division (//) operations.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "num = 17\ndivisor = 5\nquotient = num // divisor\nremainder = num % divisor\nresult = quotient + remainder",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "num", "label": "num", "type": "variable", "editable": true },
+        { "key": "divisor", "label": "divisor", "type": "variable", "editable": true },
+        { "key": "quotient", "label": "quotient", "type": "variable", "editable": true },
+        { "key": "remainder", "label": "remainder", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_powers",
+    "title": "Powers and Exponents",
+    "description": "Trace calculations using exponentiation (**) operator.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "base = 2\nexponent = 3\npower = base ** exponent\ndoubled = power * 2\nresult = doubled",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "base", "label": "base", "type": "variable", "editable": true },
+        { "key": "exponent", "label": "exponent", "type": "variable", "editable": true },
+        { "key": "power", "label": "power", "type": "variable", "editable": true },
+        { "key": "doubled", "label": "doubled", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_negative",
+    "title": "Negative Numbers",
+    "description": "Practice tracing operations with negative numbers.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "a = -5\nb = 3\nc = a + b\nd = c * -2\nresult = d",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "a", "label": "a", "type": "variable", "editable": true },
+        { "key": "b", "label": "b", "type": "variable", "editable": true },
+        { "key": "c", "label": "c", "type": "variable", "editable": true },
+        { "key": "d", "label": "d", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_mixed",
+    "title": "Mixed Operations",
+    "description": "Trace a sequence with multiple different operations.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "x = 12\ny = 4\nz = x / y\nw = z * 3\nv = w - 5\nresult = v",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "x", "label": "x", "type": "variable", "editable": true },
+        { "key": "y", "label": "y", "type": "variable", "editable": true },
+        { "key": "z", "label": "z", "type": "variable", "editable": true },
+        { "key": "w", "label": "w", "type": "variable", "editable": true },
+        { "key": "v", "label": "v", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_three_vars",
+    "title": "Three Variable Calculation",
+    "description": "Trace calculations using three different variables.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "a = 6\nb = 3\nc = 2\nsum = a + b + c\nproduct = a * b * c\nresult = sum + product",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "a", "label": "a", "type": "variable", "editable": true },
+        { "key": "b", "label": "b", "type": "variable", "editable": true },
+        { "key": "c", "label": "c", "type": "variable", "editable": true },
+        { "key": "sum", "label": "sum", "type": "variable", "editable": true },
+        { "key": "product", "label": "product", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_complex",
+    "title": "Complex Expression",
+    "description": "Trace a more complex calculation with multiple operations.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "x = 8\ny = 2\nz = x - y\nw = z * 4\nv = w / 2\nresult = v + 1",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "x", "label": "x", "type": "variable", "editable": true },
+        { "key": "y", "label": "y", "type": "variable", "editable": true },
+        { "key": "z", "label": "z", "type": "variable", "editable": true },
+        { "key": "w", "label": "w", "type": "variable", "editable": true },
+        { "key": "v", "label": "v", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_order",
+    "title": "Order of Operations",
+    "description": "Practice tracing expressions that require understanding order of operations.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "a = 2\nb = 3\nc = 4\nresult1 = a + b * c\nresult2 = (a + b) * c\nfinal = result1 + result2",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "a", "label": "a", "type": "variable", "editable": true },
+        { "key": "b", "label": "b", "type": "variable", "editable": true },
+        { "key": "c", "label": "c", "type": "variable", "editable": true },
+        { "key": "result1", "label": "result1", "type": "variable", "editable": true },
+        { "key": "result2", "label": "result2", "type": "variable", "editable": true },
+        { "key": "final", "label": "final", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
+    "id": "sequence_large",
+    "title": "Large Number Sequence",
+    "description": "Trace calculations with larger numbers.",
+    "difficulty": "Level 1 – sequence",
+    "topic": "sequence",
+    "python_code": "first = 25\nsecond = 15\nthird = first - second\nfourth = third * 2\nfifth = fourth + 10\nresult = fifth",
+    "inputs": {},
+    "trace_config": {
+      "mode": "iterative",
+      "columns": [
+        { "key": "step_index", "label": "Step", "type": "step", "editable": false },
+        { "key": "line_number", "label": "Line", "type": "line", "editable": false },
+        { "key": "first", "label": "first", "type": "variable", "editable": true },
+        { "key": "second", "label": "second", "type": "variable", "editable": true },
+        { "key": "third", "label": "third", "type": "variable", "editable": true },
+        { "key": "fourth", "label": "fourth", "type": "variable", "editable": true },
+        { "key": "fifth", "label": "fifth", "type": "variable", "editable": true },
+        { "key": "result", "label": "result", "type": "variable", "editable": true }
+      ]
+    }
+  },
+  {
     "id": "selection_if",
     "title": "Selection with if (Level 1)",
     "description": "Trace an algorithm that uses an if statement to make a decision.",

@@ -1,0 +1,50 @@
+{
+  "steps": [
+    {
+      "step_index": 1,
+      "line_number": 1,
+      "variables": {
+        "start": 10
+      }
+    },
+    {
+      "step_index": 2,
+      "line_number": 2,
+      "variables": {
+        "start": 10,
+        "step1": 15
+      }
+    },
+    {
+      "step_index": 3,
+      "line_number": 3,
+      "variables": {
+        "start": 10,
+        "step1": 15,
+        "step2": 30
+      }
+    },
+    {
+      "step_index": 4,
+      "line_number": 4,
+      "variables": {
+        "start": 10,
+        "step1": 15,
+        "step2": 30,
+        "step3": 22
+      }
+    },
+    {
+      "step_index": 5,
+      "line_number": 5,
+      "variables": {
+        "start": 10,
+        "step1": 15,
+        "step2": 30,
+        "step3": 22,
+        "final": 11
+      }
+    }
+  ]
+}
+
