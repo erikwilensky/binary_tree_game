@@ -5,14 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classroom Answer Race - Admin</title>
     <link rel="stylesheet" href="classroom-styles.css">
+    <link rel="stylesheet" href="classroom-styles-themes.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🎓 Classroom Answer Race - Admin</h1>
-            <div class="admin-header-info">
-                <span id="session-code-display"></span>
-                <button id="back-to-lobby-btn" class="btn btn-outline">Back to Lobby</button>
+            <div class="header-controls">
+                <div>
+                    <h1>🎓 Classroom Answer Race - Admin</h1>
+                    <div class="admin-header-info">
+                        <span id="session-code-display"></span>
+                        <button id="back-to-lobby-btn" class="btn btn-outline">Back to Lobby</button>
+                    </div>
+                </div>
+                <div class="theme-selector">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select" class="theme-select">
+                        <option value="electric">Electric Arena</option>
+                        <option value="carnival">Classroom Carnival</option>
+                        <option value="scifi">Sci-Fi Neon Grid</option>
+                    </select>
+                </div>
             </div>
         </header>
 

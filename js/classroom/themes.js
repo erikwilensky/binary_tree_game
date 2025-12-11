@@ -2,88 +2,55 @@
 class ThemeManager {
     constructor() {
         this.themes = {
-            default: {
-                name: 'Default',
+            electric: {
+                name: 'Electric Arena',
                 colors: {
-                    primary: '#667eea',
-                    secondary: '#764ba2',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#f8f9fa',
-                    card: '#ffffff',
-                    text: '#1f2937',
-                    textLight: '#6b7280'
+                    primary: '#1E1F2B',
+                    secondary: '#27293A',
+                    accent: '#4F7BFF',
+                    success: '#25D68A',
+                    warning: '#FFC542',
+                    danger: '#FF5F6D',
+                    background: '#1E1F2B',
+                    card: '#27293A',
+                    text: '#EDEEFF',
+                    textLight: '#B8B9C5',
+                    gradientStart: '#1E1F2B',
+                    gradientEnd: '#27293A'
                 }
             },
-            dark: {
-                name: 'Dark Mode',
+            carnival: {
+                name: 'Classroom Carnival',
                 colors: {
-                    primary: '#8b5cf6',
-                    secondary: '#6366f1',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#111827',
-                    card: '#1f2937',
-                    text: '#f9fafb',
-                    textLight: '#d1d5db'
+                    primary: '#F5F7FA',
+                    secondary: '#E8EEF5',
+                    accent: '#FF7A59',
+                    success: '#85D67E',
+                    warning: '#F5C94C',
+                    danger: '#E8505B',
+                    background: '#F5F7FA',
+                    card: '#FFFFFF',
+                    text: '#2A2E33',
+                    textLight: '#6B7280',
+                    gradientStart: '#F5F7FA',
+                    gradientEnd: '#E8EEF5'
                 }
             },
-            ocean: {
-                name: 'Ocean',
+            scifi: {
+                name: 'Sci-Fi Neon Grid',
                 colors: {
-                    primary: '#06b6d4',
-                    secondary: '#0891b2',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#ecfeff',
-                    card: '#ffffff',
-                    text: '#0c4a6e',
-                    textLight: '#075985'
-                }
-            },
-            forest: {
-                name: 'Forest',
-                colors: {
-                    primary: '#059669',
-                    secondary: '#047857',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#f0fdf4',
-                    card: '#ffffff',
-                    text: '#064e3b',
-                    textLight: '#065f46'
-                }
-            },
-            sunset: {
-                name: 'Sunset',
-                colors: {
-                    primary: '#f97316',
-                    secondary: '#ea580c',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#fff7ed',
-                    card: '#ffffff',
-                    text: '#7c2d12',
-                    textLight: '#9a3412'
-                }
-            },
-            neon: {
-                name: 'Neon',
-                colors: {
-                    primary: '#a855f7',
-                    secondary: '#ec4899',
-                    success: '#10b981',
-                    warning: '#f59e0b',
-                    danger: '#ef4444',
-                    background: '#0f172a',
-                    card: '#1e293b',
-                    text: '#f1f5f9',
-                    textLight: '#cbd5e1'
+                    primary: '#0B0C10',
+                    secondary: '#1F2833',
+                    accent: '#66FCF1',
+                    success: '#45A29E',
+                    warning: '#FFC542',
+                    danger: '#FF4B5C',
+                    background: '#0B0C10',
+                    card: '#1F2833',
+                    text: '#C5C6C7',
+                    textLight: '#B7B7B7',
+                    gradientStart: '#0B0C10',
+                    gradientEnd: '#1F2833'
                 }
             }
         };
@@ -94,7 +61,7 @@ class ThemeManager {
 
     loadTheme() {
         const saved = localStorage.getItem('classroom-theme');
-        return saved && this.themes[saved] ? saved : 'default';
+        return saved && this.themes[saved] ? saved : 'electric';
     }
 
     saveTheme(themeName) {
@@ -102,7 +69,7 @@ class ThemeManager {
     }
 
     getTheme(themeName) {
-        return this.themes[themeName] || this.themes.default;
+        return this.themes[themeName] || this.themes.electric;
     }
 
     applyTheme(themeName) {
@@ -112,6 +79,7 @@ class ThemeManager {
         // Apply CSS variables
         root.style.setProperty('--theme-primary', theme.colors.primary);
         root.style.setProperty('--theme-secondary', theme.colors.secondary);
+        root.style.setProperty('--theme-accent', theme.colors.accent);
         root.style.setProperty('--theme-success', theme.colors.success);
         root.style.setProperty('--theme-warning', theme.colors.warning);
         root.style.setProperty('--theme-danger', theme.colors.danger);
@@ -119,6 +87,8 @@ class ThemeManager {
         root.style.setProperty('--theme-card', theme.colors.card);
         root.style.setProperty('--theme-text', theme.colors.text);
         root.style.setProperty('--theme-text-light', theme.colors.textLight);
+        root.style.setProperty('--theme-gradient-start', theme.colors.gradientStart);
+        root.style.setProperty('--theme-gradient-end', theme.colors.gradientEnd);
 
         // Apply theme class to body
         document.body.className = document.body.className.replace(/theme-\w+/g, '');

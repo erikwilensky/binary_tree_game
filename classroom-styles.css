@@ -5,12 +5,29 @@
     box-sizing: border-box;
 }
 
+/* Theme CSS Variables - Default to Electric Arena */
+:root {
+    --theme-primary: #1E1F2B;
+    --theme-secondary: #27293A;
+    --theme-accent: #4F7BFF;
+    --theme-success: #25D68A;
+    --theme-warning: #FFC542;
+    --theme-danger: #FF5F6D;
+    --theme-background: #1E1F2B;
+    --theme-card: #27293A;
+    --theme-text: #EDEEFF;
+    --theme-text-light: #B8B9C5;
+    --theme-gradient-start: #1E1F2B;
+    --theme-gradient-end: #27293A;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--theme-gradient-start) 0%, var(--theme-gradient-end) 100%);
     min-height: 100vh;
     padding: 20px;
-    color: #333;
+    color: var(--theme-text);
+    transition: background 0.5s ease, color 0.3s ease;
 }
 
 .container {
@@ -212,13 +229,22 @@ header h1 {
     width: 100%;
     min-height: 300px;
     padding: 20px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
+    border: 2px solid var(--theme-accent);
+    border-radius: 12px;
     font-size: 1.1em;
     font-family: inherit;
     line-height: 1.6;
     resize: vertical;
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
+    background: var(--theme-card);
+    color: var(--theme-text);
+}
+
+.answer-input:focus {
+    outline: none;
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 4px rgba(79, 123, 255, 0.1);
+    transform: scale(1.01);
 }
 
 .answer-input:focus {
@@ -364,15 +390,16 @@ header h1 {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #ff9800;
-    color: white;
+    background: var(--theme-warning);
+    color: var(--theme-primary);
     padding: 15px 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     animation: slideIn 0.3s ease-out;
     font-size: 1.1em;
     font-weight: 600;
+    border: 2px solid var(--theme-accent);
 }
 
 .powerup-notification-warning {

@@ -1,0 +1,139 @@
+/* Theme-specific overrides - Add to end of classroom-styles.css */
+
+/* Electric Arena Theme */
+.theme-electric {
+    --theme-primary: #1E1F2B;
+    --theme-secondary: #27293A;
+    --theme-accent: #4F7BFF;
+    --theme-success: #25D68A;
+    --theme-warning: #FFC542;
+    --theme-danger: #FF5F6D;
+    --theme-background: #1E1F2B;
+    --theme-card: #27293A;
+    --theme-text: #EDEEFF;
+    --theme-text-light: #B8B9C5;
+    --theme-gradient-start: #1E1F2B;
+    --theme-gradient-end: #27293A;
+}
+
+.theme-electric .answer-input,
+.theme-electric .powerup-select,
+.theme-electric .powerup-input,
+.theme-electric input[type="text"],
+.theme-electric input[type="number"],
+.theme-electric textarea {
+    background: #1E1F2B;
+    color: var(--theme-text);
+    border-color: #4F7BFF;
+}
+
+.theme-electric .timer-progress {
+    background: linear-gradient(90deg, #4F7BFF, #25D68A);
+    box-shadow: 0 0 20px rgba(79, 123, 255, 0.5);
+}
+
+.theme-electric .btn-primary {
+    box-shadow: 0 4px 12px rgba(79, 123, 255, 0.3);
+}
+
+.theme-electric .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(79, 123, 255, 0.4);
+}
+
+/* Classroom Carnival Theme */
+.theme-carnival {
+    --theme-primary: #F5F7FA;
+    --theme-secondary: #E8EEF5;
+    --theme-accent: #FF7A59;
+    --theme-success: #85D67E;
+    --theme-warning: #F5C94C;
+    --theme-danger: #E8505B;
+    --theme-background: #F5F7FA;
+    --theme-card: #FFFFFF;
+    --theme-text: #2A2E33;
+    --theme-text-light: #6B7280;
+    --theme-gradient-start: #F5F7FA;
+    --theme-gradient-end: #E8EEF5;
+}
+
+.theme-carnival body {
+    background: linear-gradient(135deg, #F5F7FA 0%, #E8EEF5 100%);
+}
+
+.theme-carnival .answer-input,
+.theme-carnival .powerup-select,
+.theme-carnival .powerup-input,
+.theme-carnival input[type="text"],
+.theme-carnival input[type="number"],
+.theme-carnival textarea {
+    background: #FFFFFF;
+    color: var(--theme-text);
+    border-color: #FF7A59;
+}
+
+.theme-carnival .timer-progress {
+    background: linear-gradient(90deg, #2E86DE, #85D67E);
+}
+
+.theme-carnival .card, .theme-carnival .admin-card, .theme-carnival .teams-status-card, 
+.theme-carnival .powerups-card, .theme-carnival .answer-card, .theme-carnival .lobby-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(255, 122, 89, 0.2);
+}
+
+.theme-carnival .btn-primary {
+    background: #FF7A59;
+    box-shadow: 0 4px 12px rgba(255, 122, 89, 0.3);
+}
+
+/* Sci-Fi Neon Grid Theme */
+.theme-scifi {
+    --theme-primary: #0B0C10;
+    --theme-secondary: #1F2833;
+    --theme-accent: #66FCF1;
+    --theme-success: #45A29E;
+    --theme-warning: #FFC542;
+    --theme-danger: #FF4B5C;
+    --theme-background: #0B0C10;
+    --theme-card: #1F2833;
+    --theme-text: #C5C6C7;
+    --theme-text-light: #B7B7B7;
+    --theme-gradient-start: #0B0C10;
+    --theme-gradient-end: #1F2833;
+}
+
+.theme-scifi body {
+    background: linear-gradient(135deg, #0B0C10 0%, #1F2833 100%);
+}
+
+.theme-scifi .answer-input,
+.theme-scifi .powerup-select,
+.theme-scifi .powerup-input,
+.theme-scifi input[type="text"],
+.theme-scifi input[type="number"],
+.theme-scifi textarea {
+    background: #0B0C10;
+    color: var(--theme-text);
+    border-color: #66FCF1;
+    box-shadow: 0 0 10px rgba(102, 252, 241, 0.2);
+}
+
+.theme-scifi .timer-progress {
+    background: linear-gradient(90deg, #66FCF1, #45A29E);
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
+}
+
+.theme-scifi .btn-primary {
+    background: #66FCF1;
+    color: #0B0C10;
+    box-shadow: 0 0 20px rgba(102, 252, 241, 0.4);
+}
+
+.theme-scifi .btn-primary:hover {
+    box-shadow: 0 0 30px rgba(102, 252, 241, 0.6);
+}
+
+.theme-scifi header h1 {
+    text-shadow: 0 0 20px rgba(102, 252, 241, 0.5);
+}
+

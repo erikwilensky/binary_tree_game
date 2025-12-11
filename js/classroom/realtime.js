@@ -55,22 +55,10 @@ class RealtimeManager {
             const answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
             if (answer) {
                 const currentAnswer = classroomState.get('answers')[question.id];
-                // Only update if answer actually changed (and user isn't actively typing)
-                if (!currentAnswer || currentAnswer.answer !== answer.answer) {
-                    // Check if user is currently typing (cursor position indicates active editing)
-                    const answerInput = document.getElementById('answer-input');
-                    const isUserTyping = answerInput && document.activeElement === answerInput;
-                    
-                    // If user is typing, only update if the new answer is longer (powerup injection)
-                    if (isUserTyping && currentAnswer && answer.answer.length > currentAnswer.answer.length) {
-                        // Powerup was used - append the new chars
-                        const newChars = answer.answer.substring(currentAnswer.answer.length);
-                        answerInput.value = answerInput.value + newChars;
-                        this.onAnswerUpdate(answer);
-                    } else if (!isUserTyping) {
-                        // User not typing - safe to update
-                        this.onAnswerUpdate(answer);
-                    }
+                // Only update if answer actually changed
+                if (!currentAnswer || currentAnswer.answer !== answer.answer || currentAnswer.locked !== answer.locked) {
+                    // Always call onAnswerUpdate - it will handle the typing check internally
+                    this.onAnswerUpdate(answer);
                 }
             }
         });
@@ -149,11 +137,25 @@ class RealtimeManager {
             // Update UI if on game page
             const answerInput = document.getElementById('answer-input');
             if (answerInput && !answerInput.disabled) {
-                // Only update if answer is longer (powerup injection) or user not typing
                 const isUserTyping = document.activeElement === answerInput;
-                if (!isUserTyping || answer.answer.length > answerInput.value.length) {
-                    answerInput.value = answer.answer || '';
+                const currentValue = answerInput.value;
+                const newValue = answer.answer || '';
+                const oldValue = currentAnswer?.answer || '';
+                
+                // Only update if:
+                // 1. User is not typing (not focused on input)
+                // 2. OR new answer is longer (powerup injection) AND user's current value matches old answer
+                if (!isUserTyping) {
+                    // User not typing - safe to update
+                    if (currentValue !== newValue) {
+                        answerInput.value = newValue;
+                    }
+                } else if (newValue.length > oldValue.length && currentValue === oldValue) {
+                    // Powerup injection - append new characters only if current value matches old value
+                    const newChars = newValue.substring(oldValue.length);
+                    answerInput.value = currentValue + newChars;
                 }
+                // Otherwise, don't update - user is actively typing and we don't want to overwrite
             }
         }
 
