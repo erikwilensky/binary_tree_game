@@ -177,7 +177,10 @@ class InClassQuizController {
         this.storageManager.saveTeamAnswer(teamName, answer, true, timestamp)
             .then(() => {
                 this.isProcessing = false;
-                this.loadAdminPanel(); // Refresh admin panel
+                // Only refresh admin panel if Admin 2 is activated
+                if (this.adminActivated) {
+                    this.loadAdminPanel();
+                }
             })
             .catch(error => {
                 console.error('Error saving locked answer:', error);
