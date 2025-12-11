@@ -90,14 +90,21 @@ class GameController {
         this.elements.answerInput.addEventListener('input', () => {
             this.isTyping = true;
             this.lastTypingTime = Date.now();
-            this.scheduleAnswerSync();
             
             // Clear existing timeout
             clearTimeout(typingTimeout);
-            // Mark as not typing after 5 seconds of inactivity (extended to prevent overwrites)
+            // Mark as not typing after 10 seconds of inactivity (very extended to prevent overwrites)
             typingTimeout = setTimeout(() => {
-                this.isTyping = false;
-            }, 5000);
+                // Only mark as not typing if input is not focused
+                if (document.activeElement !== this.elements.answerInput) {
+                    this.isTyping = false;
+                    // Sync after user stops typing
+                    this.syncAnswer();
+                }
+            }, 10000);
+            
+            // Schedule sync only after user stops typing (debounced)
+            this.scheduleAnswerSync();
         });
 
         // Track when user stops typing
@@ -255,28 +262,43 @@ class GameController {
     }
 
     scheduleAnswerSync() {
-        // Debounce answer syncing
+        // Debounce answer syncing - only sync if not typing
         if (this.answerSyncTimeout) {
             clearTimeout(this.answerSyncTimeout);
         }
 
-        // Sync more frequently to prevent server from having stale data
-        this.answerSyncTimeout = setTimeout(() => {
-            this.syncAnswer();
-        }, 500);
+        // Only schedule sync if user is not actively typing
+        if (!this.isTyping && document.activeElement !== this.elements.answerInput) {
+            this.answerSyncTimeout = setTimeout(() => {
+                // Double-check user isn't typing before syncing
+                if (!this.isTyping && document.activeElement !== this.elements.answerInput) {
+                    this.syncAnswer();
+                }
+            }, 1000); // Wait 1 second after typing stops
+        }
     }
 
     startAnswerSyncing() {
-        // Sync answer every 3 seconds as backup (only if not typing)
-        this.answerSyncInterval = setInterval(() => {
-            if (!this.isTyping) {
-                this.syncAnswer();
-            }
-        }, 3000);
+        // DISABLED: Periodic sync is causing text deletion
+        // We only sync on input events now, not periodically
+        // This prevents any chance of overwriting user input
+        // this.answerSyncInterval = setInterval(() => {
+        //     // Only sync if user is definitely not typing
+        //     if (!this.isTyping && 
+        //         document.activeElement !== this.elements.answerInput &&
+        //         (Date.now() - (this.lastTypingTime || 0)) > 10000) {
+        //         this.syncAnswer();
+        //     }
+        // }, 5000);
     }
 
     async syncAnswer() {
         if (!this.currentAnswerId) return;
+        
+        // NEVER sync if user is typing - this prevents overwriting
+        if (this.isTyping || document.activeElement === this.elements.answerInput) {
+            return; // Don't sync while typing
+        }
 
         const answerText = this.elements.answerInput.value;
         

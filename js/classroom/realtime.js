@@ -79,7 +79,7 @@ class RealtimeManager {
             const isFocused = document.activeElement === answerInput;
             const isTyping = window.gameController && (
                 window.gameController.isTyping ||
-                (Date.now() - (window.gameController.lastTypingTime || 0)) < 5000 // Extended to 5 seconds
+                (Date.now() - (window.gameController.lastTypingTime || 0)) < 10000 // Extended to 10 seconds
             );
             
             // If input is focused OR user was recently typing, completely skip polling
@@ -186,7 +186,7 @@ class RealtimeManager {
                 const isFocused = document.activeElement === answerInput;
                 const isTyping = window.gameController && (
                     window.gameController.isTyping ||
-                    (Date.now() - (window.gameController.lastTypingTime || 0)) < 5000 // Extended to 5 seconds
+                    (Date.now() - (window.gameController.lastTypingTime || 0)) < 10000 // Extended to 10 seconds
                 );
                 
                 // If user is typing or input is focused, DO NOT UPDATE AT ALL
