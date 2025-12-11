@@ -19,7 +19,8 @@ class AdminController {
             teamSelection: document.getElementById('team-selection'),
             teamCheckboxes: document.getElementById('team-checkboxes'),
             randomCount: document.getElementById('random-count'),
-            distributePowerupsBtn: document.getElementById('distribute-powerups-btn')
+            distributePowerupsBtn: document.getElementById('distribute-powerups-btn'),
+            randomPowerupAllBtn: document.getElementById('random-powerup-all-btn')
         };
 
         this.currentQuestion = null;
@@ -62,6 +63,7 @@ class AdminController {
         this.elements.refreshAnswersBtn.addEventListener('click', () => this.loadAnswers());
         this.elements.copyAnswersBtn.addEventListener('click', () => this.copyAnswers());
         this.elements.distributePowerupsBtn.addEventListener('click', () => this.distributePowerups());
+        this.elements.randomPowerupAllBtn.addEventListener('click', () => this.giveRandomPowerupToAll());
 
         // Distribution method change handler
         this.elements.distributionRadios.forEach(radio => {
@@ -225,15 +227,16 @@ class AdminController {
         teams.forEach(team => {
             const teamEl = document.createElement('div');
             teamEl.className = 'team-admin-item';
+            const modifier = team.score >= 0 ? `+${team.score}` : `${team.score}`;
             teamEl.innerHTML = `
                 <div class="team-info">
                     <span class="team-name">${this.escapeHtml(team.team_name)}</span>
-                    <span class="team-score">Score: ${team.score}</span>
+                    <span class="team-score">Modifier: ${modifier}</span>
                     <span class="team-powerups">Powerups: ${(team.powerups || []).length}</span>
                 </div>
                 <div class="team-actions">
-                    <input type="number" class="score-adjust-input" placeholder="±score" data-team-id="${team.id}">
-                    <button class="btn btn-small adjust-score-btn" data-team-id="${team.id}">Adjust Score</button>
+                    <input type="number" class="score-adjust-input" placeholder="±modifier" data-team-id="${team.id}">
+                    <button class="btn btn-small adjust-score-btn" data-team-id="${team.id}">Adjust Modifier</button>
                 </div>
             `;
             
@@ -406,6 +409,50 @@ class AdminController {
     stopPolling() {
         if (this.pollInterval) {
             clearInterval(this.pollInterval);
+        }
+    }
+
+    async giveRandomPowerupToAll() {
+        if (!confirm('Give 1 random powerup to all teams?')) return;
+
+        this.elements.randomPowerupAllBtn.disabled = true;
+        this.elements.randomPowerupAllBtn.textContent = 'Distributing...';
+
+        try {
+            const sessionId = classroomState.get('sessionId');
+            const teams = await classroomAPI.getTeams(sessionId);
+            
+            if (teams.length === 0) {
+                alert('No teams in session');
+                this.elements.randomPowerupAllBtn.disabled = false;
+                this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerup to All Teams';
+                return;
+            }
+
+            const powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'edit_name'];
+            let distributed = 0;
+
+            for (const team of teams) {
+                // Pick a random powerup type
+                const randomPowerup = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
+                
+                const currentPowerups = team.powerups || [];
+                const newPowerups = [...currentPowerups, randomPowerup];
+                
+                await classroomAPI.updateTeam(team.id, { powerups: newPowerups });
+                distributed++;
+            }
+
+            alert(`Distributed 1 random powerup to ${distributed} team(s)!`);
+            
+            // Reload teams
+            await this.loadTeams();
+        } catch (error) {
+            console.error('Give random powerup error:', error);
+            alert('Failed to distribute powerups. Please try again.');
+        } finally {
+            this.elements.randomPowerupAllBtn.disabled = false;
+            this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerup to All Teams';
         }
     }
 

@@ -40,7 +40,7 @@ class ClassroomAPI {
         const data = await this.client.post('teams', {
             session_id: sessionId,
             team_name: teamName,
-            score: 0,
+            score: 10, // Start with 10 points (modifier)
             powerups: []
         });
         return Array.isArray(data) ? data[0] : data;
@@ -70,7 +70,8 @@ class ClassroomAPI {
         const team = await this.getTeam(teamId);
         if (!team) return null;
         
-        const newScore = Math.max(0, team.score + scoreDelta);
+        // Modifiers can go negative, but we'll keep a reasonable floor
+        const newScore = team.score + scoreDelta;
         return await this.updateTeam(teamId, { score: newScore });
     }
 

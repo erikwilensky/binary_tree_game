@@ -16,10 +16,11 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    background: white;
+    background: var(--theme-card);
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
 }
 
 header {
@@ -28,14 +29,16 @@ header {
 }
 
 header h1 {
-    color: #667eea;
+    color: var(--theme-primary);
     font-size: 2.5em;
     margin-bottom: 10px;
+    transition: color 0.3s ease;
 }
 
 .subtitle {
-    color: #666;
+    color: var(--theme-text-light);
     font-size: 1.1em;
+    transition: color 0.3s ease;
 }
 
 /* Lobby Styles */
@@ -207,11 +210,13 @@ header h1 {
 
 .answer-input {
     width: 100%;
-    padding: 15px;
+    min-height: 300px;
+    padding: 20px;
     border: 2px solid #ddd;
     border-radius: 8px;
-    font-size: 1em;
+    font-size: 1.1em;
     font-family: inherit;
+    line-height: 1.6;
     resize: vertical;
     transition: border-color 0.3s;
 }
@@ -227,11 +232,77 @@ header h1 {
     cursor: not-allowed;
 }
 
+.answer-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.answer-card-header h2 {
+    margin: 0;
+}
+
 .answer-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 15px;
+}
+
+.lock-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn.armed {
+    background: #ff9800;
+    color: white;
+    border-color: #ff9800;
+}
+
+.btn.armed-ready {
+    animation: pulse-warning 1s ease-in-out infinite;
+}
+
+@keyframes pulse-warning {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.7);
+    }
+    50% { 
+        box-shadow: 0 0 0 10px rgba(255, 152, 0, 0);
+    }
+}
+
+.answer-card.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: white;
+    padding: 40px;
+    border-radius: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.answer-card.fullscreen-mode .answer-input {
+    flex: 1;
+    min-height: 60vh;
+    font-size: 1.3em;
+    padding: 30px;
+}
+
+.answer-card.fullscreen-mode .answer-card-header {
+    margin-bottom: 30px;
+}
+
+.answer-card.fullscreen-mode .answer-card-header h2 {
+    font-size: 2em;
 }
 
 .answer-status {
@@ -300,6 +371,18 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     animation: slideIn 0.3s ease-out;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.powerup-notification-warning {
+    background: #dc3545;
+    animation: slideIn 0.3s ease-out, pulse 1s ease-in-out infinite;
+}
+
+@keyframes flash {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: rgba(220, 53, 69, 0.2); }
 }
 
 @keyframes slideIn {
@@ -587,6 +670,67 @@ header h1 {
 
 .checkbox-label input[type="checkbox"] {
     cursor: pointer;
+}
+
+/* Theme Selector */
+.theme-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-selector label {
+    font-size: 0.9em;
+    color: var(--theme-text-light);
+}
+
+.theme-select {
+    padding: 8px 12px;
+    border: 2px solid var(--theme-primary);
+    border-radius: 6px;
+    background: var(--theme-card);
+    color: var(--theme-text);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.theme-select:hover {
+    border-color: var(--theme-secondary);
+}
+
+.theme-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header-controls h1 {
+    margin: 0;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-header h1 {
+    margin: 0;
 }
 
 .powerup-select,

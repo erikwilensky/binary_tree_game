@@ -8,7 +8,10 @@ class GameController {
             timerText: document.getElementById('timer-text'),
             timerProgress: document.getElementById('timer-progress'),
             answerInput: document.getElementById('answer-input'),
+            answerCard: document.getElementById('answer-card'),
+            armLockBtn: document.getElementById('arm-lock-btn'),
             lockBtn: document.getElementById('lock-btn'),
+            fullscreenBtn: document.getElementById('fullscreen-btn'),
             answerStatus: document.getElementById('answer-status'),
             teamsStatusList: document.getElementById('teams-status-list'),
             powerupsInventory: document.getElementById('powerups-inventory'),
@@ -18,6 +21,8 @@ class GameController {
 
         this.answerSyncInterval = null;
         this.currentAnswerId = null;
+        this.lockArmed = false;
+        this.isFullscreen = false;
         this.init();
     }
 
@@ -54,8 +59,14 @@ class GameController {
     }
 
     setupEventListeners() {
+        // Arm lock button
+        this.elements.armLockBtn.addEventListener('click', () => this.armLock());
+
         // Lock button
         this.elements.lockBtn.addEventListener('click', () => this.lockAnswer());
+
+        // Fullscreen button
+        this.elements.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
 
         // Buy powerup button
         this.elements.buyPowerupBtn.addEventListener('click', () => this.buyPowerup());
@@ -72,6 +83,31 @@ class GameController {
         this.elements.answerInput.addEventListener('input', () => {
             this.scheduleAnswerSync();
         });
+
+        // Exit fullscreen on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isFullscreen) {
+                this.exitFullscreen();
+            }
+        });
+
+        // Listen for fullscreen changes
+        document.addEventListener('fullscreenchange', () => this.onFullscreenChange());
+        document.addEventListener('webkitfullscreenchange', () => this.onFullscreenChange());
+        document.addEventListener('msfullscreenchange', () => this.onFullscreenChange());
+    }
+
+    onFullscreenChange() {
+        const isCurrentlyFullscreen = !!(document.fullscreenElement || 
+                                        document.webkitFullscreenElement || 
+                                        document.msFullscreenElement);
+        
+        if (!isCurrentlyFullscreen && this.isFullscreen) {
+            // User exited fullscreen via browser controls
+            this.elements.answerCard.classList.remove('fullscreen-mode');
+            this.elements.fullscreenBtn.textContent = '⛶ Fullscreen';
+            this.isFullscreen = false;
+        }
     }
 
     setupStateListeners() {
@@ -109,6 +145,15 @@ class GameController {
         realtimeManager.on('powerupReceived', (data) => {
             if (data.type === 'random_chars') {
                 this.showPowerupEffect('Random characters injected into your answer!');
+            }
+        });
+
+        // Early lock received
+        realtimeManager.on('earlyLockReceived', (data) => {
+            if (data.targetTeamId === classroomState.get('teamId')) {
+                this.showPowerupEffect('⚠️ Your answer has been locked early by a powerup!', 'warning');
+                // Force lock the answer
+                this.lockAnswer(true);
             }
         });
     }
@@ -157,14 +202,19 @@ class GameController {
             
             if (answer.locked) {
                 this.elements.answerInput.disabled = true;
+                this.elements.armLockBtn.disabled = true;
                 this.elements.lockBtn.disabled = true;
                 this.elements.answerStatus.textContent = '🔒 Answer Locked';
                 this.elements.answerStatus.className = 'answer-status locked';
+                this.lockArmed = false;
             } else {
                 this.elements.answerInput.disabled = false;
+                this.elements.armLockBtn.disabled = false;
                 this.elements.lockBtn.disabled = false;
                 this.elements.answerStatus.textContent = '';
                 this.elements.answerStatus.className = 'answer-status';
+                this.lockArmed = false;
+                this.updateLockButtonState();
             }
         } catch (error) {
             console.error('Load answer error:', error);
@@ -201,16 +251,53 @@ class GameController {
         }
     }
 
+    armLock() {
+        if (this.lockArmed) {
+            // Disarm
+            this.lockArmed = false;
+            this.elements.armLockBtn.textContent = '⚠️ Arm Lock';
+            this.elements.armLockBtn.classList.remove('armed');
+            this.updateLockButtonState();
+        } else {
+            // Arm
+            if (!confirm('Are you sure you want to arm the lock? You will be able to lock your answer.')) {
+                return;
+            }
+            this.lockArmed = true;
+            this.elements.armLockBtn.textContent = '⚠️ Lock Armed';
+            this.elements.armLockBtn.classList.add('armed');
+            this.updateLockButtonState();
+        }
+    }
+
+    updateLockButtonState() {
+        if (this.lockArmed) {
+            this.elements.lockBtn.disabled = false;
+            this.elements.lockBtn.classList.add('armed-ready');
+        } else {
+            this.elements.lockBtn.disabled = true;
+            this.elements.lockBtn.classList.remove('armed-ready');
+        }
+    }
+
     async lockAnswer(autoLock = false) {
         if (!this.currentAnswerId) return;
+
+        // Check if armed (unless auto-lock)
+        if (!autoLock && !this.lockArmed) {
+            alert('Please arm the lock first!');
+            return;
+        }
 
         try {
             await classroomAPI.lockAnswer(this.currentAnswerId);
             
             this.elements.answerInput.disabled = true;
+            this.elements.armLockBtn.disabled = true;
             this.elements.lockBtn.disabled = true;
             this.elements.answerStatus.textContent = '🔒 Answer Locked';
             this.elements.answerStatus.className = 'answer-status locked';
+            this.lockArmed = false;
 
             // Visual feedback
             this.elements.answerInput.classList.add('success-flash');
@@ -226,6 +313,44 @@ class GameController {
             console.error('Lock answer error:', error);
             alert('Failed to lock answer. Please try again.');
         }
+    }
+
+    toggleFullscreen() {
+        if (!this.isFullscreen) {
+            this.enterFullscreen();
+        } else {
+            this.exitFullscreen();
+        }
+    }
+
+    enterFullscreen() {
+        const card = this.elements.answerCard;
+        
+        if (card.requestFullscreen) {
+            card.requestFullscreen();
+        } else if (card.webkitRequestFullscreen) {
+            card.webkitRequestFullscreen();
+        } else if (card.msRequestFullscreen) {
+            card.msRequestFullscreen();
+        }
+
+        card.classList.add('fullscreen-mode');
+        this.elements.fullscreenBtn.textContent = '✕ Exit Fullscreen';
+        this.isFullscreen = true;
+    }
+
+    exitFullscreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+
+        this.elements.answerCard.classList.remove('fullscreen-mode');
+        this.elements.fullscreenBtn.textContent = '⛶ Fullscreen';
+        this.isFullscreen = false;
     }
 
     async buyPowerup() {
@@ -259,30 +384,36 @@ class GameController {
         }
     }
 
-    renderTeamsStatus(teams) {
+    async renderTeamsStatus(teams) {
         const question = classroomState.get('currentQuestion');
         if (!question) return;
 
         this.elements.teamsStatusList.innerHTML = '';
 
-        teams.forEach(async (team) => {
+        // Get all answers at once to avoid multiple async calls
+        const sessionId = classroomState.get('sessionId');
+        let answers = [];
+        try {
+            answers = await classroomAPI.getAnswersForQuestion(sessionId, question.id);
+        } catch (error) {
+            console.error('Error loading answers for team status:', error);
+        }
+
+        const answerMap = new Map(answers.map(a => [a.team_id, a]));
+
+        teams.forEach((team) => {
             const teamEl = document.createElement('div');
             teamEl.className = 'team-status-item';
             
-            // Get team's answer status
-            const answer = await classroomAPI.getAnswer(
-                classroomState.get('sessionId'),
-                question.id,
-                team.id
-            );
-
+            const answer = answerMap.get(team.id);
             const status = answer && answer.locked ? 'locked' : 'working';
             const statusText = answer && answer.locked ? '🔒 Locked' : '✏️ Working';
 
+            const modifier = team.score >= 0 ? `+${team.score}` : `${team.score}`;
             teamEl.innerHTML = `
                 <span class="team-name">${this.escapeHtml(team.team_name)}</span>
                 <span class="team-status ${status}">${statusText}</span>
-                <span class="team-score">${team.score} pts</span>
+                <span class="team-score">${modifier}</span>
             `;
             this.elements.teamsStatusList.appendChild(teamEl);
         });
@@ -319,7 +450,7 @@ class GameController {
         const teams = classroomState.get('teams');
         
         // For powerups that need a target, show team selection
-        if (powerupType === 'random_chars' || powerupType === 'score_bash') {
+        if (powerupType === 'random_chars' || powerupType === 'score_bash' || powerupType === 'early_lock' || powerupType === 'edit_name') {
             const targetTeam = await this.selectTargetTeam(teams, teamId);
             if (!targetTeam) return;
             
@@ -362,7 +493,8 @@ class GameController {
         const team = teams.find(t => t.id === teamId);
         
         if (team) {
-            this.elements.scoreDisplay.textContent = `Score: ${team.score}`;
+            const modifier = team.score >= 0 ? `+${team.score}` : `${team.score}`;
+            this.elements.scoreDisplay.textContent = `Modifier: ${modifier}`;
         }
     }
 
@@ -385,10 +517,10 @@ class GameController {
         }
     }
 
-    showPowerupEffect(message) {
+    showPowerupEffect(message, type = 'info') {
         // Show visual feedback
         const notification = document.createElement('div');
-        notification.className = 'powerup-notification';
+        notification.className = `powerup-notification powerup-notification-${type}`;
         notification.textContent = message;
         document.body.appendChild(notification);
         
@@ -400,11 +532,19 @@ class GameController {
             }, 500);
         }
         
+        // Flash effect for early lock
+        if (message.includes('locked early')) {
+            document.body.style.animation = 'flash 0.5s ease-in-out 3';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 1500);
+        }
+        
         setTimeout(() => {
             notification.style.opacity = '0';
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => notification.remove(), 300);
-        }, 3000);
+        }, 5000);
     }
 
     escapeHtml(text) {

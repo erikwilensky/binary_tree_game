@@ -9,10 +9,25 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎓 Classroom Answer Race</h1>
-            <div class="game-header-info">
-                <span id="team-name-display"></span>
-                <span id="score-display">Score: 0</span>
+            <div class="header-controls">
+                <div class="game-header-info">
+                    <h1>🎓 Classroom Answer Race</h1>
+                    <div>
+                        <span id="team-name-display"></span>
+                        <span id="score-display">Score: 0</span>
+                    </div>
+                </div>
+                <div class="theme-selector">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select" class="theme-select">
+                        <option value="default">Default</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="neon">Neon</option>
+                    </select>
+                </div>
             </div>
         </header>
 
@@ -34,16 +49,22 @@
             </div>
 
             <!-- Answer Input -->
-            <div class="answer-card">
-                <h2>Your Answer</h2>
+            <div class="answer-card" id="answer-card">
+                <div class="answer-card-header">
+                    <h2>Your Answer</h2>
+                    <button id="fullscreen-btn" class="btn btn-small btn-outline">⛶ Fullscreen</button>
+                </div>
                 <textarea 
                     id="answer-input" 
                     class="answer-input" 
                     placeholder="Type your answer here..."
-                    rows="6"
+                    rows="12"
                 ></textarea>
                 <div class="answer-actions">
-                    <button id="lock-btn" class="btn btn-warning">🔒 Lock Answer</button>
+                    <div class="lock-controls">
+                        <button id="arm-lock-btn" class="btn btn-outline">⚠️ Arm Lock</button>
+                        <button id="lock-btn" class="btn btn-warning" disabled>🔒 Lock Answer</button>
+                    </div>
                     <div id="answer-status" class="answer-status"></div>
                 </div>
             </div>
@@ -58,7 +79,7 @@
             <div class="powerups-card">
                 <h2>Powerups</h2>
                 <div id="powerups-inventory" class="powerups-inventory"></div>
-                <button id="buy-powerup-btn" class="btn btn-secondary">Buy Powerup (25% of score)</button>
+                <button id="buy-powerup-btn" class="btn btn-secondary">Buy Powerup (25% of modifier)</button>
             </div>
         </div>
 
@@ -71,10 +92,23 @@
     <script src="js/classroom/supabase.js"></script>
     <script src="js/classroom/api.js"></script>
     <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/themes.js"></script>
     <script src="js/classroom/timer.js"></script>
     <script src="js/classroom/powerups.js"></script>
     <script src="js/classroom/realtime.js"></script>
     <script src="js/classroom/game.js"></script>
+    <script>
+        // Initialize theme selector
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.value = themeManager.currentTheme;
+                themeSelect.addEventListener('change', (e) => {
+                    themeManager.applyTheme(e.target.value);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

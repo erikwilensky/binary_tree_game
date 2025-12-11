@@ -4,7 +4,7 @@ class RealtimeManager {
         this.pollIntervals = new Map();
         this.lastUpdateTimes = new Map();
         this.pollingEnabled = true;
-        this.pollInterval = 2000; // 2 seconds
+        this.pollInterval = 3000; // 3 seconds (reduced flashing)
     }
 
     // Start polling for updates
@@ -36,7 +36,12 @@ class RealtimeManager {
             if (!sessionId) return;
 
             const teams = await classroomAPI.getTeams(sessionId);
-            classroomState.set('teams', teams || []);
+            const currentTeams = classroomState.get('teams');
+            
+            // Only update if teams actually changed (prevent flashing)
+            if (JSON.stringify(teams || []) !== JSON.stringify(currentTeams || [])) {
+                classroomState.set('teams', teams || []);
+            }
         });
 
         // Poll for answer updates (if in a question)
@@ -50,8 +55,22 @@ class RealtimeManager {
             const answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
             if (answer) {
                 const currentAnswer = classroomState.get('answers')[question.id];
+                // Only update if answer actually changed (and user isn't actively typing)
                 if (!currentAnswer || currentAnswer.answer !== answer.answer) {
-                    this.onAnswerUpdate(answer);
+                    // Check if user is currently typing (cursor position indicates active editing)
+                    const answerInput = document.getElementById('answer-input');
+                    const isUserTyping = answerInput && document.activeElement === answerInput;
+                    
+                    // If user is typing, only update if the new answer is longer (powerup injection)
+                    if (isUserTyping && currentAnswer && answer.answer.length > currentAnswer.answer.length) {
+                        // Powerup was used - append the new chars
+                        const newChars = answer.answer.substring(currentAnswer.answer.length);
+                        answerInput.value = answerInput.value + newChars;
+                        this.onAnswerUpdate(answer);
+                    } else if (!isUserTyping) {
+                        // User not typing - safe to update
+                        this.onAnswerUpdate(answer);
+                    }
                 }
             }
         });
@@ -120,8 +139,23 @@ class RealtimeManager {
 
         // Update state
         const answers = classroomState.get('answers');
-        answers[question.id] = answer;
-        classroomState.set('answers', { ...answers });
+        const currentAnswer = answers[question.id];
+        
+        // Only update if actually changed
+        if (!currentAnswer || currentAnswer.answer !== answer.answer || currentAnswer.locked !== answer.locked) {
+            answers[question.id] = answer;
+            classroomState.set('answers', { ...answers });
+            
+            // Update UI if on game page
+            const answerInput = document.getElementById('answer-input');
+            if (answerInput && !answerInput.disabled) {
+                // Only update if answer is longer (powerup injection) or user not typing
+                const isUserTyping = document.activeElement === answerInput;
+                if (!isUserTyping || answer.answer.length > answerInput.value.length) {
+                    answerInput.value = answer.answer || '';
+                }
+            }
+        }
 
         // Check if any team locked (triggers time reduction)
         this.checkForLocks();
@@ -164,6 +198,22 @@ class RealtimeManager {
                 type: 'random_chars',
                 payload: event.payload
             });
+        }
+
+        // Handle early lock powerup if we're the target
+        if (event.powerup_type === 'early_lock' && 
+            event.target_team_id === teamId) {
+            // Check if answer is now locked
+            const sessionId = classroomState.get('sessionId');
+            if (question) {
+                const answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
+                if (answer && answer.locked) {
+                    this.triggerEvent('earlyLockReceived', {
+                        type: 'early_lock',
+                        targetTeamId: teamId
+                    });
+                }
+            }
         }
 
         // Update teams to reflect score changes

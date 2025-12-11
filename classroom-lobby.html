@@ -9,8 +9,23 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎓 Classroom Answer Race</h1>
-            <p class="subtitle">Join or create a game session</p>
+            <div class="header-controls">
+                <div>
+                    <h1>🎓 Classroom Answer Race</h1>
+                    <p class="subtitle">Join or create a game session</p>
+                </div>
+                <div class="theme-selector">
+                    <label for="theme-select">Theme:</label>
+                    <select id="theme-select" class="theme-select">
+                        <option value="default">Default</option>
+                        <option value="dark">Dark Mode</option>
+                        <option value="ocean">Ocean</option>
+                        <option value="forest">Forest</option>
+                        <option value="sunset">Sunset</option>
+                        <option value="neon">Neon</option>
+                    </select>
+                </div>
+            </div>
         </header>
 
         <div class="lobby-content">
@@ -50,7 +65,20 @@
     <script src="js/classroom/supabase.js"></script>
     <script src="js/classroom/api.js"></script>
     <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/themes.js"></script>
     <script src="js/classroom/lobby.js"></script>
+    <script>
+        // Initialize theme selector
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.value = themeManager.currentTheme;
+                themeSelect.addEventListener('change', (e) => {
+                    themeManager.applyTheme(e.target.value);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

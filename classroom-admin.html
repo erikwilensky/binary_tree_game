@@ -73,6 +73,8 @@
                         <option value="random_chars">Random Characters</option>
                         <option value="score_bash">Score Bash</option>
                         <option value="roll_dice">Roll the Dice</option>
+                        <option value="early_lock">Early Lock</option>
+                        <option value="edit_name">Edit Team Name</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -106,6 +108,13 @@
                 </div>
                 <button id="distribute-powerups-btn" class="btn btn-primary">Distribute Powerups</button>
             </div>
+
+            <!-- Random Powerup Giveaway -->
+            <div class="admin-card">
+                <h2>Random Powerup Giveaway</h2>
+                <p class="hint">Give 1 random powerup to each team instantly</p>
+                <button id="random-powerup-all-btn" class="btn btn-success">Give Random Powerup to All Teams</button>
+            </div>
         </div>
     </div>
 
@@ -113,8 +122,21 @@
     <script src="js/classroom/supabase.js"></script>
     <script src="js/classroom/api.js"></script>
     <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/themes.js"></script>
     <script src="js/classroom/powerups.js"></script>
     <script src="js/classroom/admin.js"></script>
+    <script>
+        // Initialize theme selector
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.value = themeManager.currentTheme;
+                themeSelect.addEventListener('change', (e) => {
+                    themeManager.applyTheme(e.target.value);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

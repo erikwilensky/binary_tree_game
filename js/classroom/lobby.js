@@ -175,9 +175,10 @@ class LobbyController {
         teams.forEach(team => {
             const teamEl = document.createElement('div');
             teamEl.className = 'team-item';
+            const modifier = team.score >= 0 ? `+${team.score}` : `${team.score}`;
             teamEl.innerHTML = `
                 <span class="team-name">${this.escapeHtml(team.team_name)}</span>
-                <span class="team-score">Score: ${team.score}</span>
+                <span class="team-score">Modifier: ${modifier}</span>
             `;
             this.elements.teamsList.appendChild(teamEl);
         });
