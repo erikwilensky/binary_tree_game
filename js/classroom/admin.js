@@ -12,7 +12,14 @@ class AdminController {
             refreshAnswersBtn: document.getElementById('refresh-answers-btn'),
             copyAnswersBtn: document.getElementById('copy-answers-btn'),
             answersTableBody: document.getElementById('answers-table-body'),
-            teamsAdminList: document.getElementById('teams-admin-list')
+            teamsAdminList: document.getElementById('teams-admin-list'),
+            powerupTypeSelect: document.getElementById('powerup-type-select'),
+            powerupCount: document.getElementById('powerup-count'),
+            distributionRadios: document.querySelectorAll('input[name="distribution"]'),
+            teamSelection: document.getElementById('team-selection'),
+            teamCheckboxes: document.getElementById('team-checkboxes'),
+            randomCount: document.getElementById('random-count'),
+            distributePowerupsBtn: document.getElementById('distribute-powerups-btn')
         };
 
         this.currentQuestion = null;
@@ -40,6 +47,9 @@ class AdminController {
         // Load initial data
         await this.loadData();
         this.startPolling();
+        
+        // Initialize distribution UI
+        this.onDistributionMethodChange();
     }
 
     setupEventListeners() {
@@ -51,6 +61,12 @@ class AdminController {
         this.elements.endQuestionBtn.addEventListener('click', () => this.endQuestion());
         this.elements.refreshAnswersBtn.addEventListener('click', () => this.loadAnswers());
         this.elements.copyAnswersBtn.addEventListener('click', () => this.copyAnswers());
+        this.elements.distributePowerupsBtn.addEventListener('click', () => this.distributePowerups());
+
+        // Distribution method change handler
+        this.elements.distributionRadios.forEach(radio => {
+            radio.addEventListener('change', () => this.onDistributionMethodChange());
+        });
     }
 
     async loadData() {
@@ -202,6 +218,7 @@ class AdminController {
 
         if (teams.length === 0) {
             this.elements.teamsAdminList.innerHTML = '<p>No teams yet</p>';
+            this.elements.teamCheckboxes.innerHTML = '';
             return;
         }
 
@@ -212,6 +229,7 @@ class AdminController {
                 <div class="team-info">
                     <span class="team-name">${this.escapeHtml(team.team_name)}</span>
                     <span class="team-score">Score: ${team.score}</span>
+                    <span class="team-powerups">Powerups: ${(team.powerups || []).length}</span>
                 </div>
                 <div class="team-actions">
                     <input type="number" class="score-adjust-input" placeholder="±score" data-team-id="${team.id}">
@@ -232,6 +250,113 @@ class AdminController {
             
             this.elements.teamsAdminList.appendChild(teamEl);
         });
+
+        // Update team checkboxes for powerup distribution
+        this.updateTeamCheckboxes(teams);
+    }
+
+    updateTeamCheckboxes(teams) {
+        this.elements.teamCheckboxes.innerHTML = '';
+        
+        teams.forEach(team => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            label.innerHTML = `
+                <input type="checkbox" value="${team.id}" class="team-checkbox">
+                ${this.escapeHtml(team.team_name)}
+            `;
+            this.elements.teamCheckboxes.appendChild(label);
+        });
+    }
+
+    onDistributionMethodChange() {
+        const selectedMethod = document.querySelector('input[name="distribution"]:checked').value;
+        
+        if (selectedMethod === 'selected') {
+            this.elements.teamSelection.style.display = 'block';
+            this.elements.randomCount.style.display = 'none';
+        } else if (selectedMethod === 'random') {
+            this.elements.teamSelection.style.display = 'none';
+            this.elements.randomCount.style.display = 'block';
+        } else {
+            this.elements.teamSelection.style.display = 'none';
+            this.elements.randomCount.style.display = 'none';
+        }
+    }
+
+    async distributePowerups() {
+        const powerupType = this.elements.powerupTypeSelect.value;
+        const count = parseInt(this.elements.powerupCount.value);
+        const distributionMethod = document.querySelector('input[name="distribution"]:checked').value;
+        
+        if (count < 1 || count > 10) {
+            alert('Powerup count must be between 1 and 10');
+            return;
+        }
+
+        this.elements.distributePowerupsBtn.disabled = true;
+        this.elements.distributePowerupsBtn.textContent = 'Distributing...';
+
+        try {
+            const sessionId = classroomState.get('sessionId');
+            const teams = await classroomAPI.getTeams(sessionId);
+            
+            let targetTeams = [];
+
+            if (distributionMethod === 'all') {
+                targetTeams = teams;
+            } else if (distributionMethod === 'selected') {
+                const checkedBoxes = this.elements.teamCheckboxes.querySelectorAll('input[type="checkbox"]:checked');
+                if (checkedBoxes.length === 0) {
+                    alert('Please select at least one team');
+                    this.elements.distributePowerupsBtn.disabled = false;
+                    this.elements.distributePowerupsBtn.textContent = 'Distribute Powerups';
+                    return;
+                }
+                checkedBoxes.forEach(checkbox => {
+                    const teamId = parseInt(checkbox.value);
+                    const team = teams.find(t => t.id === teamId);
+                    if (team) targetTeams.push(team);
+                });
+            } else if (distributionMethod === 'random') {
+                const randomCount = parseInt(this.elements.randomCount.value);
+                if (randomCount < 1 || randomCount > teams.length) {
+                    alert(`Random count must be between 1 and ${teams.length}`);
+                    this.elements.distributePowerupsBtn.disabled = false;
+                    this.elements.distributePowerupsBtn.textContent = 'Distribute Powerups';
+                    return;
+                }
+                // Shuffle and take random teams
+                const shuffled = [...teams].sort(() => Math.random() - 0.5);
+                targetTeams = shuffled.slice(0, randomCount);
+            }
+
+            // Distribute powerups to target teams
+            let distributed = 0;
+            for (const team of targetTeams) {
+                const currentPowerups = team.powerups || [];
+                const newPowerups = [...currentPowerups];
+                
+                // Add the specified number of powerups
+                for (let i = 0; i < count; i++) {
+                    newPowerups.push(powerupType);
+                }
+                
+                await classroomAPI.updateTeam(team.id, { powerups: newPowerups });
+                distributed++;
+            }
+
+            alert(`Distributed ${count} ${powerupEngine.getPowerupName(powerupType)} powerup(s) to ${distributed} team(s)!`);
+            
+            // Reload teams
+            await this.loadTeams();
+        } catch (error) {
+            console.error('Distribute powerups error:', error);
+            alert('Failed to distribute powerups. Please try again.');
+        } finally {
+            this.elements.distributePowerupsBtn.disabled = false;
+            this.elements.distributePowerupsBtn.textContent = 'Distribute Powerups';
+        }
     }
 
     async adjustTeamScore(teamId, delta) {

@@ -134,7 +134,15 @@ class RealtimeManager {
         if (!sessionId || !question) return;
 
         const answers = await classroomAPI.getAnswersForQuestion(sessionId, question.id);
+        const teams = classroomState.get('teams');
         const lockedCount = answers.filter(a => a.locked).length;
+        const totalTeams = teams.length;
+        
+        // If all teams have locked, set timer to zero
+        if (totalTeams > 0 && lockedCount >= totalTeams) {
+            classroomTimer.forceToZero();
+            return;
+        }
         
         // If any team locked and timer hasn't been reduced yet
         if (lockedCount > 0 && !classroomTimer.reduced) {

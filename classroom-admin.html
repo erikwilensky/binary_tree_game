@@ -63,6 +63,49 @@
                 <h2>Team Management</h2>
                 <div id="teams-admin-list" class="teams-admin-list"></div>
             </div>
+
+            <!-- Powerup Distribution -->
+            <div class="admin-card">
+                <h2>Powerup Distribution</h2>
+                <div class="form-group">
+                    <label for="powerup-type-select">Powerup Type:</label>
+                    <select id="powerup-type-select" class="powerup-select">
+                        <option value="random_chars">Random Characters</option>
+                        <option value="score_bash">Score Bash</option>
+                        <option value="roll_dice">Roll the Dice</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="powerup-count">Number of Powerups per Team:</label>
+                    <input type="number" id="powerup-count" class="powerup-input" value="1" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Distribution Method:</label>
+                    <div class="distribution-options">
+                        <label class="radio-label">
+                            <input type="radio" name="distribution" value="all" checked>
+                            All Teams
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="distribution" value="selected">
+                            Selected Teams
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="distribution" value="random">
+                            Random Distribution
+                        </label>
+                    </div>
+                </div>
+                <div id="team-selection" class="team-selection" style="display: none;">
+                    <label>Select Teams:</label>
+                    <div id="team-checkboxes" class="team-checkboxes"></div>
+                </div>
+                <div class="form-group">
+                    <label for="random-count">Number of Teams (for random):</label>
+                    <input type="number" id="random-count" class="powerup-input" value="1" min="1" style="display: none;">
+                </div>
+                <button id="distribute-powerups-btn" class="btn btn-primary">Distribute Powerups</button>
+            </div>
         </div>
     </div>
 
@@ -70,6 +113,7 @@
     <script src="js/classroom/supabase.js"></script>
     <script src="js/classroom/api.js"></script>
     <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/powerups.js"></script>
     <script src="js/classroom/admin.js"></script>
 </body>
 </html>

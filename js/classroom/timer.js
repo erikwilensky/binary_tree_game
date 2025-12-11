@@ -84,6 +84,7 @@ class ClassroomTimer {
     // Timer expired
     expire() {
         this.stopTimer();
+        this.remainingTime = 0;
         
         // Notify expire callbacks
         this.callbacks.onExpire.forEach(callback => {
@@ -91,6 +92,22 @@ class ClassroomTimer {
                 callback();
             } catch (error) {
                 console.error('Timer expire callback error:', error);
+            }
+        });
+    }
+
+    // Force timer to zero (when all teams lock)
+    forceToZero() {
+        this.stopTimer();
+        this.remainingTime = 0;
+        this.timeLimit = 0;
+        
+        // Notify tick callbacks with zero time
+        this.callbacks.onTick.forEach(callback => {
+            try {
+                callback(0, 0);
+            } catch (error) {
+                console.error('Timer tick callback error:', error);
             }
         });
     }
