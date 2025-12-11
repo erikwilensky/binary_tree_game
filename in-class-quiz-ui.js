@@ -143,7 +143,10 @@ class InClassQuizController {
     }
     
     handleLockAnswer() {
-        if (this.isProcessing) return;
+        if (this.isProcessing) {
+            console.log('Already processing, ignoring click');
+            return;
+        }
         
         const teamName = this.teamNameInput?.value.trim();
         const answer = this.answerTextarea?.value.trim();
@@ -164,7 +167,6 @@ class InClassQuizController {
         }
         
         this.isProcessing = true;
-        this.lockBtn.disabled = true;
         
         // Update UI immediately
         this.isLocked = true;
@@ -177,6 +179,7 @@ class InClassQuizController {
         this.storageManager.saveTeamAnswer(teamName, answer, true, timestamp)
             .then(() => {
                 this.isProcessing = false;
+                this.updateUIState(); // Update button states
                 // Only refresh admin panel if Admin 2 is activated
                 if (this.adminActivated) {
                     this.loadAdminPanel();
@@ -185,9 +188,9 @@ class InClassQuizController {
             .catch(error => {
                 console.error('Error saving locked answer:', error);
                 this.isLocked = false;
+                this.isProcessing = false;
                 this.updateUIState();
                 this.updateStatus('Error saving answer. Please try again.', 'error');
-                this.isProcessing = false;
             });
     }
     
