@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Answer Race - Admin</title>
+    <link rel="stylesheet" href="classroom-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Classroom Answer Race - Admin</h1>
+            <div class="admin-header-info">
+                <span id="session-code-display"></span>
+                <button id="back-to-lobby-btn" class="btn btn-outline">Back to Lobby</button>
+            </div>
+        </header>
+
+        <div class="admin-content">
+            <!-- Question Management -->
+            <div class="admin-card">
+                <h2>Question Management</h2>
+                <div class="form-group">
+                    <label for="question-text">Question Text:</label>
+                    <textarea id="question-text" class="question-input" rows="4" placeholder="Enter question text..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="time-limit">Time Limit (seconds):</label>
+                    <input type="number" id="time-limit" class="time-input" value="60" min="10" max="600">
+                </div>
+                <div class="question-actions">
+                    <button id="start-question-btn" class="btn btn-primary">Start Question</button>
+                    <button id="end-question-btn" class="btn btn-warning" disabled>End Question Early</button>
+                </div>
+                <div id="current-question-display" class="current-question-display"></div>
+            </div>
+
+            <!-- Answers Table -->
+            <div class="admin-card">
+                <h2>Answers</h2>
+                <div class="answers-actions">
+                    <button id="refresh-answers-btn" class="btn btn-secondary">Refresh</button>
+                    <button id="copy-answers-btn" class="btn btn-secondary">Copy All Answers</button>
+                </div>
+                <div id="answers-table-container" class="answers-table-container">
+                    <table id="answers-table" class="answers-table">
+                        <thead>
+                            <tr>
+                                <th>Team</th>
+                                <th>Answer</th>
+                                <th>Status</th>
+                                <th>Submitted</th>
+                            </tr>
+                        </thead>
+                        <tbody id="answers-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Team Management -->
+            <div class="admin-card">
+                <h2>Team Management</h2>
+                <div id="teams-admin-list" class="teams-admin-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js" onerror="console.log('config.js not found - using defaults')"></script>
+    <script src="js/classroom/supabase.js"></script>
+    <script src="js/classroom/api.js"></script>
+    <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/admin.js"></script>
+</body>
+</html>
+

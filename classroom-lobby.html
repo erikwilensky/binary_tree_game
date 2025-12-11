@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classroom Answer Race - Lobby</title>
+    <link rel="stylesheet" href="classroom-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎓 Classroom Answer Race</h1>
+            <p class="subtitle">Join or create a game session</p>
+        </header>
+
+        <div class="lobby-content">
+            <div class="lobby-card">
+                <h2>Join Session</h2>
+                <div class="form-group">
+                    <label for="session-code">Session Code:</label>
+                    <input type="text" id="session-code" placeholder="Enter session code" maxlength="10" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="team-name">Team Name:</label>
+                    <input type="text" id="team-name" placeholder="Enter your team name" maxlength="50" autocomplete="off">
+                </div>
+                <button id="join-btn" class="btn btn-primary">Join Game</button>
+                <div id="join-error" class="error-message"></div>
+            </div>
+
+            <div class="lobby-card">
+                <h2>Create Session (Admin)</h2>
+                <button id="create-session-btn" class="btn btn-secondary">Create New Session</button>
+                <div id="session-info" class="session-info" style="display: none;">
+                    <p><strong>Session Code:</strong> <span id="generated-code"></span></p>
+                    <p class="hint">Share this code with students to join</p>
+                    <button id="go-admin-btn" class="btn btn-primary">Go to Admin Dashboard</button>
+                </div>
+            </div>
+
+            <div class="lobby-card" id="teams-list-card" style="display: none;">
+                <h2>Teams in Session</h2>
+                <div id="teams-list" class="teams-list"></div>
+                <button id="start-game-btn" class="btn btn-success" style="display: none;">Start Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js" onerror="console.log('config.js not found - using defaults')"></script>
+    <script src="js/classroom/supabase.js"></script>
+    <script src="js/classroom/api.js"></script>
+    <script src="js/classroom/state.js"></script>
+    <script src="js/classroom/lobby.js"></script>
+</body>
+</html>
+
