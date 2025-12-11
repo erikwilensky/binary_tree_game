@@ -27,6 +27,10 @@ class InClassQuizController {
         
         this.initializeEventListeners();
         this.setupAppSwitching();
+        // Ensure reset button is enabled on initialization
+        if (this.resetBtn) {
+            this.resetBtn.disabled = false;
+        }
     }
     
     initializeEventListeners() {
@@ -205,6 +209,11 @@ class InClassQuizController {
     }
     
     updateUIState() {
+        // Always ensure reset button is enabled (can reset even when locked)
+        if (this.resetBtn) {
+            this.resetBtn.disabled = false;
+        }
+        
         if (this.isLocked) {
             if (this.answerTextarea) {
                 this.answerTextarea.disabled = true;
@@ -214,10 +223,6 @@ class InClassQuizController {
                 this.lockBtn.disabled = true;
                 this.lockBtn.textContent = 'Answer Locked';
             }
-            // Reset button remains enabled even when locked, so teams can clear and start over
-            if (this.resetBtn) {
-                this.resetBtn.disabled = false;
-            }
         } else {
             if (this.answerTextarea) {
                 this.answerTextarea.disabled = false;
@@ -226,9 +231,6 @@ class InClassQuizController {
             if (this.lockBtn) {
                 this.lockBtn.disabled = false;
                 this.lockBtn.textContent = 'Lock Answer';
-            }
-            if (this.resetBtn) {
-                this.resetBtn.disabled = false;
             }
         }
     }
