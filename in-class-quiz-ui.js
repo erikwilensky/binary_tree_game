@@ -175,21 +175,10 @@ class InClassQuizController {
             return;
         }
         
-        // Check if locked
-        if (this.isLocked) {
-            this.updateStatus('Cannot reset a locked answer', 'error');
-            return;
-        }
-        
         try {
             // Clear from storage
             await this.storageManager.loadAnswers();
             const teamData = this.storageManager.getTeamAnswer(teamName);
-            
-            if (teamData && teamData.locked) {
-                this.updateStatus('Cannot reset a locked answer', 'error');
-                return;
-            }
             
             // Remove from storage if exists
             if (teamData) {
@@ -200,6 +189,10 @@ class InClassQuizController {
             if (this.answerTextarea) {
                 this.answerTextarea.value = '';
             }
+            
+            // Reset lock state
+            this.isLocked = false;
+            this.updateUIState();
             
             // Clear draft from localStorage
             localStorage.removeItem(`quiz_draft_${teamName}`);
@@ -221,8 +214,9 @@ class InClassQuizController {
                 this.lockBtn.disabled = true;
                 this.lockBtn.textContent = 'Answer Locked';
             }
+            // Reset button remains enabled even when locked, so teams can clear and start over
             if (this.resetBtn) {
-                this.resetBtn.disabled = true;
+                this.resetBtn.disabled = false;
             }
         } else {
             if (this.answerTextarea) {
