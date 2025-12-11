@@ -28,6 +28,8 @@ body {
     padding: 20px;
     color: var(--theme-text);
     transition: background 0.5s ease, color 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {

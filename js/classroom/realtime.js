@@ -4,7 +4,7 @@ class RealtimeManager {
         this.pollIntervals = new Map();
         this.lastUpdateTimes = new Map();
         this.pollingEnabled = true;
-        this.pollInterval = 3000; // 3 seconds (reduced flashing)
+        this.pollInterval = 5000; // 5 seconds (reduced flashing)
     }
 
     // Start polling for updates
@@ -39,7 +39,27 @@ class RealtimeManager {
             const currentTeams = classroomState.get('teams');
             
             // Only update if teams actually changed (prevent flashing)
-            if (JSON.stringify(teams || []) !== JSON.stringify(currentTeams || [])) {
+            // Deep comparison to avoid unnecessary updates
+            if (!currentTeams || teams.length !== currentTeams.length) {
+                classroomState.set('teams', teams || []);
+                return;
+            }
+            
+            // Check if any team data actually changed
+            let hasChanges = false;
+            for (let i = 0; i < teams.length; i++) {
+                const team = teams[i];
+                const currentTeam = currentTeams.find(t => t.id === team.id);
+                if (!currentTeam || 
+                    currentTeam.score !== team.score ||
+                    currentTeam.team_name !== team.team_name ||
+                    JSON.stringify(currentTeam.powerups || []) !== JSON.stringify(team.powerups || [])) {
+                    hasChanges = true;
+                    break;
+                }
+            }
+            
+            if (hasChanges) {
                 classroomState.set('teams', teams || []);
             }
         });
@@ -51,6 +71,19 @@ class RealtimeManager {
             const teamId = classroomState.get('teamId');
 
             if (!sessionId || !question || !teamId) return;
+
+            // Check if user is currently typing - if so, skip this poll
+            const answerInput = document.getElementById('answer-input');
+            const isUserTyping = answerInput && (
+                document.activeElement === answerInput || 
+                (window.gameController && window.gameController.isTyping) ||
+                (Date.now() - (window.gameController?.lastTypingTime || 0)) < 2000
+            );
+            
+            if (isUserTyping) {
+                // User is typing - don't poll to avoid overwriting their input
+                return;
+            }
 
             const answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
             if (answer) {
@@ -142,20 +175,26 @@ class RealtimeManager {
                 const newValue = answer.answer || '';
                 const oldValue = currentAnswer?.answer || '';
                 
-                // Only update if:
-                // 1. User is not typing (not focused on input)
-                // 2. OR new answer is longer (powerup injection) AND user's current value matches old answer
-                if (!isUserTyping) {
+                // NEVER update if user is actively typing (unless it's a powerup injection)
+                if (isUserTyping) {
+                    // Only allow powerup injection if:
+                    // 1. New value is longer than old value (powerup added characters)
+                    // 2. Current input value matches the old value exactly (user hasn't typed new chars)
+                    // 3. New value starts with the old value (powerup appended, not replaced)
+                    if (newValue.length > oldValue.length && 
+                        currentValue === oldValue && 
+                        newValue.startsWith(oldValue)) {
+                        // Powerup injection - append new characters
+                        const newChars = newValue.substring(oldValue.length);
+                        answerInput.value = currentValue + newChars;
+                    }
+                    // Otherwise, don't touch the input - user is typing!
+                } else {
                     // User not typing - safe to update
                     if (currentValue !== newValue) {
                         answerInput.value = newValue;
                     }
-                } else if (newValue.length > oldValue.length && currentValue === oldValue) {
-                    // Powerup injection - append new characters only if current value matches old value
-                    const newChars = newValue.substring(oldValue.length);
-                    answerInput.value = currentValue + newChars;
                 }
-                // Otherwise, don't update - user is actively typing and we don't want to overwrite
             }
         }
 

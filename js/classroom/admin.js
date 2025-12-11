@@ -398,12 +398,12 @@ class AdminController {
     }
 
     startPolling() {
-        // Poll for updates every 2 seconds
+        // Poll for updates every 5 seconds (reduced flashing)
         this.pollInterval = setInterval(async () => {
             await this.loadCurrentQuestion();
             await this.loadAnswers();
             await this.loadTeams();
-        }, 2000);
+        }, 5000);
     }
 
     stopPolling() {

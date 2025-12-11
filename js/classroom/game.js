@@ -23,6 +23,12 @@ class GameController {
         this.currentAnswerId = null;
         this.lockArmed = false;
         this.isFullscreen = false;
+        this.isTyping = false;
+        this.lastTypingTime = 0;
+        
+        // Expose to window for realtime manager to check
+        window.gameController = this;
+        
         this.init();
     }
 
@@ -81,7 +87,26 @@ class GameController {
 
         // Answer input - sync on input
         this.elements.answerInput.addEventListener('input', () => {
+            this.isTyping = true;
+            this.lastTypingTime = Date.now();
             this.scheduleAnswerSync();
+        });
+
+        // Track when user stops typing
+        this.elements.answerInput.addEventListener('blur', () => {
+            this.isTyping = false;
+            this.syncAnswer(); // Final sync when they leave the field
+        });
+
+        // Also track keyup to detect when typing stops
+        let typingTimeout;
+        this.elements.answerInput.addEventListener('keyup', () => {
+            this.isTyping = true;
+            this.lastTypingTime = Date.now();
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+                this.isTyping = false;
+            }, 1000); // Consider typing stopped after 1 second of no input
         });
 
         // Exit fullscreen on ESC key
@@ -227,16 +252,19 @@ class GameController {
             clearTimeout(this.answerSyncTimeout);
         }
 
+        // Sync more frequently to prevent server from having stale data
         this.answerSyncTimeout = setTimeout(() => {
             this.syncAnswer();
-        }, 300);
+        }, 500);
     }
 
     startAnswerSyncing() {
-        // Sync answer every 2 seconds as backup
+        // Sync answer every 3 seconds as backup (only if not typing)
         this.answerSyncInterval = setInterval(() => {
-            this.syncAnswer();
-        }, 2000);
+            if (!this.isTyping) {
+                this.syncAnswer();
+            }
+        }, 3000);
     }
 
     async syncAnswer() {
@@ -398,8 +426,6 @@ class GameController {
         const question = classroomState.get('currentQuestion');
         if (!question) return;
 
-        this.elements.teamsStatusList.innerHTML = '';
-
         // Get all answers at once to avoid multiple async calls
         const sessionId = classroomState.get('sessionId');
         let answers = [];
@@ -411,22 +437,28 @@ class GameController {
 
         const answerMap = new Map(answers.map(a => [a.team_id, a]));
 
+        // Build new HTML
+        let newHTML = '';
         teams.forEach((team) => {
-            const teamEl = document.createElement('div');
-            teamEl.className = 'team-status-item';
-            
             const answer = answerMap.get(team.id);
             const status = answer && answer.locked ? 'locked' : 'working';
             const statusText = answer && answer.locked ? '🔒 Locked' : '✏️ Working';
-
             const modifier = team.score >= 0 ? `+${team.score}` : `${team.score}`;
-            teamEl.innerHTML = `
-                <span class="team-name">${this.escapeHtml(team.team_name)}</span>
-                <span class="team-status ${status}">${statusText}</span>
-                <span class="team-score">${modifier}</span>
+
+            newHTML += `
+                <div class="team-status-item ${status}">
+                    <span class="team-name">${this.escapeHtml(team.team_name)}</span>
+                    <span class="team-status ${status}">${statusText}</span>
+                    <span class="team-score">${modifier}</span>
+                </div>
             `;
-            this.elements.teamsStatusList.appendChild(teamEl);
         });
+
+        // Only update DOM if content actually changed (prevent flashing)
+        const currentHTML = this.elements.teamsStatusList.innerHTML;
+        if (currentHTML !== newHTML) {
+            this.elements.teamsStatusList.innerHTML = newHTML;
+        }
     }
 
     renderPowerups(powerups) {
