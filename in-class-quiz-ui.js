@@ -139,27 +139,29 @@ class InClassQuizController {
             return;
         }
         
-        // Check if already locked
-        await this.storageManager.loadAnswers();
-        const existingData = this.storageManager.getTeamAnswer(teamName);
-        if (existingData && existingData.locked) {
-            this.updateStatus('This answer is already locked and cannot be modified', 'error');
+        // If already locked locally, don't proceed
+        if (this.isLocked) {
+            this.updateStatus('This answer is already locked', 'error');
             return;
         }
         
-        try {
-            const timestamp = new Date().toISOString();
-            await this.storageManager.saveTeamAnswer(teamName, answer, true, timestamp);
-            this.isLocked = true;
+        // Update UI immediately (optimistic update)
+        this.isLocked = true;
+        this.updateUIState();
+        this.updateStatus('Answer locked successfully!', 'success');
+        
+        // Clear draft from localStorage immediately
+        localStorage.removeItem(`quiz_draft_${teamName}`);
+        
+        // Save to storage in background (don't await - fire and forget)
+        const timestamp = new Date().toISOString();
+        this.storageManager.saveTeamAnswer(teamName, answer, true, timestamp).catch(error => {
+            console.error('Error saving locked answer:', error);
+            // Revert UI state on error
+            this.isLocked = false;
             this.updateUIState();
-            this.updateStatus('Answer locked successfully!', 'success');
-            
-            // Clear draft from localStorage
-            localStorage.removeItem(`quiz_draft_${teamName}`);
-        } catch (error) {
-            console.error('Error locking answer:', error);
-            this.updateStatus('Error locking answer. Please try again.', 'error');
-        }
+            this.updateStatus('Error saving answer. Please try again.', 'error');
+        });
     }
     
     async resetAnswer() {
@@ -170,33 +172,30 @@ class InClassQuizController {
             return;
         }
         
-        try {
-            // Clear from storage
-            await this.storageManager.loadAnswers();
-            const teamData = this.storageManager.getTeamAnswer(teamName);
-            
-            // Remove from storage if exists (this also clears viewed status)
-            if (teamData) {
-                await this.storageManager.removeTeamAnswer(teamName);
-            }
-            
-            // Clear textarea
-            if (this.answerTextarea) {
-                this.answerTextarea.value = '';
-            }
-            
-            // Reset lock state
-            this.isLocked = false;
-            this.updateUIState();
-            
-            // Clear draft from localStorage
-            localStorage.removeItem(`quiz_draft_${teamName}`);
-            
-            this.updateStatus('Answer cleared. You can now enter a new answer.', 'success');
-        } catch (error) {
-            console.error('Error resetting answer:', error);
-            this.updateStatus('Error resetting answer. Please try again.', 'error');
+        // Update UI immediately (optimistic update)
+        if (this.answerTextarea) {
+            this.answerTextarea.value = '';
         }
+        
+        // Reset lock state
+        this.isLocked = false;
+        this.updateUIState();
+        
+        // Clear draft from localStorage immediately
+        localStorage.removeItem(`quiz_draft_${teamName}`);
+        
+        this.updateStatus('Answer cleared. You can now enter a new answer.', 'success');
+        
+        // Remove from storage in background (don't await - fire and forget)
+        this.storageManager.loadAnswers().then(() => {
+            const teamData = this.storageManager.getTeamAnswer(teamName);
+            if (teamData) {
+                return this.storageManager.removeTeamAnswer(teamName);
+            }
+        }).catch(error => {
+            console.error('Error removing answer from storage:', error);
+            // Don't show error to user since UI is already updated
+        });
     }
     
     updateUIState() {
