@@ -223,7 +223,10 @@ class InClassQuizController {
             })
             .then(() => {
                 this.isProcessing = false;
-                this.loadAdminPanel(); // Refresh admin panel
+                // Only refresh admin panel if Admin 2 is activated
+                if (this.adminActivated) {
+                    this.loadAdminPanel();
+                }
             })
             .catch(error => {
                 console.error('Error removing answer from storage:', error);
