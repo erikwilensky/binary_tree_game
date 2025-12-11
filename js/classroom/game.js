@@ -255,16 +255,13 @@ class GameController {
         if (this.lockArmed) {
             // Disarm
             this.lockArmed = false;
-            this.elements.armLockBtn.textContent = '⚠️ Arm Lock';
+            this.elements.armLockBtn.textContent = 'Arm Lock';
             this.elements.armLockBtn.classList.remove('armed');
             this.updateLockButtonState();
         } else {
             // Arm
-            if (!confirm('Are you sure you want to arm the lock? You will be able to lock your answer.')) {
-                return;
-            }
             this.lockArmed = true;
-            this.elements.armLockBtn.textContent = '⚠️ Lock Armed';
+            this.elements.armLockBtn.textContent = 'Lock Armed';
             this.elements.armLockBtn.classList.add('armed');
             this.updateLockButtonState();
         }
@@ -281,7 +278,11 @@ class GameController {
     }
 
     async lockAnswer(autoLock = false) {
-        if (!this.currentAnswerId) return;
+        if (!this.currentAnswerId) {
+            console.error('Cannot lock: no current answer ID');
+            alert('No answer to lock. Please wait for a question to start.');
+            return;
+        }
 
         // Check if armed (unless auto-lock)
         if (!autoLock && !this.lockArmed) {
@@ -289,12 +290,18 @@ class GameController {
             return;
         }
 
+        // Disable button immediately to prevent double-clicks
+        this.elements.lockBtn.disabled = true;
+        this.elements.lockBtn.textContent = 'Locking...';
+
         try {
-            await classroomAPI.lockAnswer(this.currentAnswerId);
+            const result = await classroomAPI.lockAnswer(this.currentAnswerId);
+            console.log('Lock answer successful:', result);
             
             this.elements.answerInput.disabled = true;
             this.elements.armLockBtn.disabled = true;
             this.elements.lockBtn.disabled = true;
+            this.elements.lockBtn.textContent = '🔒 Lock Answer';
             this.elements.answerStatus.textContent = '🔒 Answer Locked';
             this.elements.answerStatus.className = 'answer-status locked';
             this.lockArmed = false;
@@ -311,7 +318,10 @@ class GameController {
             }
         } catch (error) {
             console.error('Lock answer error:', error);
-            alert('Failed to lock answer. Please try again.');
+            // Re-enable button on error
+            this.elements.lockBtn.disabled = false;
+            this.elements.lockBtn.textContent = '🔒 Lock Answer';
+            alert('Failed to lock answer: ' + (error.message || 'Please try again.'));
         }
     }
 
