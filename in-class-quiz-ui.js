@@ -20,6 +20,7 @@ class InClassQuizController {
         this.isLocked = false;
         this.isProcessing = false; // Prevent multiple simultaneous operations
         this.adminActivated = false; // Track if Admin 1 has been pressed
+        this.answersLoaded = false; // Track if answers have been loaded
         
         this.initializeEventListeners();
         this.setupAppSwitching();
@@ -101,6 +102,7 @@ class InClassQuizController {
                     this.loadTeamData();
                     // Reset admin state when switching to quiz
                     this.adminActivated = false;
+                    this.answersLoaded = false;
                     this.updateAdminButtons();
                     if (this.adminTableContainer) {
                         this.adminTableContainer.innerHTML = '';
@@ -346,6 +348,7 @@ class InClassQuizController {
             
             html += '</tbody></table>';
             this.adminTableContainer.innerHTML = html;
+            this.answersLoaded = true;
             
             // Show refresh button after answers are loaded
             this.updateAdminButtons();
@@ -377,12 +380,7 @@ class InClassQuizController {
         }
         // Refresh button is shown and enabled after Admin 2 is pressed and answers are loaded
         if (this.adminRefreshBtn) {
-            const hasAnswers = this.adminTableContainer && 
-                              this.adminTableContainer.innerHTML.trim() !== '' && 
-                              !this.adminTableContainer.innerHTML.includes('Loading...') &&
-                              !this.adminTableContainer.innerHTML.includes('No answers');
-            
-            if (this.adminActivated && hasAnswers) {
+            if (this.adminActivated && this.answersLoaded) {
                 this.adminRefreshBtn.style.display = 'inline-block';
                 this.adminRefreshBtn.disabled = false;
             } else {
