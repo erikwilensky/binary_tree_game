@@ -72,26 +72,38 @@ class RealtimeManager {
 
             if (!sessionId || !question || !teamId) return;
 
-            // Check if user is currently typing - if so, skip this poll
+            // STRICT: Check if user is currently typing - if so, skip this poll COMPLETELY
             const answerInput = document.getElementById('answer-input');
-            const isUserTyping = answerInput && (
-                document.activeElement === answerInput || 
-                (window.gameController && window.gameController.isTyping) ||
-                (Date.now() - (window.gameController?.lastTypingTime || 0)) < 2000
+            if (!answerInput) return;
+            
+            const isFocused = document.activeElement === answerInput;
+            const isTyping = window.gameController && (
+                window.gameController.isTyping ||
+                (Date.now() - (window.gameController.lastTypingTime || 0)) < 5000 // Extended to 5 seconds
             );
             
-            if (isUserTyping) {
-                // User is typing - don't poll to avoid overwriting their input
-                return;
+            // If input is focused OR user was recently typing, completely skip polling
+            if (isFocused || isTyping) {
+                return; // Don't poll at all - prevents any chance of overwriting
             }
 
+            // Only poll if input is NOT focused and user hasn't typed recently
             const answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
             if (answer) {
                 const currentAnswer = classroomState.get('answers')[question.id];
                 // Only update if answer actually changed
                 if (!currentAnswer || currentAnswer.answer !== answer.answer || currentAnswer.locked !== answer.locked) {
-                    // Always call onAnswerUpdate - it will handle the typing check internally
-                    this.onAnswerUpdate(answer);
+                    // Double-check user isn't typing before updating
+                    const stillNotTyping = !answerInput || (
+                        document.activeElement !== answerInput &&
+                        (!window.gameController || 
+                         !window.gameController.isTyping &&
+                         (Date.now() - (window.gameController.lastTypingTime || 0)) >= 5000)
+                    );
+                    
+                    if (stillNotTyping) {
+                        this.onAnswerUpdate(answer);
+                    }
                 }
             }
         });
@@ -170,30 +182,39 @@ class RealtimeManager {
             // Update UI if on game page
             const answerInput = document.getElementById('answer-input');
             if (answerInput && !answerInput.disabled) {
-                const isUserTyping = document.activeElement === answerInput;
-                const currentValue = answerInput.value;
-                const newValue = answer.answer || '';
-                const oldValue = currentAnswer?.answer || '';
+                // STRICT check: is user typing?
+                const isFocused = document.activeElement === answerInput;
+                const isTyping = window.gameController && (
+                    window.gameController.isTyping ||
+                    (Date.now() - (window.gameController.lastTypingTime || 0)) < 5000 // Extended to 5 seconds
+                );
                 
-                // NEVER update if user is actively typing (unless it's a powerup injection)
-                if (isUserTyping) {
-                    // Only allow powerup injection if:
-                    // 1. New value is longer than old value (powerup added characters)
-                    // 2. Current input value matches the old value exactly (user hasn't typed new chars)
-                    // 3. New value starts with the old value (powerup appended, not replaced)
-                    if (newValue.length > oldValue.length && 
-                        currentValue === oldValue && 
-                        newValue.startsWith(oldValue)) {
-                        // Powerup injection - append new characters
-                        const newChars = newValue.substring(oldValue.length);
-                        answerInput.value = currentValue + newChars;
+                // If user is typing or input is focused, DO NOT UPDATE AT ALL
+                // This prevents any text deletion while typing
+                if (isFocused || isTyping) {
+                    // User is actively typing - completely ignore all updates
+                    // Don't even check for powerups - wait until user stops typing
+                    return;
+                }
+                
+                // Additional safety: Check if current input value differs from server value
+                // If user has typed something different, don't overwrite it
+                const currentValue = answerInput.value;
+                const serverValue = answer.answer || '';
+                
+                // If user has typed something and it's different from server, be very careful
+                if (currentValue !== serverValue && currentValue.length > 0) {
+                    // User has typed something - don't overwrite with server value
+                    // Only update if server value is longer (might be a powerup, but we'll handle that when not typing)
+                    if (serverValue.length <= currentValue.length) {
+                        return; // Server value is same or shorter - don't overwrite user's typing
                     }
-                    // Otherwise, don't touch the input - user is typing!
-                } else {
-                    // User not typing - safe to update
-                    if (currentValue !== newValue) {
-                        answerInput.value = newValue;
-                    }
+                    // If server value is longer, it might be a powerup - but since user isn't typing, it's safe
+                }
+                
+                // User not typing - safe to update
+                if (currentValue !== serverValue) {
+                    answerInput.value = serverValue;
                 }
             }
         }

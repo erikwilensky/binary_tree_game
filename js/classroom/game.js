@@ -86,27 +86,35 @@ class GameController {
         });
 
         // Answer input - sync on input
+        let typingTimeout;
         this.elements.answerInput.addEventListener('input', () => {
             this.isTyping = true;
             this.lastTypingTime = Date.now();
             this.scheduleAnswerSync();
+            
+            // Clear existing timeout
+            clearTimeout(typingTimeout);
+            // Mark as not typing after 5 seconds of inactivity (extended to prevent overwrites)
+            typingTimeout = setTimeout(() => {
+                this.isTyping = false;
+            }, 5000);
         });
 
         // Track when user stops typing
         this.elements.answerInput.addEventListener('blur', () => {
-            this.isTyping = false;
-            this.syncAnswer(); // Final sync when they leave the field
+            // Wait a bit before marking as not typing (in case they click back)
+            setTimeout(() => {
+                if (document.activeElement !== this.elements.answerInput) {
+                    this.isTyping = false;
+                    this.syncAnswer(); // Final sync when they leave the field
+                }
+            }, 100);
         });
 
-        // Also track keyup to detect when typing stops
-        let typingTimeout;
-        this.elements.answerInput.addEventListener('keyup', () => {
+        // Track focus to mark as typing
+        this.elements.answerInput.addEventListener('focus', () => {
             this.isTyping = true;
             this.lastTypingTime = Date.now();
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                this.isTyping = false;
-            }, 1000); // Consider typing stopped after 1 second of no input
         });
 
         // Exit fullscreen on ESC key

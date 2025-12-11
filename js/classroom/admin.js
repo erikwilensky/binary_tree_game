@@ -12,6 +12,8 @@ class AdminController {
             refreshAnswersBtn: document.getElementById('refresh-answers-btn'),
             copyAnswersBtn: document.getElementById('copy-answers-btn'),
             answersTableBody: document.getElementById('answers-table-body'),
+            answersCard: document.getElementById('answers-card'),
+            fullscreenAnswersBtn: document.getElementById('fullscreen-answers-btn'),
             teamsAdminList: document.getElementById('teams-admin-list'),
             powerupTypeSelect: document.getElementById('powerup-type-select'),
             powerupCount: document.getElementById('powerup-count'),
@@ -22,6 +24,8 @@ class AdminController {
             distributePowerupsBtn: document.getElementById('distribute-powerups-btn'),
             randomPowerupAllBtn: document.getElementById('random-powerup-all-btn')
         };
+
+        this.isAnswersFullscreen = false;
 
         this.currentQuestion = null;
         this.pollInterval = null;
@@ -64,6 +68,19 @@ class AdminController {
         this.elements.copyAnswersBtn.addEventListener('click', () => this.copyAnswers());
         this.elements.distributePowerupsBtn.addEventListener('click', () => this.distributePowerups());
         this.elements.randomPowerupAllBtn.addEventListener('click', () => this.giveRandomPowerupToAll());
+        this.elements.fullscreenAnswersBtn.addEventListener('click', () => this.toggleAnswersFullscreen());
+
+        // Exit fullscreen on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isAnswersFullscreen) {
+                this.exitAnswersFullscreen();
+            }
+        });
+
+        // Listen for fullscreen changes
+        document.addEventListener('fullscreenchange', () => this.onFullscreenChange());
+        document.addEventListener('webkitfullscreenchange', () => this.onFullscreenChange());
+        document.addEventListener('msfullscreenchange', () => this.onFullscreenChange());
 
         // Distribution method change handler
         this.elements.distributionRadios.forEach(radio => {
