@@ -24,8 +24,14 @@ class RealtimeManager {
                 (question.is_active && !currentQuestion.is_active))) {
                 this.onQuestionStart(question);
             } else if (!question && currentQuestion) {
+                // Question ended - stop random char injections
+                this.onQuestionEnd();
                 classroomState.set('currentQuestion', null);
             } else if (question && currentQuestion && question.id === currentQuestion.id) {
+                // Check if question became inactive (ended)
+                if (currentQuestion.is_active && !question.is_active) {
+                    this.onQuestionEnd();
+                }
                 classroomState.set('currentQuestion', question);
             }
         });
@@ -162,6 +168,14 @@ class RealtimeManager {
         // Start timer if question is active
         if (question.is_active && question.started_at) {
             classroomTimer.startTimer(question.time_limit_seconds, question.started_at);
+        }
+    }
+
+    // Question ended handler - stop all random char injections
+    onQuestionEnd() {
+        // Stop all continuous random char powerup injections
+        if (window.powerupEngine) {
+            window.powerupEngine.stopAllRandomCharInjections();
         }
     }
 

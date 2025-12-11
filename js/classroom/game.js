@@ -208,8 +208,11 @@ class GameController {
     onQuestionChange(question) {
         if (!question) {
             this.elements.questionText.textContent = 'Waiting for question...';
+            // IMPORTANT: Do NOT clear the answer input when question ends
+            // Just disable it so answers remain visible
             this.elements.answerInput.disabled = true;
             this.elements.lockBtn.disabled = true;
+            this.elements.armLockBtn.disabled = true;
             classroomTimer.stopTimer();
             return;
         }
@@ -218,6 +221,7 @@ class GameController {
         this.elements.questionText.textContent = question.text;
         this.elements.answerInput.disabled = false;
         this.elements.lockBtn.disabled = false;
+        this.elements.armLockBtn.disabled = false;
 
         // Start timer if active
         if (question.is_active && question.started_at) {

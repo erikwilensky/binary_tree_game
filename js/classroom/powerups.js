@@ -2,6 +2,9 @@
 class PowerupEngine {
     constructor() {
         this.powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'edit_name'];
+        // Track active random char injection intervals
+        // Key: `${sessionId}_${questionId}_${targetTeamId}`, Value: intervalId
+        this.randomCharIntervals = new Map();
     }
 
     // Buy a powerup (costs 25% of team modifier, minimum 1)
@@ -78,7 +81,7 @@ class PowerupEngine {
         return result;
     }
 
-    // Random Characters powerup - inject random chars into target's answer
+    // Random Characters powerup - inject random chars into target's answer every 10 seconds
     async handleRandomChars(sessionId, teamId, targetTeamId) {
         if (!targetTeamId) throw new Error('Target team required for random_chars');
 
@@ -92,14 +95,69 @@ class PowerupEngine {
             answer = await classroomAPI.createAnswer(sessionId, question.id, targetTeamId, '');
         }
 
-        // Generate random characters to inject
+        // Check if answer is already locked - if so, don't start injection
+        if (answer.locked) {
+            throw new Error('Target team\'s answer is already locked');
+        }
+
+        // Stop any existing interval for this target
+        const intervalKey = `${sessionId}_${question.id}_${targetTeamId}`;
+        this.stopRandomCharInjection(intervalKey);
+
+        // Inject immediately
         const randomChars = this.generateRandomChars(3);
         const newAnswer = (answer.answer || '') + randomChars;
-
-        // Update answer
         await classroomAPI.updateAnswer(answer.id, { answer: newAnswer });
 
-        return { injectedChars: randomChars };
+        // Start interval to inject every 10 seconds
+        const intervalId = setInterval(async () => {
+            try {
+                // Check if question is still active
+                const currentQuestion = classroomState.get('currentQuestion');
+                if (!currentQuestion || currentQuestion.id !== question.id || !currentQuestion.is_active) {
+                    this.stopRandomCharInjection(intervalKey);
+                    return;
+                }
+
+                // Get current answer and check if locked
+                const currentAnswer = await classroomAPI.getAnswer(sessionId, question.id, targetTeamId);
+                if (!currentAnswer || currentAnswer.locked) {
+                    this.stopRandomCharInjection(intervalKey);
+                    return;
+                }
+
+                // Inject more random characters
+                const chars = this.generateRandomChars(3);
+                const updatedAnswer = (currentAnswer.answer || '') + chars;
+                await classroomAPI.updateAnswer(currentAnswer.id, { answer: updatedAnswer });
+            } catch (error) {
+                console.error('Error in random char injection interval:', error);
+                // Stop interval on error
+                this.stopRandomCharInjection(intervalKey);
+            }
+        }, 10000); // Every 10 seconds
+
+        // Store interval
+        this.randomCharIntervals.set(intervalKey, intervalId);
+
+        return { injectedChars: randomChars, continuous: true };
+    }
+
+    // Stop random char injection for a specific target
+    stopRandomCharInjection(intervalKey) {
+        const intervalId = this.randomCharIntervals.get(intervalKey);
+        if (intervalId) {
+            clearInterval(intervalId);
+            this.randomCharIntervals.delete(intervalKey);
+        }
+    }
+
+    // Stop all random char injections (called when question ends)
+    stopAllRandomCharInjections() {
+        this.randomCharIntervals.forEach((intervalId) => {
+            clearInterval(intervalId);
+        });
+        this.randomCharIntervals.clear();
     }
 
     // Score Bash powerup - reduce target team's modifier by 10% (minimum 1)
@@ -267,4 +325,7 @@ class PowerupEngine {
 
 // Export singleton instance
 const powerupEngine = new PowerupEngine();
+
+// Expose globally for realtime manager to access
+window.powerupEngine = powerupEngine;
 
