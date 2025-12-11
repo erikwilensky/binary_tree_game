@@ -1,0 +1,20 @@
+{
+  "name": "binary-tree-game",
+  "version": "1.0.0",
+  "description": "Binary Tree Traversal Game with Database Backend",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel"
+  },
+  "dependencies": {
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
+

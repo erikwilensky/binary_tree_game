@@ -393,11 +393,16 @@ class InClassQuizController {
     }
 }
 
-// Quiz Answer Storage Manager
+// Quiz Answer Storage Manager - Uses Supabase REST API directly
 class QuizAnswerStorage {
     constructor() {
-        this.binId = '692e87fad0ea881f400d3443';
-        this.apiKey = '$2a$10$ZZEnotrxZWf4OAffHwnXFen5GewLcBIqreyPOs4/eVuUUvuINk55u';
+        // Get Supabase config from config.js or use defaults
+        this.supabaseUrl = (typeof config !== 'undefined' && config.SUPABASE_URL) || 
+                          window.SUPABASE_URL || 
+                          'https://zihmxkuwkyqcwqrjbgoo.supabase.co';
+        this.supabaseKey = (typeof config !== 'undefined' && config.SUPABASE_KEY) || 
+                          window.SUPABASE_KEY || 
+                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppaG14a3V3a3lxY3dxcmpiZ29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTYzMDcsImV4cCI6MjA4MTAzMjMwN30.RyR5KRDAfL29rQGJ5V2fl6Dr0FyLJhyPUPeymCN8TV8';
         this.answers = {};
         this.loadPromise = null; // Cache load promise to prevent multiple simultaneous loads
     }
@@ -425,14 +430,15 @@ class QuizAnswerStorage {
                 this.answers = JSON.parse(stored);
             }
             
-            // Then try to sync from JSONBin.io
-            const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
+            // Then try to sync from Supabase
+            const url = `${this.supabaseUrl}/rest/v1/quiz_answers?select=*`;
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000);
             
             const response = await fetch(url, {
                 headers: {
-                    'X-Access-Key': this.apiKey
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.supabaseKey}`
                 },
                 cache: 'no-cache',
                 signal: controller.signal
@@ -442,12 +448,20 @@ class QuizAnswerStorage {
             
             if (response.ok) {
                 const data = await response.json();
-                const record = data.record || {};
-                this.answers = record.quizAnswers || this.answers;
+                // Convert array to object format
+                this.answers = {};
+                data.forEach(row => {
+                    this.answers[row.team_name] = {
+                        answer: row.answer,
+                        locked: row.locked,
+                        timestamp: row.timestamp
+                    };
+                });
                 localStorage.setItem('inClassQuizAnswers', JSON.stringify(this.answers));
+                console.log('Loaded quiz answers from Supabase');
             }
         } catch (error) {
-            console.warn('Failed to load from JSONBin, using localStorage:', error);
+            console.warn('Failed to load from Supabase, using localStorage:', error);
             // Use localStorage fallback
             const stored = localStorage.getItem('inClassQuizAnswers');
             if (stored) {
@@ -460,77 +474,110 @@ class QuizAnswerStorage {
         // Save to localStorage immediately
         localStorage.setItem('inClassQuizAnswers', JSON.stringify(this.answers));
         
-        // Save to JSONBin.io in background (don't await)
-        this._saveToJSONBin().catch(error => {
-            console.error('Error saving to JSONBin:', error);
+        // Save to Supabase in background (don't await)
+        this._saveToSupabase().catch(error => {
+            console.error('Error saving to Supabase:', error);
         });
     }
     
-    async _saveToJSONBin() {
+    async _saveToSupabase() {
+        // Save each team answer individually
+        const savePromises = Object.keys(this.answers).map(teamName => {
+            const answerData = this.answers[teamName];
+            return this._saveTeamAnswerToSupabase(teamName, answerData.answer, answerData.locked, answerData.timestamp);
+        });
+        
         try {
-            // Load existing record
-            const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
-            const loadController = new AbortController();
-            const loadTimeoutId = setTimeout(() => loadController.abort(), 5000);
-            
-            const loadResponse = await fetch(url, {
-                headers: {
-                    'X-Access-Key': this.apiKey
-                },
-                cache: 'no-cache',
-                signal: loadController.signal
-            });
-            
-            clearTimeout(loadTimeoutId);
-            
-            let fullRecord = {};
-            if (loadResponse.ok) {
-                const data = await loadResponse.json();
-                fullRecord = data.record || {};
-            }
-            
-            // Merge quiz answers
-            fullRecord.quizAnswers = this.answers;
-            
-            // Save
-            const saveUrl = `https://api.jsonbin.io/v3/b/${this.binId}`;
-            const saveController = new AbortController();
-            const saveTimeoutId = setTimeout(() => saveController.abort(), 5000);
-            
-            const saveResponse = await fetch(saveUrl, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Key': this.apiKey
-                },
-                body: JSON.stringify(fullRecord),
-                signal: saveController.signal
-            });
-            
-            clearTimeout(saveTimeoutId);
-            
-            if (saveResponse.ok) {
-                console.log('Successfully saved quiz answers to JSONBin!');
-            }
+            await Promise.all(savePromises);
+            console.log('Successfully saved quiz answers to Supabase!');
         } catch (error) {
-            console.error('Error saving to JSONBin:', error);
+            console.error('Error saving quiz answers to Supabase:', error);
             throw error;
+        }
+    }
+    
+    async _saveTeamAnswerToSupabase(teamName, answer, locked, timestamp) {
+        // Check if record exists
+        const checkUrl = `${this.supabaseUrl}/rest/v1/quiz_answers?team_name=eq.${encodeURIComponent(teamName)}&select=id&limit=1`;
+        const checkResponse = await fetch(checkUrl, {
+            headers: {
+                'apikey': this.supabaseKey,
+                'Authorization': `Bearer ${this.supabaseKey}`
+            }
+        });
+        
+        const exists = checkResponse.ok && (await checkResponse.json()).length > 0;
+        const method = exists ? 'PATCH' : 'POST';
+        const filter = exists ? `?team_name=eq.${encodeURIComponent(teamName)}` : '';
+        
+        const body = {
+            team_name: teamName,
+            answer: answer,
+            locked: locked || false,
+            timestamp: timestamp || new Date().toISOString()
+        };
+        
+        const url = `${this.supabaseUrl}/rest/v1/quiz_answers${filter}`;
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'apikey': this.supabaseKey,
+                'Authorization': `Bearer ${this.supabaseKey}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=representation'
+            },
+            body: JSON.stringify(body)
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Failed to save: ${response.status} ${errorText}`);
         }
     }
     
     async saveTeamAnswer(teamName, answer, locked, timestamp) {
         this.answers[teamName] = {
             answer: answer,
-            locked: locked,
-            timestamp: timestamp
+            locked: locked || false,
+            timestamp: timestamp || new Date().toISOString()
         };
-        await this.saveAnswers();
+        
+        // Save to localStorage immediately
+        localStorage.setItem('inClassQuizAnswers', JSON.stringify(this.answers));
+        
+        // Save to Supabase
+        try {
+            await this._saveTeamAnswerToSupabase(teamName, answer, locked, timestamp);
+            console.log(`Successfully saved answer for ${teamName}`);
+        } catch (error) {
+            console.error('Error saving team answer:', error);
+        }
     }
     
     async removeTeamAnswer(teamName) {
         if (this.answers[teamName]) {
             delete this.answers[teamName];
-            await this.saveAnswers();
+            localStorage.setItem('inClassQuizAnswers', JSON.stringify(this.answers));
+            
+            // Delete from Supabase
+            try {
+                const url = `${this.supabaseUrl}/rest/v1/quiz_answers?team_name=eq.${encodeURIComponent(teamName)}`;
+                const response = await fetch(url, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': this.supabaseKey,
+                        'Authorization': `Bearer ${this.supabaseKey}`
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log(`Successfully removed answer for ${teamName}`);
+                } else {
+                    console.error('Failed to remove team answer:', response.status);
+                }
+            } catch (error) {
+                console.error('Error removing team answer:', error);
+            }
         }
     }
     

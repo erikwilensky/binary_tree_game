@@ -221,35 +221,48 @@ class GameState {
     }
 }
 
-// High Score Manager - Uses JSONBin.io for shared storage (free, no auth needed)
+// High Score Manager - Uses Supabase REST API directly
 class HighScoreManager {
     constructor() {
-        this.binId = '692e87fad0ea881f400d3443';
-        this.apiKey = '$2a$10$ZZEnotrxZWf4OAffHwnXFen5GewLcBIqreyPOs4/eVuUUvuINk55u';
+        // Get Supabase config from config.js or use defaults
+        this.supabaseUrl = (typeof config !== 'undefined' && config.SUPABASE_URL) || 
+                          window.SUPABASE_URL || 
+                          'https://zihmxkuwkyqcwqrjbgoo.supabase.co';
+        this.supabaseKey = (typeof config !== 'undefined' && config.SUPABASE_KEY) || 
+                          window.SUPABASE_KEY || 
+                          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InppaG14a3V3a3lxY3dxcmpiZ29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NTYzMDcsImV4cCI6MjA4MTAzMjMwN30.RyR5KRDAfL29rQGJ5V2fl6Dr0FyLJhyPUPeymCN8TV8';
         this.scores = {};
     }
 
     async loadScores() {
         try {
-            // Load from JSONBin.io
-            // Try X-Access-Key first (for private bins), then X-Master-Key
-            const url = `https://api.jsonbin.io/v3/b/${this.binId}/latest`;
+            const url = `${this.supabaseUrl}/rest/v1/high_scores?select=*`;
             const response = await fetch(url, {
                 headers: {
-                    'X-Access-Key': this.apiKey
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.supabaseKey}`
                 },
                 cache: 'no-cache'
             });
             
             if (response.ok) {
                 const data = await response.json();
-                this.scores = data.record || {};
+                // Convert array to object format
+                this.scores = {};
+                data.forEach(row => {
+                    const key = `${row.difficulty}_${row.traversal_type}`;
+                    this.scores[key] = {
+                        initials: row.initials,
+                        time: row.time_taken,
+                        date: row.created_at
+                    };
+                });
                 localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
-                console.log('Loaded scores from JSONBin');
+                console.log('Loaded scores from Supabase');
             } else {
                 // Fallback to localStorage
                 const errorText = await response.text();
-                console.warn(`Cannot load from JSONBin (${response.status}):`, errorText);
+                console.warn(`Cannot load from Supabase (${response.status}):`, errorText);
                 const stored = localStorage.getItem('binaryTreeHighScores');
                 this.scores = stored ? JSON.parse(stored) : {};
             }
@@ -261,34 +274,6 @@ class HighScoreManager {
         }
     }
 
-    async saveScores(scores) {
-        this.scores = scores;
-        localStorage.setItem('binaryTreeHighScores', JSON.stringify(scores));
-        
-        try {
-            // Save to JSONBin.io
-            // Try X-Access-Key first (for private bins), then X-Master-Key
-            const url = `https://api.jsonbin.io/v3/b/${this.binId}`;
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Key': this.apiKey
-                },
-                body: JSON.stringify(scores)
-            });
-            
-            if (response.ok) {
-                console.log('Successfully saved to JSONBin!');
-            } else {
-                const errorText = await response.text();
-                console.error('Failed to save to JSONBin:', response.status, errorText);
-            }
-        } catch (error) {
-            console.error('Error saving to JSONBin:', error);
-        }
-    }
-
     async getHighScores() {
         if (Object.keys(this.scores).length === 0) {
             await this.loadScores();
@@ -297,34 +282,100 @@ class HighScoreManager {
     }
 
     async getHighScore(difficulty, traversalType) {
-        const scores = await this.getHighScores();
-        const key = `${difficulty}_${traversalType}`;
-        const score = scores[key];
-        // Return null if score doesn't exist, is empty object, or missing required properties
-        if (!score || !score.initials || score.time === undefined) {
-            return null;
+        try {
+            const url = `${this.supabaseUrl}/rest/v1/high_scores?difficulty=eq.${difficulty}&traversal_type=eq.${traversalType}&select=*&limit=1`;
+            const response = await fetch(url, {
+                headers: {
+                    'apikey': this.supabaseKey,
+                    'Authorization': `Bearer ${this.supabaseKey}`
+                },
+                cache: 'no-cache'
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                if (data.length === 0) {
+                    return null;
+                }
+                const row = data[0];
+                return {
+                    initials: row.initials,
+                    time: row.time_taken,
+                    date: row.created_at
+                };
+            } else {
+                // Fallback to local scores
+                const scores = await this.getHighScores();
+                const key = `${difficulty}_${traversalType}`;
+                const score = scores[key];
+                if (!score || !score.initials || score.time === undefined) {
+                    return null;
+                }
+                return score;
+            }
+        } catch (error) {
+            console.error('Failed to get high score:', error);
+            // Fallback to local scores
+            const scores = await this.getHighScores();
+            const key = `${difficulty}_${traversalType}`;
+            const score = scores[key];
+            if (!score || !score.initials || score.time === undefined) {
+                return null;
+            }
+            return score;
         }
-        return score;
     }
 
     async setHighScore(difficulty, traversalType, initials, timeTaken) {
-        const scores = await this.getHighScores();
-        const key = `${difficulty}_${traversalType}`;
-        const currentHigh = scores[key];
-        
-        // Check if current high score is invalid/empty or if new time is better
-        const isNewHighScore = !currentHigh || !currentHigh.time || timeTaken < currentHigh.time;
-        
-        if (isNewHighScore) {
-            scores[key] = {
-                initials: initials.toUpperCase().substring(0, 2),
-                time: timeTaken,
-                date: new Date().toISOString()
-            };
-            await this.saveScores(scores);
-            return true;
+        try {
+            // First check if a record exists
+            const existing = await this.getHighScore(difficulty, traversalType);
+            const isNewHighScore = !existing || timeTaken < existing.time;
+            
+            if (isNewHighScore) {
+                const url = `${this.supabaseUrl}/rest/v1/high_scores`;
+                const method = existing ? 'PATCH' : 'POST';
+                const filter = existing ? `?difficulty=eq.${difficulty}&traversal_type=eq.${traversalType}` : '';
+                
+                const body = {
+                    difficulty: difficulty,
+                    traversal_type: traversalType,
+                    initials: initials.toUpperCase().substring(0, 10),
+                    time_taken: timeTaken
+                };
+                
+                const response = await fetch(`${url}${filter}`, {
+                    method: method,
+                    headers: {
+                        'apikey': this.supabaseKey,
+                        'Authorization': `Bearer ${this.supabaseKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                if (response.ok) {
+                    // Update local cache
+                    const key = `${difficulty}_${traversalType}`;
+                    this.scores[key] = {
+                        initials: initials.toUpperCase().substring(0, 10),
+                        time: timeTaken,
+                        date: new Date().toISOString()
+                    };
+                    localStorage.setItem('binaryTreeHighScores', JSON.stringify(this.scores));
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.error('Failed to save high score:', response.status, errorText);
+                    return false;
+                }
+            }
+            return false;
+        } catch (error) {
+            console.error('Error saving high score:', error);
+            return false;
         }
-        return false;
     }
 
     async getAllHighScores() {

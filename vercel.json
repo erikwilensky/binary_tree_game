@@ -1,5 +1,14 @@
 {
   "functions": {
+    "api/high-scores.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/quiz-answers.js": {
+      "runtime": "nodejs18.x"
+    },
+    "api/game-sessions.js": {
+      "runtime": "nodejs18.x"
+    },
     "api/save-scores.js": {
       "runtime": "nodejs18.x"
     }
