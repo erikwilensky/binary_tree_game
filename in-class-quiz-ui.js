@@ -13,6 +13,7 @@ class InClassQuizController {
         this.adminTableContainer = document.getElementById('quiz-admin-table-container');
         this.admin1Btn = document.getElementById('quiz-admin-1-btn');
         this.admin2Btn = document.getElementById('quiz-admin-2-btn');
+        this.adminRefreshBtn = document.getElementById('quiz-admin-refresh-btn');
         
         this.storageManager = new QuizAnswerStorage();
         this.currentTeamName = '';
@@ -78,6 +79,14 @@ class InClassQuizController {
         
         if (this.admin2Btn) {
             this.admin2Btn.addEventListener('click', () => {
+                if (this.adminActivated) {
+                    this.loadAdminPanel();
+                }
+            });
+        }
+        
+        if (this.adminRefreshBtn) {
+            this.adminRefreshBtn.addEventListener('click', () => {
                 if (this.adminActivated) {
                     this.loadAdminPanel();
                 }
@@ -337,9 +346,13 @@ class InClassQuizController {
             
             html += '</tbody></table>';
             this.adminTableContainer.innerHTML = html;
+            
+            // Show refresh button after answers are loaded
+            this.updateAdminButtons();
         } catch (error) {
             console.error('Error loading admin panel:', error);
             this.adminTableContainer.innerHTML = '<p>Error loading answers. Please try again.</p>';
+            this.updateAdminButtons();
         }
     }
     
@@ -361,6 +374,16 @@ class InClassQuizController {
         }
         if (this.admin2Btn) {
             this.admin2Btn.disabled = !this.adminActivated;
+        }
+        // Refresh button is shown and enabled after Admin 2 is pressed
+        if (this.adminRefreshBtn) {
+            if (this.adminActivated && this.adminTableContainer && this.adminTableContainer.innerHTML.trim() !== '') {
+                this.adminRefreshBtn.style.display = 'inline-block';
+                this.adminRefreshBtn.disabled = false;
+            } else {
+                this.adminRefreshBtn.style.display = 'none';
+                this.adminRefreshBtn.disabled = true;
+            }
         }
     }
 }
