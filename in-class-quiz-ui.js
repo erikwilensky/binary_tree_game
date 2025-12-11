@@ -19,11 +19,13 @@ class InClassQuizController {
         this.adminSubmitBtn = document.getElementById('quiz-admin-submit-btn');
         this.adminCancelBtn = document.getElementById('quiz-admin-cancel-btn');
         this.adminCloseBtn = document.getElementById('quiz-admin-close-btn');
+        this.adminRefreshBtn = document.getElementById('quiz-admin-refresh-btn');
         
         this.storageManager = new QuizAnswerStorage();
         this.currentTeamName = '';
         this.isLocked = false;
         this.ADMIN_PASSWORD = 'gamey';
+        this.isAdminAuthenticated = sessionStorage.getItem('quizAdminAuthenticated') === 'true';
         
         this.initializeEventListeners();
         this.setupAppSwitching();
@@ -83,6 +85,10 @@ class InClassQuizController {
         
         if (this.adminCloseBtn) {
             this.adminCloseBtn.addEventListener('click', () => this.hideAdminModal());
+        }
+        
+        if (this.adminRefreshBtn) {
+            this.adminRefreshBtn.addEventListener('click', () => this.refreshAdminView());
         }
         
         if (this.adminPasswordInput) {
@@ -273,11 +279,19 @@ class InClassQuizController {
     showAdminModal() {
         if (this.adminModal) {
             this.adminModal.classList.remove('hidden');
-            this.adminPasswordSection.classList.remove('hidden');
-            this.adminResults.classList.add('hidden');
-            if (this.adminPasswordInput) {
-                this.adminPasswordInput.value = '';
-                this.adminPasswordInput.focus();
+            
+            // If already authenticated, show results directly
+            if (this.isAdminAuthenticated) {
+                this.adminPasswordSection.classList.add('hidden');
+                this.adminResults.classList.remove('hidden');
+                this.refreshAdminView();
+            } else {
+                this.adminPasswordSection.classList.remove('hidden');
+                this.adminResults.classList.add('hidden');
+                if (this.adminPasswordInput) {
+                    this.adminPasswordInput.value = '';
+                    this.adminPasswordInput.focus();
+                }
             }
         }
     }
@@ -288,6 +302,42 @@ class InClassQuizController {
             if (this.adminPasswordInput) {
                 this.adminPasswordInput.value = '';
             }
+        }
+    }
+    
+    async refreshAdminView() {
+        if (!this.isAdminAuthenticated) {
+            // If not authenticated, show password section
+            this.adminPasswordSection.classList.remove('hidden');
+            this.adminResults.classList.add('hidden');
+            return;
+        }
+        
+        try {
+            await this.storageManager.loadAnswers();
+            const allAnswers = this.storageManager.getAllAnswers();
+            
+            // Filter to only show unviewed answers
+            const unviewedAnswers = {};
+            const teamsToMarkAsViewed = [];
+            
+            Object.keys(allAnswers).forEach(teamName => {
+                const data = allAnswers[teamName];
+                if (!data.viewed) {
+                    unviewedAnswers[teamName] = data;
+                    teamsToMarkAsViewed.push(teamName);
+                }
+            });
+            
+            // Mark answers as viewed
+            for (const teamName of teamsToMarkAsViewed) {
+                await this.storageManager.markAsViewed(teamName);
+            }
+            
+            this.displayAllAnswers(unviewedAnswers);
+        } catch (error) {
+            console.error('Error refreshing admin view:', error);
+            this.updateStatus('Error refreshing answers. Please try again.', 'error');
         }
     }
     
@@ -303,7 +353,10 @@ class InClassQuizController {
             return;
         }
         
-        // Password correct - show all unviewed answers and mark them as viewed
+        // Password correct - authenticate and show all unviewed answers
+        this.isAdminAuthenticated = true;
+        sessionStorage.setItem('quizAdminAuthenticated', 'true');
+        
         try {
             await this.storageManager.loadAnswers();
             const allAnswers = this.storageManager.getAllAnswers();
