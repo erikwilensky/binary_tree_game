@@ -6,6 +6,7 @@ class InClassQuizController {
         this.teamNameInput = document.getElementById('quiz-team-name');
         this.answerTextarea = document.getElementById('quiz-answer');
         this.lockBtn = document.getElementById('quiz-lock-btn');
+        this.resetBtn = document.getElementById('quiz-reset-btn');
         this.adminBtn = document.getElementById('quiz-admin-btn');
         this.statusDiv = document.getElementById('quiz-status');
         
@@ -31,6 +32,10 @@ class InClassQuizController {
     initializeEventListeners() {
         if (this.lockBtn) {
             this.lockBtn.addEventListener('click', () => this.lockAnswer());
+        }
+        
+        if (this.resetBtn) {
+            this.resetBtn.addEventListener('click', () => this.resetAnswer());
         }
         
         if (this.adminBtn) {
@@ -162,6 +167,50 @@ class InClassQuizController {
         }
     }
     
+    async resetAnswer() {
+        const teamName = this.teamNameInput?.value.trim();
+        
+        if (!teamName) {
+            this.updateStatus('Please enter a team name first', 'error');
+            return;
+        }
+        
+        // Check if locked
+        if (this.isLocked) {
+            this.updateStatus('Cannot reset a locked answer', 'error');
+            return;
+        }
+        
+        try {
+            // Clear from storage
+            await this.storageManager.loadAnswers();
+            const teamData = this.storageManager.getTeamAnswer(teamName);
+            
+            if (teamData && teamData.locked) {
+                this.updateStatus('Cannot reset a locked answer', 'error');
+                return;
+            }
+            
+            // Remove from storage if exists
+            if (teamData) {
+                await this.storageManager.removeTeamAnswer(teamName);
+            }
+            
+            // Clear textarea
+            if (this.answerTextarea) {
+                this.answerTextarea.value = '';
+            }
+            
+            // Clear draft from localStorage
+            localStorage.removeItem(`quiz_draft_${teamName}`);
+            
+            this.updateStatus('Answer cleared. You can now enter a new answer.', 'success');
+        } catch (error) {
+            console.error('Error resetting answer:', error);
+            this.updateStatus('Error resetting answer. Please try again.', 'error');
+        }
+    }
+    
     updateUIState() {
         if (this.isLocked) {
             if (this.answerTextarea) {
@@ -172,6 +221,9 @@ class InClassQuizController {
                 this.lockBtn.disabled = true;
                 this.lockBtn.textContent = 'Answer Locked';
             }
+            if (this.resetBtn) {
+                this.resetBtn.disabled = true;
+            }
         } else {
             if (this.answerTextarea) {
                 this.answerTextarea.disabled = false;
@@ -180,6 +232,9 @@ class InClassQuizController {
             if (this.lockBtn) {
                 this.lockBtn.disabled = false;
                 this.lockBtn.textContent = 'Lock Answer';
+            }
+            if (this.resetBtn) {
+                this.resetBtn.disabled = false;
             }
         }
     }
@@ -382,6 +437,13 @@ class QuizAnswerStorage {
             timestamp: timestamp
         };
         await this.saveAnswers();
+    }
+    
+    async removeTeamAnswer(teamName) {
+        if (this.answers[teamName]) {
+            delete this.answers[teamName];
+            await this.saveAnswers();
+        }
     }
     
     getTeamAnswer(teamName) {
