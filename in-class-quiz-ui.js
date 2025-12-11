@@ -320,6 +320,8 @@ class InClassQuizController {
             
             if (top5Answers.length === 0) {
                 this.adminTableContainer.innerHTML = '<p>No answers submitted yet.</p>';
+                this.answersLoaded = true; // Still mark as loaded even if empty
+                this.updateAdminButtons();
                 return;
             }
             
