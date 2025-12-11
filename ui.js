@@ -11,9 +11,7 @@ class UIController {
         this.appSelect = document.getElementById('app-select');
         this.binaryApp = document.getElementById('binary-tree-app');
         this.pythonApp = document.getElementById('python-tracing-app');
-        this.converterApp = document.getElementById('number-converter-app');
-        this.complexityApp = document.getElementById('time-complexity-app');
-        this.sqlApp = document.getElementById('sql-practice-app');
+        this.quizApp = document.getElementById('in-class-quiz-app');
 
         this.traversalSelect = document.getElementById('traversal-type');
         this.difficultySelect = document.getElementById('difficulty');
@@ -56,24 +54,21 @@ class UIController {
         if (!this.appSelect) return;
 
         const selected = this.appSelect.value;
+        const allApps = [
+            this.binaryApp,
+            this.pythonApp,
+            this.quizApp,
+            document.getElementById('number-converter-app'),
+            document.getElementById('time-complexity-app'),
+            document.getElementById('sql-practice-app')
+        ].filter(app => app !== null);
 
         // Hide all apps first
-        if (this.binaryApp) {
-            this.binaryApp.classList.add('app-section-hidden');
-        }
-        if (this.pythonApp) {
-            this.pythonApp.classList.add('app-section-hidden');
-        }
-        if (this.converterApp) {
-            this.converterApp.classList.add('app-section-hidden');
-        }
-        if (this.complexityApp) {
-            this.complexityApp.classList.add('app-section-hidden');
-        }
-        if (this.sqlApp) {
-            this.sqlApp.classList.add('app-section-hidden');
-        }
+        allApps.forEach(app => {
+            if (app) app.classList.add('app-section-hidden');
+        });
 
+        // Show selected app
         if (selected === 'binary') {
             if (this.binaryApp) {
                 this.binaryApp.classList.remove('app-section-hidden');
@@ -88,23 +83,9 @@ class UIController {
             // Pause any running game visually
             this.stopTimer();
             this.hideFeedback();
-        } else if (selected === 'converter') {
-            if (this.converterApp) {
-                this.converterApp.classList.remove('app-section-hidden');
-            }
-            // Pause any running game visually
-            this.stopTimer();
-            this.hideFeedback();
-        } else if (selected === 'complexity') {
-            if (this.complexityApp) {
-                this.complexityApp.classList.remove('app-section-hidden');
-            }
-            // Pause any running game visually
-            this.stopTimer();
-            this.hideFeedback();
-        } else if (selected === 'sql') {
-            if (this.sqlApp) {
-                this.sqlApp.classList.remove('app-section-hidden');
+        } else if (selected === 'quiz') {
+            if (this.quizApp) {
+                this.quizApp.classList.remove('app-section-hidden');
             }
             // Pause any running game visually
             this.stopTimer();

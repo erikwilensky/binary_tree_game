@@ -22,6 +22,7 @@
                     <option value="converter">Number Conversion</option>
                     <option value="complexity">Time Complexity Quiz</option>
                     <option value="sql">SQL Practice</option>
+                    <option value="quiz">In-Class Quiz</option>
                 </select>
             </div>
         </div>
@@ -296,6 +297,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- In-Class Quiz app -->
+        <div id="in-class-quiz-app" class="app-section app-section-hidden">
+            <h2>In-Class Quiz</h2>
+            <p class="subtitle">Enter your team name and answer, then lock your submission</p>
+            
+            <div class="quiz-container">
+                <div class="quiz-input-section">
+                    <div class="control-group">
+                        <label for="quiz-team-name">Team Name:</label>
+                        <input type="text" id="quiz-team-name" placeholder="Enter your team name" maxlength="50">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="quiz-answer">Your Answer:</label>
+                        <textarea id="quiz-answer" rows="10" placeholder="Type your answer here..." maxlength="2000"></textarea>
+                    </div>
+                    
+                    <div class="quiz-controls">
+                        <button id="quiz-lock-btn" class="btn btn-primary">Lock Answer</button>
+                        <button id="quiz-admin-btn" class="btn btn-secondary">View All Answers (Admin)</button>
+                    </div>
+                    
+                    <div id="quiz-status" class="quiz-status"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- High Score Modal -->
@@ -306,6 +334,27 @@
             <input type="text" id="initials-input" maxlength="2" placeholder="AA" autofocus>
             <div class="modal-buttons">
                 <button id="submit-initials-btn" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin View Modal -->
+    <div id="quiz-admin-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <h2>All Team Answers</h2>
+            <div id="quiz-admin-password-section">
+                <p>Enter admin password:</p>
+                <input type="password" id="quiz-admin-password" placeholder="Password" autofocus>
+                <div class="modal-buttons">
+                    <button id="quiz-admin-submit-btn" class="btn btn-primary">Submit</button>
+                    <button id="quiz-admin-cancel-btn" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
+            <div id="quiz-admin-results" class="hidden">
+                <div id="quiz-admin-table-container"></div>
+                <div class="modal-buttons">
+                    <button id="quiz-admin-close-btn" class="btn btn-primary">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -324,6 +373,7 @@
     <script src="number-converter-quiz-ui.js"></script>
     <script src="time-complexity-ui.js"></script>
     <script src="sql-practice-ui.js"></script>
+    <script src="in-class-quiz-ui.js"></script>
 </body>
 </html>
 
