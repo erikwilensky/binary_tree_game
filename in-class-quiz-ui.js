@@ -11,12 +11,14 @@ class InClassQuizController {
         
         // Admin panel elements
         this.adminTableContainer = document.getElementById('quiz-admin-table-container');
-        this.adminRefreshBtn = document.getElementById('quiz-admin-refresh-btn');
+        this.admin1Btn = document.getElementById('quiz-admin-1-btn');
+        this.admin2Btn = document.getElementById('quiz-admin-2-btn');
         
         this.storageManager = new QuizAnswerStorage();
         this.currentTeamName = '';
         this.isLocked = false;
         this.isProcessing = false; // Prevent multiple simultaneous operations
+        this.adminActivated = false; // Track if Admin 1 has been pressed
         
         this.initializeEventListeners();
         this.setupAppSwitching();
@@ -35,10 +37,8 @@ class InClassQuizController {
             this.answerTextarea.disabled = false;
         }
         
-        // Load admin panel if quiz app is already selected
-        if (this.appSelect && this.appSelect.value === 'quiz') {
-            this.loadAdminPanel();
-        }
+        // Initialize admin buttons state
+        this.updateAdminButtons();
     }
     
     initializeEventListeners() {
@@ -70,9 +70,17 @@ class InClassQuizController {
             });
         }
         
-        if (this.adminRefreshBtn) {
-            this.adminRefreshBtn.addEventListener('click', () => {
-                this.loadAdminPanel();
+        if (this.admin1Btn) {
+            this.admin1Btn.addEventListener('click', () => {
+                this.activateAdmin1();
+            });
+        }
+        
+        if (this.admin2Btn) {
+            this.admin2Btn.addEventListener('click', () => {
+                if (this.adminActivated) {
+                    this.loadAdminPanel();
+                }
             });
         }
     }
@@ -82,7 +90,12 @@ class InClassQuizController {
             this.appSelect.addEventListener('change', () => {
                 if (this.appSelect.value === 'quiz') {
                     this.loadTeamData();
-                    this.loadAdminPanel();
+                    // Reset admin state when switching to quiz
+                    this.adminActivated = false;
+                    this.updateAdminButtons();
+                    if (this.adminTableContainer) {
+                        this.adminTableContainer.innerHTML = '';
+                    }
                 }
             });
         }
@@ -325,6 +338,21 @@ class InClassQuizController {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+    
+    activateAdmin1() {
+        this.adminActivated = true;
+        this.updateAdminButtons();
+        this.updateStatus('Admin 1 activated. Press Admin 2 to view answers.', 'success');
+    }
+    
+    updateAdminButtons() {
+        if (this.admin1Btn) {
+            this.admin1Btn.disabled = this.adminActivated;
+        }
+        if (this.admin2Btn) {
+            this.admin2Btn.disabled = !this.adminActivated;
+        }
     }
 }
 
