@@ -375,9 +375,14 @@ class InClassQuizController {
         if (this.admin2Btn) {
             this.admin2Btn.disabled = !this.adminActivated;
         }
-        // Refresh button is shown and enabled after Admin 2 is pressed
+        // Refresh button is shown and enabled after Admin 2 is pressed and answers are loaded
         if (this.adminRefreshBtn) {
-            if (this.adminActivated && this.adminTableContainer && this.adminTableContainer.innerHTML.trim() !== '') {
+            const hasAnswers = this.adminTableContainer && 
+                              this.adminTableContainer.innerHTML.trim() !== '' && 
+                              !this.adminTableContainer.innerHTML.includes('Loading...') &&
+                              !this.adminTableContainer.innerHTML.includes('No answers');
+            
+            if (this.adminActivated && hasAnswers) {
                 this.adminRefreshBtn.style.display = 'inline-block';
                 this.adminRefreshBtn.disabled = false;
             } else {
