@@ -92,3 +92,4 @@ The anon key is safe to use in the frontend because:
 2. Play a game and set a high score
 3. Check Supabase dashboard → Table Editor → `high_scores` to see your score!
 
+

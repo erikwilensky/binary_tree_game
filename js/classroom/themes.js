@@ -52,6 +52,23 @@ class ThemeManager {
                     gradientStart: '#0B0C10',
                     gradientEnd: '#1F2833'
                 }
+            },
+            hardtoread: {
+                name: 'Hard to Read',
+                colors: {
+                    primary: '#FF00FF',
+                    secondary: '#00FFFF',
+                    accent: '#FFFF00',
+                    success: '#FF00FF',
+                    warning: '#00FFFF',
+                    danger: '#FFFF00',
+                    background: '#FF00FF',
+                    card: '#00FFFF',
+                    text: '#FFFF00',
+                    textLight: '#FF00FF',
+                    gradientStart: '#FF00FF',
+                    gradientEnd: '#00FFFF'
+                }
             }
         };
 
@@ -108,4 +125,7 @@ class ThemeManager {
 
 // Export singleton instance
 const themeManager = new ThemeManager();
+
+// Expose globally for game controller to access
+window.themeManager = themeManager;
 

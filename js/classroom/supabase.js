@@ -114,3 +114,4 @@ class SupabaseClient {
 // Export singleton instance
 const supabaseClient = new SupabaseClient();
 
+

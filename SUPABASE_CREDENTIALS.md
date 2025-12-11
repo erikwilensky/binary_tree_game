@@ -53,3 +53,4 @@ DATABASE_SSL=true
 3. Deploy to Vercel with the environment variables above
 4. Update `config.js` with your Vercel API URL
 
+

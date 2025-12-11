@@ -1,7 +1,7 @@
 // Powerup engine with realtime effects
 class PowerupEngine {
     constructor() {
-        this.powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'edit_name'];
+        this.powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'hard_to_read'];
         // Track active random char injection intervals
         // Key: `${sessionId}_${questionId}_${targetTeamId}`, Value: intervalId
         this.randomCharIntervals = new Map();
@@ -60,9 +60,9 @@ class PowerupEngine {
                 result = await this.handleEarlyLock(sessionId, teamId, targetTeamId);
                 payload = { targetTeamId, lockedAt: result.lockedAt };
                 break;
-            case 'edit_name':
-                result = await this.handleEditTeamName(sessionId, teamId, targetTeamId);
-                payload = { targetTeamId, newName: result.newName, editorName: result.editorName };
+            case 'hard_to_read':
+                result = await this.handleHardToRead(sessionId, teamId, targetTeamId);
+                payload = { targetTeamId, forcedTheme: result.forcedTheme };
                 break;
             default:
                 throw new Error(`Unknown powerup type: ${powerupType}`);
@@ -265,37 +265,24 @@ class PowerupEngine {
         }
     }
 
-    // Edit Team Name powerup - allows editing another team's name with accountability
-    async handleEditTeamName(sessionId, teamId, targetTeamId) {
-        if (!targetTeamId) throw new Error('Target team required for edit_name');
-
-        const editingTeam = await classroomAPI.getTeam(teamId);
-        if (!editingTeam) throw new Error('Editing team not found');
+    // Hard to Read powerup - forces target team to use a hard-to-read theme
+    async handleHardToRead(sessionId, teamId, targetTeamId) {
+        if (!targetTeamId) throw new Error('Target team required for hard_to_read');
 
         const targetTeam = await classroomAPI.getTeam(targetTeamId);
         if (!targetTeam) throw new Error('Target team not found');
 
-        // Check if name already has "edited by" suffix - if so, remove it first
-        let baseName = targetTeam.team_name;
-        const editedByMatch = baseName.match(/^(.+?)\s*\(edited by .+?\)$/);
-        if (editedByMatch) {
-            baseName = editedByMatch[1].trim();
-        }
+        // Force the hard-to-read theme on the target team
+        await classroomAPI.updateTeam(targetTeamId, { forced_theme: 'hardtoread' });
 
-        // Prompt for new name
-        const newName = prompt(`Enter new name for "${baseName}":`, baseName);
-        
-        if (!newName || newName.trim() === '') {
-            throw new Error('Name cannot be empty');
-        }
+        // Trigger event for visual feedback on target team's device
+        realtimeManager.triggerEvent('themeForced', {
+            type: 'hard_to_read',
+            targetTeamId: targetTeamId,
+            forcedTheme: 'hardtoread'
+        });
 
-        // Create new name with accountability
-        const editedName = `${newName.trim()} (edited by ${editingTeam.team_name})`;
-
-        // Update team name
-        await classroomAPI.updateTeam(targetTeamId, { team_name: editedName });
-
-        return { newName: editedName, editorName: editingTeam.team_name, originalName: baseName };
+        return { forcedTheme: 'hardtoread' };
     }
 
     // Get powerup display name
@@ -305,7 +292,7 @@ class PowerupEngine {
             'score_bash': 'Score Bash',
             'roll_dice': 'Roll the Dice',
             'early_lock': 'Early Lock',
-            'edit_name': 'Edit Team Name'
+            'hard_to_read': 'Hard to Read'
         };
         return names[powerupType] || powerupType;
     }
@@ -317,7 +304,7 @@ class PowerupEngine {
             'score_bash': 'Reduce target team\'s modifier by 10%',
             'roll_dice': '50% chance: +20% modifier, 50% chance: -10% modifier',
             'early_lock': 'Lock target team\'s answer 30 seconds before time ends',
-            'edit_name': 'Edit another team\'s name (shows who edited it)'
+            'hard_to_read': 'Force target team to use a hard-to-read theme'
         };
         return descriptions[powerupType] || '';
     }

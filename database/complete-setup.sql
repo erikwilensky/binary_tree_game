@@ -104,3 +104,4 @@ WITH CHECK (true);
 -- Success message (won't show in Supabase, but helps when reading this file)
 -- ✅ Database setup complete! Your game is ready to use.
 
+

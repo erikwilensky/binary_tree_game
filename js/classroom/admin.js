@@ -4,7 +4,6 @@ class AdminController {
         this.elements = {
             sessionCodeDisplay: document.getElementById('session-code-display'),
             backToLobbyBtn: document.getElementById('back-to-lobby-btn'),
-            questionText: document.getElementById('question-text'),
             timeLimit: document.getElementById('time-limit'),
             startQuestionBtn: document.getElementById('start-question-btn'),
             endQuestionBtn: document.getElementById('end-question-btn'),
@@ -22,7 +21,8 @@ class AdminController {
             teamCheckboxes: document.getElementById('team-checkboxes'),
             randomCount: document.getElementById('random-count'),
             distributePowerupsBtn: document.getElementById('distribute-powerups-btn'),
-            randomPowerupAllBtn: document.getElementById('random-powerup-all-btn')
+            randomPowerupAllBtn: document.getElementById('random-powerup-all-btn'),
+            randomPowerupCount: document.getElementById('random-powerup-count')
         };
 
         this.isAnswersFullscreen = false;
@@ -103,7 +103,6 @@ class AdminController {
         if (question) {
             this.elements.currentQuestionDisplay.innerHTML = `
                 <h3>Active Question</h3>
-                <p><strong>${this.escapeHtml(question.text)}</strong></p>
                 <p>Time Limit: ${question.time_limit_seconds}s</p>
                 <p>Started: ${new Date(question.started_at).toLocaleTimeString()}</p>
             `;
@@ -117,13 +116,7 @@ class AdminController {
     }
 
     async startQuestion() {
-        const questionText = this.elements.questionText.value.trim();
         const timeLimit = parseInt(this.elements.timeLimit.value);
-
-        if (!questionText) {
-            alert('Please enter a question');
-            return;
-        }
 
         if (timeLimit < 10 || timeLimit > 600) {
             alert('Time limit must be between 10 and 600 seconds');
@@ -136,14 +129,11 @@ class AdminController {
         try {
             const sessionId = classroomState.get('sessionId');
             
-            // Create question
-            const question = await classroomAPI.createQuestion(sessionId, questionText, timeLimit);
+            // Create question with placeholder text (question displayed on TV)
+            const question = await classroomAPI.createQuestion(sessionId, 'Question displayed on TV', timeLimit);
             
             // Start question
             await classroomAPI.startQuestion(question.id);
-            
-            // Clear input
-            this.elements.questionText.value = '';
             
             // Reload
             await this.loadCurrentQuestion();
@@ -430,7 +420,9 @@ class AdminController {
     }
 
     async giveRandomPowerupToAll() {
-        if (!confirm('Give 1 random powerup to all teams?')) return;
+        const count = parseInt(this.elements.randomPowerupCount.value);
+        
+        if (!confirm(`Give ${count} random powerup(s) to all teams?`)) return;
 
         this.elements.randomPowerupAllBtn.disabled = true;
         this.elements.randomPowerupAllBtn.textContent = 'Distributing...';
@@ -442,25 +434,28 @@ class AdminController {
             if (teams.length === 0) {
                 alert('No teams in session');
                 this.elements.randomPowerupAllBtn.disabled = false;
-                this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerup to All Teams';
+                this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerups to All Teams';
                 return;
             }
 
-            const powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'edit_name'];
+            const powerupTypes = ['random_chars', 'score_bash', 'roll_dice', 'early_lock', 'hard_to_read'];
             let distributed = 0;
 
             for (const team of teams) {
-                // Pick a random powerup type
-                const randomPowerup = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
-                
                 const currentPowerups = team.powerups || [];
-                const newPowerups = [...currentPowerups, randomPowerup];
+                const newPowerups = [...currentPowerups];
+                
+                // Add the specified number of random powerups
+                for (let i = 0; i < count; i++) {
+                    const randomPowerup = powerupTypes[Math.floor(Math.random() * powerupTypes.length)];
+                    newPowerups.push(randomPowerup);
+                }
                 
                 await classroomAPI.updateTeam(team.id, { powerups: newPowerups });
                 distributed++;
             }
 
-            alert(`Distributed 1 random powerup to ${distributed} team(s)!`);
+            alert(`Distributed ${count} random powerup(s) to ${distributed} team(s)!`);
             
             // Reload teams
             await this.loadTeams();
@@ -469,7 +464,7 @@ class AdminController {
             alert('Failed to distribute powerups. Please try again.');
         } finally {
             this.elements.randomPowerupAllBtn.disabled = false;
-            this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerup to All Teams';
+            this.elements.randomPowerupAllBtn.textContent = 'Give Random Powerups to All Teams';
         }
     }
 

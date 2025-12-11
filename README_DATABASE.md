@@ -52,3 +52,4 @@ If you have existing data in JSONBin:
 2. Use the database migration script (if needed) or manually insert into the new database
 3. The new system will start fresh if you don't migrate
 
+

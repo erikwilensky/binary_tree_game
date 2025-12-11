@@ -59,6 +59,12 @@ class GameController {
 
         // Update UI
         this.updateUI();
+        
+        // Check for forced theme on initial load
+        const teams = classroomState.get('teams');
+        if (teams) {
+            this.checkForcedTheme(teams);
+        }
     }
 
     setupUI() {
@@ -163,6 +169,8 @@ class GameController {
         classroomState.on('teams', (teams) => {
             this.renderTeamsStatus(teams);
             this.updateScore();
+            // Check for forced theme
+            this.checkForcedTheme(teams);
         });
 
         // Listen for powerups changes
@@ -197,6 +205,27 @@ class GameController {
                 this.showPowerupEffect('⚠️ Your answer has been locked early by a powerup!', 'warning');
                 // Force lock the answer
                 this.lockAnswer(true);
+            }
+        });
+
+        // Theme forced
+        realtimeManager.on('themeForced', (data) => {
+            if (data.targetTeamId === classroomState.get('teamId')) {
+                this.showPowerupEffect('🎨 Your theme has been changed by a powerup!', 'warning');
+                // Apply forced theme
+                const teams = classroomState.get('teams');
+                const team = teams.find(t => t.id === data.targetTeamId);
+                if (team && team.forced_theme) {
+                    if (window.themeManager) {
+                        window.themeManager.applyTheme(team.forced_theme);
+                    }
+                    // Disable theme selector
+                    const themeSelect = document.getElementById('theme-select');
+                    if (themeSelect) {
+                        themeSelect.disabled = true;
+                        themeSelect.title = 'Theme locked by powerup';
+                    }
+                }
             }
         });
     }
@@ -540,7 +569,7 @@ class GameController {
         const teams = classroomState.get('teams');
         
         // For powerups that need a target, show team selection
-        if (powerupType === 'random_chars' || powerupType === 'score_bash' || powerupType === 'early_lock' || powerupType === 'edit_name') {
+        if (powerupType === 'random_chars' || powerupType === 'score_bash' || powerupType === 'early_lock' || powerupType === 'hard_to_read') {
             const targetTeam = await this.selectTargetTeam(teams, teamId);
             if (!targetTeam) return;
             
@@ -635,6 +664,32 @@ class GameController {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => notification.remove(), 300);
         }, 5000);
+    }
+
+    checkForcedTheme(teams) {
+        const teamId = classroomState.get('teamId');
+        if (!teamId) return;
+        
+        const team = teams.find(t => t.id === teamId);
+        if (team && team.forced_theme) {
+            // Apply forced theme
+            if (window.themeManager) {
+                window.themeManager.applyTheme(team.forced_theme);
+            }
+            // Disable theme selector
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.disabled = true;
+                themeSelect.title = 'Theme locked by powerup';
+            }
+        } else {
+            // Re-enable theme selector if no forced theme
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.disabled = false;
+                themeSelect.title = '';
+            }
+        }
     }
 
     escapeHtml(text) {

@@ -48,6 +48,8 @@ class RealtimeManager {
             // Deep comparison to avoid unnecessary updates
             if (!currentTeams || teams.length !== currentTeams.length) {
                 classroomState.set('teams', teams || []);
+                // Check for forced theme
+                this.checkForcedTheme(teams);
                 return;
             }
             
@@ -59,6 +61,7 @@ class RealtimeManager {
                 if (!currentTeam || 
                     currentTeam.score !== team.score ||
                     currentTeam.team_name !== team.team_name ||
+                    currentTeam.forced_theme !== team.forced_theme ||
                     JSON.stringify(currentTeam.powerups || []) !== JSON.stringify(team.powerups || [])) {
                     hasChanges = true;
                     break;
@@ -67,6 +70,8 @@ class RealtimeManager {
             
             if (hasChanges) {
                 classroomState.set('teams', teams || []);
+                // Check for forced theme
+                this.checkForcedTheme(teams);
             }
         });
 
@@ -285,11 +290,48 @@ class RealtimeManager {
             }
         }
 
+        // Handle hard to read powerup if we're the target
+        if (event.powerup_type === 'hard_to_read' && 
+            event.target_team_id === teamId) {
+            this.triggerEvent('themeForced', {
+                type: 'hard_to_read',
+                targetTeamId: teamId,
+                forcedTheme: event.payload?.forcedTheme || 'hardtoread'
+            });
+        }
+
         // Update teams to reflect score changes
         if (event.powerup_type === 'score_bash' || event.powerup_type === 'roll_dice') {
             const sessionId = classroomState.get('sessionId');
             const teams = await classroomAPI.getTeams(sessionId);
             classroomState.set('teams', teams || []);
+        }
+    }
+
+    // Check for forced theme on current team
+    checkForcedTheme(teams) {
+        const teamId = classroomState.get('teamId');
+        if (!teamId) return;
+        
+        const team = teams.find(t => t.id === teamId);
+        if (team && team.forced_theme) {
+            // Apply forced theme
+            if (window.themeManager) {
+                window.themeManager.applyTheme(team.forced_theme);
+            }
+            // Disable theme selector
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.disabled = true;
+                themeSelect.title = 'Theme locked by powerup';
+            }
+        } else {
+            // Re-enable theme selector if no forced theme
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.disabled = false;
+                themeSelect.title = '';
+            }
         }
     }
 

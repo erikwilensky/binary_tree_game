@@ -92,3 +92,4 @@ const API_URL = 'https://your-project.vercel.app/api';
 - **Table doesn't exist**: Make sure you ran the schema.sql in the SQL Editor
 - **Permission denied**: Check your RLS policies or use the service role key
 
+
