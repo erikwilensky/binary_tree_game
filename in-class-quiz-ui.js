@@ -7,31 +7,25 @@ class InClassQuizController {
         this.answerTextarea = document.getElementById('quiz-answer');
         this.lockBtn = document.getElementById('quiz-lock-btn');
         this.resetBtn = document.getElementById('quiz-reset-btn');
-        this.adminBtn = document.getElementById('quiz-admin-btn');
         this.statusDiv = document.getElementById('quiz-status');
         
-        // Admin modal elements
-        this.adminModal = document.getElementById('quiz-admin-modal');
-        this.adminPasswordInput = document.getElementById('quiz-admin-password');
-        this.adminPasswordSection = document.getElementById('quiz-admin-password-section');
-        this.adminResults = document.getElementById('quiz-admin-results');
+        // Admin panel elements
         this.adminTableContainer = document.getElementById('quiz-admin-table-container');
-        this.adminSubmitBtn = document.getElementById('quiz-admin-submit-btn');
-        this.adminCancelBtn = document.getElementById('quiz-admin-cancel-btn');
-        this.adminCloseBtn = document.getElementById('quiz-admin-close-btn');
         this.adminRefreshBtn = document.getElementById('quiz-admin-refresh-btn');
         
         this.storageManager = new QuizAnswerStorage();
         this.currentTeamName = '';
         this.isLocked = false;
-        this.ADMIN_PASSWORD = 'gamey';
-        this.isAdminAuthenticated = sessionStorage.getItem('quizAdminAuthenticated') === 'true';
         
         this.initializeEventListeners();
         this.setupAppSwitching();
         // Ensure reset button is enabled on initialization
         if (this.resetBtn) {
             this.resetBtn.disabled = false;
+        }
+        // Load admin panel if quiz app is already selected
+        if (this.appSelect && this.appSelect.value === 'quiz') {
+            this.loadAdminPanel();
         }
     }
     
@@ -58,14 +52,6 @@ class InClassQuizController {
             });
         }
         
-        if (this.adminBtn) {
-            this.adminBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                this.showAdminModal();
-            });
-        }
-        
         if (this.teamNameInput) {
             this.teamNameInput.addEventListener('input', () => this.onTeamNameChange());
         }
@@ -74,29 +60,9 @@ class InClassQuizController {
             this.answerTextarea.addEventListener('input', () => this.saveDraft());
         }
         
-        // Admin modal event listeners
-        if (this.adminSubmitBtn) {
-            this.adminSubmitBtn.addEventListener('click', () => this.checkAdminPassword());
-        }
-        
-        if (this.adminCancelBtn) {
-            this.adminCancelBtn.addEventListener('click', () => this.hideAdminModal());
-        }
-        
-        if (this.adminCloseBtn) {
-            this.adminCloseBtn.addEventListener('click', () => this.hideAdminModal());
-        }
-        
+        // Admin panel refresh button
         if (this.adminRefreshBtn) {
-            this.adminRefreshBtn.addEventListener('click', () => this.refreshAdminView());
-        }
-        
-        if (this.adminPasswordInput) {
-            this.adminPasswordInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.checkAdminPassword();
-                }
-            });
+            this.adminRefreshBtn.addEventListener('click', () => this.loadAdminPanel());
         }
     }
     
@@ -105,8 +71,9 @@ class InClassQuizController {
         if (this.appSelect) {
             this.appSelect.addEventListener('change', () => {
                 if (this.appSelect.value === 'quiz') {
-                    // Load team data when quiz app is selected
+                    // Load team data and admin panel when quiz app is selected
                     this.loadTeamData();
+                    this.loadAdminPanel();
                 }
             });
         }
@@ -276,150 +243,61 @@ class InClassQuizController {
         }
     }
     
-    showAdminModal() {
-        if (this.adminModal) {
-            this.adminModal.classList.remove('hidden');
-            
-            // If already authenticated, show results directly
-            if (this.isAdminAuthenticated) {
-                this.adminPasswordSection.classList.add('hidden');
-                this.adminResults.classList.remove('hidden');
-                this.refreshAdminView();
-            } else {
-                this.adminPasswordSection.classList.remove('hidden');
-                this.adminResults.classList.add('hidden');
-                if (this.adminPasswordInput) {
-                    this.adminPasswordInput.value = '';
-                    this.adminPasswordInput.focus();
-                }
-            }
-        }
-    }
-    
-    hideAdminModal() {
-        if (this.adminModal) {
-            this.adminModal.classList.add('hidden');
-            if (this.adminPasswordInput) {
-                this.adminPasswordInput.value = '';
-            }
-        }
-    }
-    
-    async refreshAdminView() {
-        if (!this.isAdminAuthenticated) {
-            // If not authenticated, show password section
-            this.adminPasswordSection.classList.remove('hidden');
-            this.adminResults.classList.add('hidden');
-            return;
-        }
-        
-        try {
-            await this.storageManager.loadAnswers();
-            const allAnswers = this.storageManager.getAllAnswers();
-            
-            // Filter to only show unviewed answers
-            const unviewedAnswers = {};
-            const teamsToMarkAsViewed = [];
-            
-            Object.keys(allAnswers).forEach(teamName => {
-                const data = allAnswers[teamName];
-                if (!data.viewed) {
-                    unviewedAnswers[teamName] = data;
-                    teamsToMarkAsViewed.push(teamName);
-                }
-            });
-            
-            // Mark answers as viewed
-            for (const teamName of teamsToMarkAsViewed) {
-                await this.storageManager.markAsViewed(teamName);
-            }
-            
-            this.displayAllAnswers(unviewedAnswers);
-        } catch (error) {
-            console.error('Error refreshing admin view:', error);
-            this.updateStatus('Error refreshing answers. Please try again.', 'error');
-        }
-    }
-    
-    async checkAdminPassword() {
-        const password = this.adminPasswordInput?.value.trim();
-        
-        if (password !== this.ADMIN_PASSWORD) {
-            this.updateStatus('Incorrect password', 'error');
-            if (this.adminPasswordInput) {
-                this.adminPasswordInput.value = '';
-                this.adminPasswordInput.focus();
-            }
-            return;
-        }
-        
-        // Password correct - authenticate and show all unviewed answers
-        this.isAdminAuthenticated = true;
-        sessionStorage.setItem('quizAdminAuthenticated', 'true');
-        
-        try {
-            await this.storageManager.loadAnswers();
-            const allAnswers = this.storageManager.getAllAnswers();
-            
-            // Filter to only show unviewed answers
-            const unviewedAnswers = {};
-            const teamsToMarkAsViewed = [];
-            
-            Object.keys(allAnswers).forEach(teamName => {
-                const data = allAnswers[teamName];
-                if (!data.viewed) {
-                    unviewedAnswers[teamName] = data;
-                    teamsToMarkAsViewed.push(teamName);
-                }
-            });
-            
-            // Mark answers as viewed
-            for (const teamName of teamsToMarkAsViewed) {
-                await this.storageManager.markAsViewed(teamName);
-            }
-            
-            this.displayAllAnswers(unviewedAnswers);
-            
-            this.adminPasswordSection.classList.add('hidden');
-            this.adminResults.classList.remove('hidden');
-        } catch (error) {
-            console.error('Error loading answers:', error);
-            this.updateStatus('Error loading answers. Please try again.', 'error');
-        }
-    }
-    
-    displayAllAnswers(allAnswers) {
+    async loadAdminPanel() {
         if (!this.adminTableContainer) return;
         
-        const teams = Object.keys(allAnswers).sort();
-        
-        if (teams.length === 0) {
-            this.adminTableContainer.innerHTML = '<p>No new team answers to view. All answers have already been viewed.</p>';
-            return;
-        }
-        
-        let html = '<table class="quiz-admin-table"><thead><tr>';
-        html += '<th>Team Name</th>';
-        html += '<th>Answer</th>';
-        html += '<th>Status</th>';
-        html += '<th>Timestamp</th>';
-        html += '</tr></thead><tbody>';
-        
-        teams.forEach(teamName => {
-            const data = allAnswers[teamName];
-            const status = data.locked ? '<span class="status-locked">Locked</span>' : '<span class="status-unlocked">Unlocked</span>';
-            const timestamp = data.timestamp ? new Date(data.timestamp).toLocaleString() : 'N/A';
+        try {
+            await this.storageManager.loadAnswers();
+            const allAnswers = this.storageManager.getAllAnswers();
             
-            html += '<tr>';
-            html += `<td><strong>${this.escapeHtml(teamName)}</strong></td>`;
-            html += `<td>${this.escapeHtml(data.answer || 'No answer')}</td>`;
-            html += `<td>${status}</td>`;
-            html += `<td>${timestamp}</td>`;
-            html += '</tr>';
-        });
-        
-        html += '</tbody></table>';
-        this.adminTableContainer.innerHTML = html;
+            // Convert to array and sort by timestamp (newest first)
+            const answersArray = Object.keys(allAnswers).map(teamName => ({
+                teamName: teamName,
+                ...allAnswers[teamName]
+            })).filter(item => item.timestamp); // Only include items with timestamps
+            
+            // Sort by timestamp descending (newest first)
+            answersArray.sort((a, b) => {
+                const timeA = new Date(a.timestamp).getTime();
+                const timeB = new Date(b.timestamp).getTime();
+                return timeB - timeA; // Descending order
+            });
+            
+            // Get top 5
+            const top5Answers = answersArray.slice(0, 5);
+            
+            if (top5Answers.length === 0) {
+                this.adminTableContainer.innerHTML = '<p>No answers submitted yet.</p>';
+                return;
+            }
+            
+            let html = '<table class="quiz-admin-table"><thead><tr>';
+            html += '<th>Team Name</th>';
+            html += '<th>Answer</th>';
+            html += '<th>Status</th>';
+            html += '<th>Timestamp</th>';
+            html += '</tr></thead><tbody>';
+            
+            top5Answers.forEach(item => {
+                const status = item.locked ? '<span class="status-locked">Locked</span>' : '<span class="status-unlocked">Unlocked</span>';
+                const timestamp = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'N/A';
+                
+                html += '<tr>';
+                html += `<td><strong>${this.escapeHtml(item.teamName)}</strong></td>`;
+                html += `<td>${this.escapeHtml(item.answer || 'No answer')}</td>`;
+                html += `<td>${status}</td>`;
+                html += `<td>${timestamp}</td>`;
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            this.adminTableContainer.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading admin panel:', error);
+            if (this.adminTableContainer) {
+                this.adminTableContainer.innerHTML = '<p>Error loading answers. Please try again.</p>';
+            }
+        }
     }
     
     escapeHtml(text) {
@@ -516,22 +394,12 @@ class QuizAnswerStorage {
     }
     
     async saveTeamAnswer(teamName, answer, locked, timestamp) {
-        // Preserve viewed status if it exists
-        const existing = this.answers[teamName] || {};
         this.answers[teamName] = {
             answer: answer,
             locked: locked,
-            timestamp: timestamp,
-            viewed: existing.viewed || false
+            timestamp: timestamp
         };
         await this.saveAnswers();
-    }
-    
-    async markAsViewed(teamName) {
-        if (this.answers[teamName]) {
-            this.answers[teamName].viewed = true;
-            await this.saveAnswers();
-        }
     }
     
     async removeTeamAnswer(teamName) {

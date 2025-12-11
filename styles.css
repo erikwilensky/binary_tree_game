@@ -1422,9 +1422,18 @@ header h1 {
 
 /* In-Class Quiz Styles */
 .quiz-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 968px) {
+    .quiz-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 .quiz-input-section {
@@ -1611,6 +1620,19 @@ header h1 {
     color: #666;
     padding: 20px;
     font-size: 1.1em;
+}
+
+.quiz-admin-panel {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.quiz-admin-panel h3 {
+    color: #667eea;
+    margin-bottom: 15px;
+    font-size: 1.3em;
 }
 
 @media (max-width: 768px) {

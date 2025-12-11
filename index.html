@@ -318,10 +318,16 @@
                     <div class="quiz-controls">
                         <button id="quiz-lock-btn" class="btn btn-primary">Lock Answer</button>
                         <button id="quiz-reset-btn" class="btn btn-secondary">Clear Answer</button>
-                        <button id="quiz-admin-btn" class="btn btn-secondary">View All Answers (Admin)</button>
                     </div>
                     
                     <div id="quiz-status" class="quiz-status"></div>
+                </div>
+                
+                <!-- Admin Panel - Always Visible -->
+                <div class="quiz-admin-panel">
+                    <h3>Admin - Latest 5 Answers</h3>
+                    <button id="quiz-admin-refresh-btn" class="btn btn-secondary" style="margin-bottom: 15px;">Refresh</button>
+                    <div id="quiz-admin-table-container"></div>
                 </div>
             </div>
         </div>
@@ -339,29 +345,6 @@
         </div>
     </div>
 
-    <!-- Admin View Modal -->
-    <div id="quiz-admin-modal" class="modal hidden">
-        <div class="modal-content modal-large">
-            <h2>All Team Answers</h2>
-            <div id="quiz-admin-password-section">
-                <p>Enter admin password:</p>
-                <input type="password" id="quiz-admin-password" placeholder="Password" autofocus>
-                <div class="modal-buttons">
-                    <button id="quiz-admin-submit-btn" class="btn btn-primary">Submit</button>
-                    <button id="quiz-admin-cancel-btn" class="btn btn-secondary">Cancel</button>
-                </div>
-            </div>
-            <div id="quiz-admin-results" class="hidden">
-                <div class="modal-buttons" style="margin-bottom: 15px;">
-                    <button id="quiz-admin-refresh-btn" class="btn btn-secondary">Refresh</button>
-                </div>
-                <div id="quiz-admin-table-container"></div>
-                <div class="modal-buttons">
-                    <button id="quiz-admin-close-btn" class="btn btn-primary">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Optional: Add token here for local testing (remove before committing!) -->
     <!-- <script data-github-token="YOUR_TOKEN_HERE"></script> -->
