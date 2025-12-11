@@ -25,6 +25,8 @@ class GameController {
         this.isFullscreen = false;
         this.isTyping = false;
         this.lastTypingTime = 0;
+        this.hasLocalChanges = false; // Track if user has made local edits
+        this.lastSyncedValue = ''; // Track what we last synced to server
         
         // Expose to window for realtime manager to check
         window.gameController = this;
@@ -87,9 +89,10 @@ class GameController {
 
         // Answer input - sync on input
         let typingTimeout;
-        this.elements.answerInput.addEventListener('input', () => {
+        this.elements.answerInput.addEventListener('input', (e) => {
             this.isTyping = true;
             this.lastTypingTime = Date.now();
+            this.hasLocalChanges = true; // Mark that user has made local changes
             
             // Clear existing timeout
             clearTimeout(typingTimeout);
@@ -238,7 +241,16 @@ class GameController {
             }
 
             this.currentAnswerId = answer.id;
-            this.elements.answerInput.value = answer.answer || '';
+            
+            // Only update input if user hasn't made local changes
+            // This prevents overwriting what the user is typing
+            if (!this.hasLocalChanges) {
+                this.elements.answerInput.value = answer.answer || '';
+                this.lastSyncedValue = answer.answer || '';
+            } else {
+                // User has local changes - don't overwrite, but update lastSyncedValue for comparison
+                this.lastSyncedValue = answer.answer || '';
+            }
             
             if (answer.locked) {
                 this.elements.answerInput.disabled = true;
@@ -304,6 +316,8 @@ class GameController {
         
         try {
             await classroomAPI.updateAnswer(this.currentAnswerId, { answer: answerText });
+            this.lastSyncedValue = answerText; // Track what we synced
+            this.hasLocalChanges = false; // Reset local changes flag
         } catch (error) {
             console.error('Sync answer error:', error);
         }

@@ -182,39 +182,32 @@ class RealtimeManager {
             // Update UI if on game page
             const answerInput = document.getElementById('answer-input');
             if (answerInput && !answerInput.disabled) {
+                // MAJOR CHANGE: Check if user has local changes
+                const hasLocalChanges = window.gameController && window.gameController.hasLocalChanges;
+                
                 // STRICT check: is user typing?
                 const isFocused = document.activeElement === answerInput;
                 const isTyping = window.gameController && (
                     window.gameController.isTyping ||
-                    (Date.now() - (window.gameController.lastTypingTime || 0)) < 10000 // Extended to 10 seconds
+                    (Date.now() - (window.gameController.lastTypingTime || 0)) < 10000
                 );
                 
-                // If user is typing or input is focused, DO NOT UPDATE AT ALL
-                // This prevents any text deletion while typing
-                if (isFocused || isTyping) {
-                    // User is actively typing - completely ignore all updates
-                    // Don't even check for powerups - wait until user stops typing
+                // If user has local changes OR is typing, NEVER UPDATE
+                if (hasLocalChanges || isFocused || isTyping) {
+                    // User has made local changes or is typing - completely ignore server updates
                     return;
                 }
                 
-                // Additional safety: Check if current input value differs from server value
-                // If user has typed something different, don't overwrite it
+                // User has no local changes and is not typing - safe to update
                 const currentValue = answerInput.value;
                 const serverValue = answer.answer || '';
                 
-                // If user has typed something and it's different from server, be very careful
-                if (currentValue !== serverValue && currentValue.length > 0) {
-                    // User has typed something - don't overwrite with server value
-                    // Only update if server value is longer (might be a powerup, but we'll handle that when not typing)
-                    if (serverValue.length <= currentValue.length) {
-                        return; // Server value is same or shorter - don't overwrite user's typing
-                    }
-                    // If server value is longer, it might be a powerup - but since user isn't typing, it's safe
-                }
-                
-                // User not typing - safe to update
+                // Only update if values are different
                 if (currentValue !== serverValue) {
                     answerInput.value = serverValue;
+                    if (window.gameController) {
+                        window.gameController.lastSyncedValue = serverValue;
+                    }
                 }
             }
         }
