@@ -35,15 +35,33 @@ class InClassQuizController {
     
     initializeEventListeners() {
         if (this.lockBtn) {
-            this.lockBtn.addEventListener('click', () => this.lockAnswer());
+            this.lockBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.lockAnswer().catch(err => {
+                    console.error('Error in lockAnswer:', err);
+                    this.updateStatus('Error locking answer. Please try again.', 'error');
+                });
+            });
         }
         
         if (this.resetBtn) {
-            this.resetBtn.addEventListener('click', () => this.resetAnswer());
+            this.resetBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.resetAnswer().catch(err => {
+                    console.error('Error in resetAnswer:', err);
+                    this.updateStatus('Error resetting answer. Please try again.', 'error');
+                });
+            });
         }
         
         if (this.adminBtn) {
-            this.adminBtn.addEventListener('click', () => this.showAdminModal());
+            this.adminBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showAdminModal();
+            });
         }
         
         if (this.teamNameInput) {
@@ -184,7 +202,7 @@ class InClassQuizController {
             await this.storageManager.loadAnswers();
             const teamData = this.storageManager.getTeamAnswer(teamName);
             
-            // Remove from storage if exists
+            // Remove from storage if exists (this also clears viewed status)
             if (teamData) {
                 await this.storageManager.removeTeamAnswer(teamName);
             }
@@ -285,11 +303,29 @@ class InClassQuizController {
             return;
         }
         
-        // Password correct - show all answers
+        // Password correct - show all unviewed answers and mark them as viewed
         try {
             await this.storageManager.loadAnswers();
             const allAnswers = this.storageManager.getAllAnswers();
-            this.displayAllAnswers(allAnswers);
+            
+            // Filter to only show unviewed answers
+            const unviewedAnswers = {};
+            const teamsToMarkAsViewed = [];
+            
+            Object.keys(allAnswers).forEach(teamName => {
+                const data = allAnswers[teamName];
+                if (!data.viewed) {
+                    unviewedAnswers[teamName] = data;
+                    teamsToMarkAsViewed.push(teamName);
+                }
+            });
+            
+            // Mark answers as viewed
+            for (const teamName of teamsToMarkAsViewed) {
+                await this.storageManager.markAsViewed(teamName);
+            }
+            
+            this.displayAllAnswers(unviewedAnswers);
             
             this.adminPasswordSection.classList.add('hidden');
             this.adminResults.classList.remove('hidden');
@@ -305,7 +341,7 @@ class InClassQuizController {
         const teams = Object.keys(allAnswers).sort();
         
         if (teams.length === 0) {
-            this.adminTableContainer.innerHTML = '<p>No team answers submitted yet.</p>';
+            this.adminTableContainer.innerHTML = '<p>No new team answers to view. All answers have already been viewed.</p>';
             return;
         }
         
@@ -427,12 +463,22 @@ class QuizAnswerStorage {
     }
     
     async saveTeamAnswer(teamName, answer, locked, timestamp) {
+        // Preserve viewed status if it exists
+        const existing = this.answers[teamName] || {};
         this.answers[teamName] = {
             answer: answer,
             locked: locked,
-            timestamp: timestamp
+            timestamp: timestamp,
+            viewed: existing.viewed || false
         };
         await this.saveAnswers();
+    }
+    
+    async markAsViewed(teamName) {
+        if (this.answers[teamName]) {
+            this.answers[teamName].viewed = true;
+            await this.saveAnswers();
+        }
     }
     
     async removeTeamAnswer(teamName) {
