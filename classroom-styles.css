@@ -64,6 +64,7 @@ header h1 {
     height: auto;
     max-height: 120px;
     object-fit: contain;
+    display: block;
 }
 
 .mega-knight-icon {
