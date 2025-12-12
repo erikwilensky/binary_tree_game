@@ -69,6 +69,57 @@ class ThemeManager {
                     gradientStart: '#FF00FF',
                     gradientEnd: '#00FFFF'
                 }
+            },
+            forest: {
+                name: 'Forest Green',
+                colors: {
+                    primary: '#1B4332',
+                    secondary: '#2D6A4F',
+                    accent: '#52B788',
+                    success: '#95D5B2',
+                    warning: '#F4A261',
+                    danger: '#E76F51',
+                    background: '#081C15',
+                    card: '#1B4332',
+                    text: '#D8F3DC',
+                    textLight: '#B7E4C7',
+                    gradientStart: '#081C15',
+                    gradientEnd: '#1B4332'
+                }
+            },
+            sunset: {
+                name: 'Sunset Orange',
+                colors: {
+                    primary: '#FF6B35',
+                    secondary: '#F7931E',
+                    accent: '#FFB347',
+                    success: '#90EE90',
+                    warning: '#FFD700',
+                    danger: '#FF4500',
+                    background: '#FFF8DC',
+                    card: '#FFFFFF',
+                    text: '#2C1810',
+                    textLight: '#5C4033',
+                    gradientStart: '#FFF8DC',
+                    gradientEnd: '#FFE4B5'
+                }
+            },
+            ocean: {
+                name: 'Ocean Blue',
+                colors: {
+                    primary: '#023047',
+                    secondary: '#219EBC',
+                    accent: '#8ECAE6',
+                    success: '#06FFA5',
+                    warning: '#FFB703',
+                    danger: '#FB8500',
+                    background: '#001D3D',
+                    card: '#023047',
+                    text: '#E0F2FE',
+                    textLight: '#B3E5FC',
+                    gradientStart: '#001D3D',
+                    gradientEnd: '#023047'
+                }
             }
         };
 

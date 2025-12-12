@@ -21,6 +21,7 @@ class GameController {
 
         this.answerSyncInterval = null;
         this.currentAnswerId = null;
+        this.currentQuestionId = null; // Track current question ID
         this.lockArmed = false;
         this.isFullscreen = false;
         this.isTyping = false;
@@ -238,27 +239,52 @@ class GameController {
         if (!question) {
             this.elements.questionText.textContent = 'Waiting for question...';
             // IMPORTANT: Do NOT clear the answer input when question ends
-            // Just disable it so answers remain visible
+            // Just disable it so answers remain visible until next question starts
             this.elements.answerInput.disabled = true;
             this.elements.lockBtn.disabled = true;
             this.elements.armLockBtn.disabled = true;
             classroomTimer.stopTimer();
+            // Keep currentQuestionId so we know which answer to keep showing
             return;
         }
 
+        // Check if this is a NEW question (different ID)
+        const isNewQuestion = this.currentQuestionId !== question.id;
+        
         // Display question
         this.elements.questionText.textContent = question.text;
-        this.elements.answerInput.disabled = false;
-        this.elements.lockBtn.disabled = false;
-        this.elements.armLockBtn.disabled = false;
+        
+        // If this is a NEW question, we should load/create the new answer
+        // If it's the same question (just updating), keep the current answer visible
+        if (isNewQuestion) {
+            // New question - load/create answer for this question
+            this.currentQuestionId = question.id;
+            this.elements.answerInput.disabled = false;
+            this.elements.lockBtn.disabled = false;
+            this.elements.armLockBtn.disabled = false;
+            // Reset local changes flag for new question
+            this.hasLocalChanges = false;
+            this.lastSyncedValue = '';
+            
+            // Start timer if active
+            if (question.is_active && question.started_at) {
+                classroomTimer.startTimer(question.time_limit_seconds, question.started_at);
+            }
 
-        // Start timer if active
-        if (question.is_active && question.started_at) {
-            classroomTimer.startTimer(question.time_limit_seconds, question.started_at);
+            // Load or create answer for new question
+            this.loadAnswer(question);
+        } else {
+            // Same question - just update timer if needed
+            if (question.is_active && question.started_at) {
+                classroomTimer.startTimer(question.time_limit_seconds, question.started_at);
+            }
+            // Re-enable input if question is active
+            if (question.is_active) {
+                this.elements.answerInput.disabled = false;
+                this.elements.lockBtn.disabled = false;
+                this.elements.armLockBtn.disabled = false;
+            }
         }
-
-        // Load or create answer
-        this.loadAnswer(question);
     }
 
     async loadAnswer(question) {
@@ -269,21 +295,17 @@ class GameController {
             let answer = await classroomAPI.getAnswer(sessionId, question.id, teamId);
             
             if (!answer) {
-                // Create new answer
+                // Create new answer for new question
                 answer = await classroomAPI.createAnswer(sessionId, question.id, teamId, '');
             }
 
             this.currentAnswerId = answer.id;
             
-            // Only update input if user hasn't made local changes
-            // This prevents overwriting what the user is typing
-            if (!this.hasLocalChanges) {
-                this.elements.answerInput.value = answer.answer || '';
-                this.lastSyncedValue = answer.answer || '';
-            } else {
-                // User has local changes - don't overwrite, but update lastSyncedValue for comparison
-                this.lastSyncedValue = answer.answer || '';
-            }
+            // For a new question, always load the answer (or empty string if new)
+            // This ensures we show the correct answer for the current question
+            this.elements.answerInput.value = answer.answer || '';
+            this.lastSyncedValue = answer.answer || '';
+            this.hasLocalChanges = false; // Reset for new question
             
             if (answer.locked) {
                 this.elements.answerInput.disabled = true;

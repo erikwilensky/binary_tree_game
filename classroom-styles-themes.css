@@ -240,4 +240,167 @@
     -webkit-font-smoothing: none !important;
 }
 
+/* Forest Green Theme */
+.theme-forest {
+    --theme-primary: #1B4332;
+    --theme-secondary: #2D6A4F;
+    --theme-accent: #52B788;
+    --theme-success: #95D5B2;
+    --theme-warning: #F4A261;
+    --theme-danger: #E76F51;
+    --theme-background: #081C15;
+    --theme-card: #1B4332;
+    --theme-text: #D8F3DC;
+    --theme-text-light: #B7E4C7;
+    --theme-gradient-start: #081C15;
+    --theme-gradient-end: #1B4332;
+}
+
+.theme-forest body {
+    background: linear-gradient(135deg, #081C15 0%, #1B4332 100%);
+}
+
+.theme-forest .answer-input,
+.theme-forest .powerup-select,
+.theme-forest .powerup-input,
+.theme-forest input[type="text"],
+.theme-forest input[type="number"],
+.theme-forest textarea {
+    background: #1B4332;
+    color: #D8F3DC;
+    border-color: #52B788;
+}
+
+.theme-forest .timer-progress {
+    background: linear-gradient(90deg, #52B788, #95D5B2);
+    box-shadow: 0 0 20px rgba(82, 183, 136, 0.5);
+}
+
+.theme-forest .btn-primary {
+    background: #52B788;
+    color: #081C15;
+    box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+}
+
+.theme-forest .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(82, 183, 136, 0.4);
+}
+
+.theme-forest header h1 {
+    color: #D8F3DC;
+    text-shadow: 0 2px 10px rgba(82, 183, 136, 0.3);
+}
+
+/* Sunset Orange Theme */
+.theme-sunset {
+    --theme-primary: #FF6B35;
+    --theme-secondary: #F7931E;
+    --theme-accent: #FFB347;
+    --theme-success: #90EE90;
+    --theme-warning: #FFD700;
+    --theme-danger: #FF4500;
+    --theme-background: #FFF8DC;
+    --theme-card: #FFFFFF;
+    --theme-text: #2C1810;
+    --theme-text-light: #5C4033;
+    --theme-gradient-start: #FFF8DC;
+    --theme-gradient-end: #FFE4B5;
+}
+
+.theme-sunset body {
+    background: linear-gradient(135deg, #FFF8DC 0%, #FFE4B5 100%);
+}
+
+.theme-sunset .answer-input,
+.theme-sunset .powerup-select,
+.theme-sunset .powerup-input,
+.theme-sunset input[type="text"],
+.theme-sunset input[type="number"],
+.theme-sunset textarea {
+    background: #FFFFFF;
+    color: #2C1810;
+    border-color: #FF6B35;
+}
+
+.theme-sunset .timer-progress {
+    background: linear-gradient(90deg, #FF6B35, #FFB347);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+}
+
+.theme-sunset .btn-primary {
+    background: #FF6B35;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.theme-sunset .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.theme-sunset header h1 {
+    color: #2C1810;
+}
+
+.theme-sunset .card,
+.theme-sunset .admin-card,
+.theme-sunset .teams-status-card,
+.theme-sunset .powerups-card,
+.theme-sunset .answer-card,
+.theme-sunset .lobby-card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 107, 53, 0.2);
+}
+
+/* Ocean Blue Theme */
+.theme-ocean {
+    --theme-primary: #023047;
+    --theme-secondary: #219EBC;
+    --theme-accent: #8ECAE6;
+    --theme-success: #06FFA5;
+    --theme-warning: #FFB703;
+    --theme-danger: #FB8500;
+    --theme-background: #001D3D;
+    --theme-card: #023047;
+    --theme-text: #E0F2FE;
+    --theme-text-light: #B3E5FC;
+    --theme-gradient-start: #001D3D;
+    --theme-gradient-end: #023047;
+}
+
+.theme-ocean body {
+    background: linear-gradient(135deg, #001D3D 0%, #023047 100%);
+}
+
+.theme-ocean .answer-input,
+.theme-ocean .powerup-select,
+.theme-ocean .powerup-input,
+.theme-ocean input[type="text"],
+.theme-ocean input[type="number"],
+.theme-ocean textarea {
+    background: #023047;
+    color: #E0F2FE;
+    border-color: #8ECAE6;
+    box-shadow: 0 0 10px rgba(142, 202, 230, 0.2);
+}
+
+.theme-ocean .timer-progress {
+    background: linear-gradient(90deg, #8ECAE6, #06FFA5);
+    box-shadow: 0 0 20px rgba(142, 202, 230, 0.5);
+}
+
+.theme-ocean .btn-primary {
+    background: #219EBC;
+    color: #E0F2FE;
+    box-shadow: 0 4px 12px rgba(33, 158, 188, 0.3);
+}
+
+.theme-ocean .btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(33, 158, 188, 0.4);
+}
+
+.theme-ocean header h1 {
+    color: #E0F2FE;
+    text-shadow: 0 0 20px rgba(142, 202, 230, 0.5);
+}
+
 
