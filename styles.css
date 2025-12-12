@@ -1635,6 +1635,43 @@ header h1 {
     font-size: 1.3em;
 }
 
+.btn-with-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+}
+
+.button-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+.push-button-icon {
+    width: 26px;
+    height: 26px;
+}
+
+.toggle-icon {
+    width: 30px;
+    height: 30px;
+}
+
+/* Style for when toggle is activated */
+#quiz-admin-1-btn:disabled .toggle-icon {
+    opacity: 0.6;
+    filter: brightness(1.2);
+}
+
+/* Style for when lock button is disabled (locked state) */
+#quiz-lock-btn:disabled .push-button-icon {
+    opacity: 0.7;
+}
+
 @media (max-width: 768px) {
     .quiz-container {
         padding: 10px;
