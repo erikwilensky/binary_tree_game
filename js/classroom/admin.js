@@ -28,6 +28,7 @@ class AdminController {
         this.isAnswersFullscreen = false;
 
         this.currentQuestion = null;
+        this.mostRecentQuestion = null; // Track most recent question (even if inactive)
         this.pollInterval = null;
         this.init();
     }
@@ -96,20 +97,35 @@ class AdminController {
 
     async loadCurrentQuestion() {
         const sessionId = classroomState.get('sessionId');
-        const question = await classroomAPI.getActiveQuestion(sessionId);
+        const activeQuestion = await classroomAPI.getActiveQuestion(sessionId);
+        const mostRecentQuestion = await classroomAPI.getMostRecentQuestion(sessionId);
         
-        this.currentQuestion = question;
+        this.currentQuestion = activeQuestion;
+        // Update most recent question if we have one
+        if (mostRecentQuestion) {
+            this.mostRecentQuestion = mostRecentQuestion;
+        }
         
-        if (question) {
+        if (activeQuestion) {
             this.elements.currentQuestionDisplay.innerHTML = `
                 <h3>Active Question</h3>
-                <p>Time Limit: ${question.time_limit_seconds}s</p>
-                <p>Started: ${new Date(question.started_at).toLocaleTimeString()}</p>
+                <p>Time Limit: ${activeQuestion.time_limit_seconds}s</p>
+                <p>Started: ${new Date(activeQuestion.started_at).toLocaleTimeString()}</p>
             `;
             this.elements.startQuestionBtn.disabled = true;
             this.elements.endQuestionBtn.disabled = false;
+        } else if (mostRecentQuestion) {
+            // Show most recent question (ended) so admin can still view/copy answers
+            this.elements.currentQuestionDisplay.innerHTML = `
+                <h3>Most Recent Question (Ended)</h3>
+                <p>Time Limit: ${mostRecentQuestion.time_limit_seconds}s</p>
+                <p>Started: ${mostRecentQuestion.started_at ? new Date(mostRecentQuestion.started_at).toLocaleTimeString() : 'N/A'}</p>
+                <p>Ended: ${mostRecentQuestion.ended_at ? new Date(mostRecentQuestion.ended_at).toLocaleTimeString() : 'N/A'}</p>
+            `;
+            this.elements.startQuestionBtn.disabled = false;
+            this.elements.endQuestionBtn.disabled = true;
         } else {
-            this.elements.currentQuestionDisplay.innerHTML = '<p>No active question</p>';
+            this.elements.currentQuestionDisplay.innerHTML = '<p>No questions yet</p>';
             this.elements.startQuestionBtn.disabled = false;
             this.elements.endQuestionBtn.disabled = true;
         }
@@ -158,6 +174,8 @@ class AdminController {
 
         try {
             await classroomAPI.endQuestion(this.currentQuestion.id);
+            // Update most recent question to the one we just ended
+            this.mostRecentQuestion = this.currentQuestion;
             await this.loadCurrentQuestion();
             await this.loadAnswers();
             
@@ -171,14 +189,17 @@ class AdminController {
     }
 
     async loadAnswers() {
-        if (!this.currentQuestion) {
-            this.elements.answersTableBody.innerHTML = '<tr><td colspan="4">No active question</td></tr>';
+        // Use current question if active, otherwise use most recent question
+        const questionToUse = this.currentQuestion || this.mostRecentQuestion;
+        
+        if (!questionToUse) {
+            this.elements.answersTableBody.innerHTML = '<tr><td colspan="4">No questions yet</td></tr>';
             return;
         }
 
         try {
             const sessionId = classroomState.get('sessionId');
-            const answers = await classroomAPI.getAnswersForQuestion(sessionId, this.currentQuestion.id);
+            const answers = await classroomAPI.getAnswersForQuestion(sessionId, questionToUse.id);
             
             this.renderAnswers(answers);
         } catch (error) {
@@ -380,14 +401,17 @@ class AdminController {
     }
 
     async copyAnswers() {
-        if (!this.currentQuestion) {
-            alert('No active question');
+        // Use current question if active, otherwise use most recent question
+        const questionToUse = this.currentQuestion || this.mostRecentQuestion;
+        
+        if (!questionToUse) {
+            alert('No questions yet');
             return;
         }
 
         try {
             const sessionId = classroomState.get('sessionId');
-            const answers = await classroomAPI.getAnswersForQuestion(sessionId, this.currentQuestion.id);
+            const answers = await classroomAPI.getAnswersForQuestion(sessionId, questionToUse.id);
             const teams = await classroomAPI.getTeams(sessionId);
             const teamMap = new Map(teams.map(t => [t.id, t]));
 

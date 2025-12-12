@@ -91,6 +91,12 @@ class ClassroomAPI {
         return Array.isArray(data) && data.length > 0 ? data[0] : null;
     }
 
+    async getMostRecentQuestion(sessionId) {
+        // Get the most recent question (active or not) for viewing answers after question ends
+        const data = await this.client.get('questions', `session_id=eq.${sessionId}&order=started_at.desc&limit=1`);
+        return Array.isArray(data) && data.length > 0 ? data[0] : null;
+    }
+
     async getQuestion(questionId) {
         const data = await this.client.get('questions', `id=eq.${questionId}&limit=1`);
         return Array.isArray(data) && data.length > 0 ? data[0] : null;
