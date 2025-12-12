@@ -83,7 +83,13 @@
             <div class="powerups-card">
                 <h2>Powerups</h2>
                 <div id="powerups-inventory" class="powerups-inventory"></div>
-                <button id="buy-powerup-btn" class="btn btn-secondary">Buy Powerup (25% of modifier)</button>
+                <div class="buy-powerup-section">
+                    <label for="powerup-select">Select Powerup:</label>
+                    <select id="powerup-select" class="powerup-select">
+                        <option value="">-- Choose a powerup --</option>
+                    </select>
+                    <button id="buy-powerup-btn" class="btn btn-secondary" disabled>Buy Powerup (3 points)</button>
+                </div>
             </div>
         </div>
 

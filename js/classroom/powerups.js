@@ -7,22 +7,29 @@ class PowerupEngine {
         this.randomCharIntervals = new Map();
     }
 
-    // Buy a powerup (costs 25% of team modifier, minimum 1)
-    async buyPowerup(teamId) {
+    // Buy a powerup (costs 3 points)
+    async buyPowerup(teamId, powerupType) {
         try {
+            if (!powerupType) {
+                throw new Error('Powerup type is required');
+            }
+
+            if (!this.powerupTypes.includes(powerupType)) {
+                throw new Error(`Invalid powerup type: ${powerupType}`);
+            }
+
             const team = await classroomAPI.getTeam(teamId);
             if (!team) throw new Error('Team not found');
 
-            const cost = Math.max(1, Math.floor(Math.abs(team.score) * 0.25));
+            const cost = 3;
             if (team.score < cost) {
-                throw new Error('Not enough modifier points to buy powerup');
+                throw new Error('Not enough modifier points to buy powerup (need 3 points)');
             }
 
             // Deduct cost
             await classroomAPI.updateTeamScore(teamId, -cost);
 
-            // Add random powerup
-            const powerupType = this.powerupTypes[Math.floor(Math.random() * this.powerupTypes.length)];
+            // Add selected powerup
             const powerups = team.powerups || [];
             powerups.push(powerupType);
 

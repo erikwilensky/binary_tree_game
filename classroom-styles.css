@@ -5,29 +5,28 @@
     box-sizing: border-box;
 }
 
-/* Theme CSS Variables - Default to Electric Arena */
+/* Simple, readable color scheme - no themes */
 :root {
-    --theme-primary: #1E1F2B;
-    --theme-secondary: #27293A;
-    --theme-accent: #4F7BFF;
-    --theme-success: #25D68A;
-    --theme-warning: #FFC542;
-    --theme-danger: #FF5F6D;
-    --theme-background: #1E1F2B;
-    --theme-card: #27293A;
-    --theme-text: #EDEEFF;
-    --theme-text-light: #B8B9C5;
-    --theme-gradient-start: #1E1F2B;
-    --theme-gradient-end: #27293A;
+    --theme-primary: #2C3E50;
+    --theme-secondary: #34495E;
+    --theme-accent: #3498DB;
+    --theme-success: #27AE60;
+    --theme-warning: #F39C12;
+    --theme-danger: #E74C3C;
+    --theme-background: #ECF0F1;
+    --theme-card: #FFFFFF;
+    --theme-text: #2C3E50;
+    --theme-text-light: #7F8C8D;
+    --theme-gradient-start: #ECF0F1;
+    --theme-gradient-end: #BDC3C7;
 }
 
 body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--theme-gradient-start) 0%, var(--theme-gradient-end) 100%);
+    background: #ECF0F1;
     min-height: 100vh;
     padding: 20px;
-    color: var(--theme-text);
-    transition: background 0.5s ease, color 0.3s ease;
+    color: #2C3E50;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -35,11 +34,10 @@ body {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    background: var(--theme-card);
+    background: #FFFFFF;
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    transition: background 0.3s ease;
 }
 
 header {
@@ -48,11 +46,10 @@ header {
 }
 
 header h1 {
-    color: #FFFFFF;
+    color: #2C3E50;
     font-size: 2.5em;
     margin-bottom: 10px;
-    transition: color 0.3s ease;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
 }
 
 .header-title-container {
@@ -70,9 +67,9 @@ header h1 {
 }
 
 .subtitle {
-    color: var(--theme-text-light);
+    color: #7F8C8D;
     font-size: 1.1em;
-    transition: color 0.3s ease;
+    font-weight: 600;
 }
 
 /* Lobby Styles */
@@ -84,16 +81,24 @@ header h1 {
 }
 
 .lobby-card {
-    background: #f8f9fa;
+    background: #FFFFFF;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: #2C3E50;
+    border: 2px solid #BDC3C7;
 }
 
 .lobby-card h2 {
-    color: #667eea;
+    color: #3498DB;
     margin-bottom: 15px;
     font-size: 1.5em;
+    font-weight: 700;
+}
+
+.lobby-card p {
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .form-group {
@@ -103,23 +108,26 @@ header h1 {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    font-weight: 600;
-    color: #555;
+    font-weight: 700;
+    color: #2C3E50;
+    font-size: 1.05em;
 }
 
 .form-group input {
     width: 100%;
     padding: 10px 15px;
-    border: 2px solid #ddd;
+    border: 2px solid #3498DB;
     border-radius: 8px;
     font-size: 1em;
-    transition: border-color 0.3s;
+    font-weight: 600;
+    background: #FFFFFF;
+    color: #2C3E50;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #2980B9;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 .teams-list {
@@ -130,40 +138,86 @@ header h1 {
     display: flex;
     justify-content: space-between;
     padding: 10px;
-    background: white;
+    background: #FFFFFF;
     border-radius: 5px;
     margin-bottom: 8px;
+    color: #2C3E50;
+    border: 1px solid #BDC3C7;
 }
 
 .team-name {
-    font-weight: 600;
+    font-weight: 700;
+    color: #2C3E50;
+    font-size: 1.05em;
 }
 
 .team-score {
-    color: #667eea;
+    color: #3498DB;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
 .session-info {
     margin-top: 15px;
-    padding: 15px;
-    background: #e7f3ff;
+    padding: 20px;
+    background: #FFFFFF;
     border-radius: 8px;
+    color: #2C3E50;
+    border: 3px solid #3498DB;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .session-info p {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    color: #2C3E50;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.session-info strong {
+    color: #2C3E50;
+    font-weight: 800;
+    font-size: 1.2em;
+}
+
+.session-info #generated-code {
+    color: #FFFFFF;
+    font-weight: 800;
+    font-size: 1.6em;
+    background: #3498DB;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-left: 10px;
+    border: 3px solid #2980B9;
+    letter-spacing: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    min-width: 120px;
+    text-align: center;
+}
+
+.session-info .hint {
+    color: #2C3E50;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: 600;
+    margin-top: 8px;
+    display: block;
 }
 
 .hint {
-    color: #666;
-    font-size: 0.9em;
+    color: #7F8C8D;
+    font-size: 0.95em;
     font-style: italic;
+    font-weight: 600;
 }
 
 .error-message {
-    color: #dc3545;
+    color: #E74C3C;
     margin-top: 10px;
     display: none;
+    font-weight: 700;
+    font-size: 1.05em;
 }
 
 /* Game Styles */
@@ -173,6 +227,13 @@ header h1 {
     align-items: center;
     margin-top: 10px;
     font-size: 1.1em;
+    color: #2C3E50;
+    font-weight: 700;
+}
+
+.game-header-info span {
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .game-content {
@@ -183,26 +244,36 @@ header h1 {
 }
 
 .question-card, .timer-card, .answer-card, .teams-status-card, .powerups-card {
-    background: #f8f9fa;
+    background: #FFFFFF;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: #2C3E50;
+    border: 2px solid #BDC3C7;
 }
 
 .question-card h2, .timer-card h2, .answer-card h2, .teams-status-card h2, .powerups-card h2 {
-    color: #667eea;
+    color: #3498DB;
     margin-bottom: 15px;
     font-size: 1.3em;
+    font-weight: 700;
+}
+
+.question-card p, .timer-card p, .answer-card p, .teams-status-card p, .powerups-card p {
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .question-text {
     font-size: 1.2em;
     line-height: 1.6;
-    color: #333;
+    color: #2C3E50;
     padding: 15px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
     min-height: 80px;
+    border: 2px solid #3498DB;
+    font-weight: 600;
 }
 
 .timer-display {
@@ -211,8 +282,8 @@ header h1 {
 
 .timer-text {
     font-size: 3em;
-    font-weight: bold;
-    color: #667eea;
+    font-weight: 800;
+    color: #3498DB;
     margin-bottom: 15px;
 }
 
@@ -246,33 +317,30 @@ header h1 {
     width: 100%;
     min-height: 300px;
     padding: 20px;
-    border: 2px solid var(--theme-accent);
+    border: 2px solid #3498DB;
     border-radius: 12px;
     font-size: 1.1em;
     font-family: inherit;
     line-height: 1.6;
     resize: vertical;
     transition: all 0.3s ease;
-    background: var(--theme-card);
-    color: var(--theme-text);
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .answer-input:focus {
     outline: none;
-    border-color: var(--theme-accent);
-    box-shadow: 0 0 0 4px rgba(79, 123, 255, 0.1);
+    border-color: #2980B9;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.2);
     transform: scale(1.01);
 }
 
-.answer-input:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
 .answer-input:disabled {
-    background: #f5f5f5;
+    background: #ECF0F1;
+    opacity: 0.8;
     cursor: not-allowed;
+    color: #2C3E50;
 }
 
 .answer-card-header {
@@ -300,9 +368,10 @@ header h1 {
 }
 
 .btn.armed {
-    background: #ff9800;
-    color: white;
-    border-color: #ff9800;
+    background: #F39C12;
+    color: #FFFFFF;
+    border-color: #F39C12;
+    font-weight: 700;
 }
 
 .btn.armed-ready {
@@ -355,7 +424,9 @@ header h1 {
 }
 
 .answer-status.locked {
-    color: #dc3545;
+    color: #E74C3C;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
 .teams-status-list {
@@ -369,17 +440,21 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
-    border-left: 4px solid #ddd;
+    border-left: 4px solid #3498DB;
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .team-status-item .team-status.working {
-    color: #28a745;
+    color: #27AE60;
+    font-weight: 700;
 }
 
 .team-status-item .team-status.locked {
-    color: #dc3545;
+    color: #E74C3C;
+    font-weight: 700;
 }
 
 .powerups-inventory {
@@ -389,20 +464,44 @@ header h1 {
     margin-bottom: 15px;
 }
 
+.buy-powerup-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.buy-powerup-section label {
+    font-weight: 600;
+    color: var(--theme-text);
+    font-size: 0.95em;
+}
+
 .powerup-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
+    color: #2C3E50;
+    border: 2px solid #3498DB;
+    font-weight: 600;
+}
+
+.powerup-item .powerup-name {
+    color: #2C3E50;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
 .no-powerups {
-    color: #999;
+    color: #7F8C8D;
     font-style: italic;
     text-align: center;
     padding: 20px;
+    font-weight: 600;
+    font-size: 1.05em;
 }
 
 .powerup-notification {
@@ -446,7 +545,9 @@ header h1 {
 .loading {
     text-align: center;
     padding: 20px;
-    color: #667eea;
+    color: #3498DB;
+    font-weight: 700;
+    font-size: 1.1em;
 }
 
 .loading::after {
@@ -505,7 +606,7 @@ header h1 {
 /* Answer input shake on error */
 .answer-input.error {
     animation: shake 0.5s;
-    border-color: #dc3545;
+    border-color: var(--theme-danger);
 }
 
 @keyframes shake {
@@ -521,7 +622,7 @@ header h1 {
 
 @keyframes successFlash {
     0% { background-color: transparent; }
-    50% { background-color: #d4edda; }
+    50% { background-color: var(--theme-success); }
     100% { background-color: transparent; }
 }
 
@@ -541,6 +642,14 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
+    color: #2C3E50;
+    font-weight: 700;
+    font-size: 1.1em;
+}
+
+.admin-header-info span {
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .admin-content {
@@ -550,16 +659,30 @@ header h1 {
 }
 
 .admin-card {
-    background: #f8f9fa;
+    background: #FFFFFF;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: #2C3E50;
+    border: 2px solid #BDC3C7;
 }
 
 .admin-card h2 {
-    color: #667eea;
+    color: #3498DB;
     margin-bottom: 15px;
     font-size: 1.5em;
+    font-weight: 700;
+}
+
+.admin-card p {
+    color: #2C3E50;
+    font-weight: 600;
+}
+
+.admin-card label {
+    color: #2C3E50;
+    font-weight: 700;
+    font-size: 1.05em;
 }
 
 .admin-card-header {
@@ -576,19 +699,25 @@ header h1 {
 .question-input {
     width: 100%;
     padding: 15px;
-    border: 2px solid #ddd;
+    border: 2px solid #3498DB;
     border-radius: 8px;
     font-size: 1em;
     font-family: inherit;
     resize: vertical;
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 600;
 }
 
 .time-input {
     width: 100%;
     padding: 10px 15px;
-    border: 2px solid #ddd;
+    border: 2px solid #3498DB;
     border-radius: 8px;
     font-size: 1em;
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .question-actions {
@@ -600,8 +729,11 @@ header h1 {
 .current-question-display {
     margin-top: 15px;
     padding: 15px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
+    color: #2C3E50;
+    border: 2px solid #3498DB;
+    font-weight: 600;
 }
 
 .answers-actions {
@@ -617,25 +749,55 @@ header h1 {
 .answers-table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: #FFFFFF;
     border-radius: 8px;
     overflow: hidden;
+    color: #2C3E50;
+    border: 2px solid #BDC3C7;
 }
 
 .answers-table thead {
-    background: #667eea;
-    color: white;
+    background: #3498DB;
+    color: #FFFFFF;
 }
 
 .answers-table th,
 .answers-table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #BDC3C7;
+    color: #2C3E50;
+    font-weight: 700;
+}
+
+.answers-table thead th {
+    color: #FFFFFF;
+    font-weight: 800;
+    background: #3498DB;
+    font-size: 1.05em;
+}
+
+.answers-table tbody tr {
+    background: #FFFFFF;
+}
+
+.answers-table tbody tr:nth-child(even) {
+    background: #ECF0F1;
+}
+
+.answers-table tbody td {
+    color: #2C3E50;
+    font-weight: 700;
+    background: inherit;
 }
 
 .answers-table tbody tr:hover {
-    background: #f5f5f5;
+    background: #D5DBDB;
+}
+
+.answers-table tbody tr:hover td {
+    background: #D5DBDB;
+    color: #2C3E50;
 }
 
 .teams-admin-list {
@@ -649,8 +811,11 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
+    color: #2C3E50;
+    border: 2px solid #3498DB;
+    font-weight: 600;
 }
 
 .team-info {
@@ -668,14 +833,18 @@ header h1 {
 .score-adjust-input {
     width: 100px;
     padding: 8px;
-    border: 2px solid #ddd;
+    border: 2px solid #3498DB;
     border-radius: 5px;
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .team-powerups {
-    color: #667eea;
+    color: #3498DB;
     font-size: 0.9em;
     margin-left: 10px;
+    font-weight: 700;
 }
 
 .distribution-options {
@@ -699,8 +868,15 @@ header h1 {
 .team-selection {
     margin-top: 15px;
     padding: 15px;
-    background: white;
+    background: #ECF0F1;
     border-radius: 8px;
+    color: #2C3E50;
+    border: 2px solid #3498DB;
+}
+
+.team-selection label {
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .team-checkboxes {
@@ -721,7 +897,7 @@ header h1 {
 }
 
 .checkbox-label:hover {
-    background: #f5f5f5;
+    background: #D5DBDB;
     border-radius: 4px;
 }
 
@@ -738,27 +914,35 @@ header h1 {
 
 .theme-selector label {
     font-size: 0.9em;
-    color: var(--theme-text-light);
+    color: #2C3E50;
+    font-weight: 700;
 }
 
 .theme-select {
     padding: 8px 12px;
-    border: 2px solid var(--theme-primary);
+    border: 2px solid #3498DB;
     border-radius: 6px;
-    background: var(--theme-card);
-    color: var(--theme-text);
+    background: #FFFFFF;
+    color: #2C3E50;
     font-size: 0.9em;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s;
 }
 
 .theme-select:hover {
-    border-color: var(--theme-secondary);
+    border-color: #2980B9;
 }
 
 .theme-select:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.theme-select option {
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 700;
+    padding: 8px;
 }
 
 .header-controls {
@@ -794,9 +978,29 @@ header h1 {
 .powerup-input {
     width: 100%;
     padding: 10px 15px;
-    border: 2px solid #ddd;
+    border: 2px solid #3498DB;
     border-radius: 8px;
     font-size: 1em;
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 700;
+}
+
+/* Global select option styling */
+select option,
+select optgroup {
+    background: #FFFFFF !important;
+    color: #2C3E50 !important;
+    font-weight: 700 !important;
+    padding: 8px !important;
+}
+
+.powerup-select option,
+.powerup-select optgroup {
+    background: #FFFFFF;
+    color: #2C3E50;
+    font-weight: 700;
+    padding: 8px;
 }
 
 /* Buttons */
@@ -816,52 +1020,57 @@ header h1 {
 }
 
 .btn-primary {
-    background: #667eea;
-    color: white;
+    background: #3498DB;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
 .btn-primary:hover:not(:disabled) {
-    background: #5568d3;
+    background: #2980B9;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
 .btn-secondary {
-    background: #6c757d;
-    color: white;
+    background: #95A5A6;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
 .btn-secondary:hover:not(:disabled) {
-    background: #5a6268;
+    background: #7F8C8D;
 }
 
 .btn-warning {
-    background: #ffc107;
-    color: #333;
+    background: #F39C12;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
 .btn-warning:hover:not(:disabled) {
-    background: #e0a800;
+    background: #E67E22;
 }
 
 .btn-success {
-    background: #28a745;
-    color: white;
+    background: #27AE60;
+    color: #FFFFFF;
+    font-weight: 700;
 }
 
 .btn-success:hover:not(:disabled) {
-    background: #218838;
+    background: #229954;
 }
 
 .btn-outline {
     background: transparent;
-    border: 2px solid #667eea;
-    color: #667eea;
+    border: 2px solid #3498DB;
+    color: #3498DB;
+    font-weight: 700;
 }
 
 .btn-outline:hover:not(:disabled) {
-    background: #667eea;
-    color: white;
+    background: #3498DB;
+    color: #FFFFFF;
 }
 
 .btn-small {

@@ -15,6 +15,7 @@ class GameController {
             answerStatus: document.getElementById('answer-status'),
             teamsStatusList: document.getElementById('teams-status-list'),
             powerupsInventory: document.getElementById('powerups-inventory'),
+            powerupSelect: document.getElementById('powerup-select'),
             buyPowerupBtn: document.getElementById('buy-powerup-btn'),
             leaveGameBtn: document.getElementById('leave-game-btn')
         };
@@ -72,6 +73,27 @@ class GameController {
     setupUI() {
         const teamName = classroomState.get('teamName');
         this.elements.teamNameDisplay.textContent = `Team: ${teamName || 'Unknown'}`;
+        
+        // Populate powerup dropdown
+        this.populatePowerupDropdown();
+    }
+
+    populatePowerupDropdown() {
+        if (!this.elements.powerupSelect) return;
+        
+        const powerupTypes = powerupEngine.powerupTypes;
+        powerupTypes.forEach(powerupType => {
+            const option = document.createElement('option');
+            option.value = powerupType;
+            option.textContent = powerupEngine.getPowerupName(powerupType);
+            this.elements.powerupSelect.appendChild(option);
+        });
+        
+        // Enable/disable buy button based on selection
+        this.elements.powerupSelect.addEventListener('change', () => {
+            const selected = this.elements.powerupSelect.value;
+            this.elements.buyPowerupBtn.disabled = !selected;
+        });
     }
 
     setupEventListeners() {
@@ -529,9 +551,19 @@ class GameController {
         const teamId = classroomState.get('teamId');
         if (!teamId) return;
 
+        const selectedPowerup = this.elements.powerupSelect.value;
+        if (!selectedPowerup) {
+            alert('Please select a powerup first');
+            return;
+        }
+
         try {
-            const powerupType = await powerupEngine.buyPowerup(teamId);
+            const powerupType = await powerupEngine.buyPowerup(teamId, selectedPowerup);
             alert(`Purchased ${powerupEngine.getPowerupName(powerupType)}!`);
+            
+            // Reset dropdown selection
+            this.elements.powerupSelect.value = '';
+            this.elements.buyPowerupBtn.disabled = true;
             
             // Refresh state
             await this.syncState();
