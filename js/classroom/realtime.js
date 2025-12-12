@@ -16,8 +16,19 @@ class RealtimeManager {
             const sessionId = classroomState.get('sessionId');
             if (!sessionId) return;
 
-            const question = await classroomAPI.getActiveQuestion(sessionId);
+            const activeQuestion = await classroomAPI.getActiveQuestion(sessionId);
             const currentQuestion = classroomState.get('currentQuestion');
+
+            // If no active question, check for most recent question to detect end
+            let question = activeQuestion;
+            if (!activeQuestion && currentQuestion) {
+                // Check if current question just ended by getting most recent
+                const mostRecent = await classroomAPI.getMostRecentQuestion(sessionId);
+                if (mostRecent && mostRecent.id === currentQuestion.id && !mostRecent.is_active) {
+                    // Question just ended - update state with inactive question
+                    question = mostRecent;
+                }
+            }
 
             // Check if question changed or started
             if (question && (!currentQuestion || currentQuestion.id !== question.id || 

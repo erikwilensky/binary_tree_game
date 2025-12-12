@@ -22,6 +22,7 @@ class GameController {
         this.answerSyncInterval = null;
         this.currentAnswerId = null;
         this.currentQuestionId = null; // Track current question ID
+        this.currentQuestion = null; // Track current question object
         this.lockArmed = false;
         this.isFullscreen = false;
         this.isTyping = false;
@@ -251,6 +252,19 @@ class GameController {
         // Check if this is a NEW question (different ID)
         const isNewQuestion = this.currentQuestionId !== question.id;
         
+        // Check if question just ended (was active, now inactive)
+        const wasActive = this.currentQuestion && this.currentQuestion.is_active;
+        const justEnded = wasActive && !question.is_active;
+        
+        // If question just ended, immediately sync the current answer
+        if (justEnded && this.currentAnswerId && this.elements.answerInput.value) {
+            // Force sync the current answer value before disabling
+            this.forceSyncAnswer();
+        }
+        
+        // Store current question state for next comparison
+        this.currentQuestion = question;
+        
         // Display question
         this.elements.questionText.textContent = question.text;
         
@@ -278,11 +292,16 @@ class GameController {
             if (question.is_active && question.started_at) {
                 classroomTimer.startTimer(question.time_limit_seconds, question.started_at);
             }
-            // Re-enable input if question is active
+            // Re-enable input if question is active, disable if ended
             if (question.is_active) {
                 this.elements.answerInput.disabled = false;
                 this.elements.lockBtn.disabled = false;
                 this.elements.armLockBtn.disabled = false;
+            } else {
+                // Question ended - disable input but keep answer visible
+                this.elements.answerInput.disabled = true;
+                this.elements.lockBtn.disabled = true;
+                this.elements.armLockBtn.disabled = true;
             }
         }
     }
@@ -375,6 +394,22 @@ class GameController {
             this.hasLocalChanges = false; // Reset local changes flag
         } catch (error) {
             console.error('Sync answer error:', error);
+        }
+    }
+
+    // Force sync answer immediately (used when question ends)
+    async forceSyncAnswer() {
+        if (!this.currentAnswerId) return;
+
+        const answerText = this.elements.answerInput.value;
+        
+        try {
+            await classroomAPI.updateAnswer(this.currentAnswerId, { answer: answerText });
+            this.lastSyncedValue = answerText;
+            this.hasLocalChanges = false;
+            console.log('Force synced answer on question end:', answerText);
+        } catch (error) {
+            console.error('Force sync answer error:', error);
         }
     }
 
