@@ -44,6 +44,9 @@ class PowerupEngine {
 
     // Use a powerup
     async usePowerup(powerupType, teamId, targetTeamId = null) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:46',message:'usePowerup entry',data:{powerupType,teamId,targetTeamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         const sessionId = classroomState.get('sessionId');
         if (!sessionId) throw new Error('Not in a session');
 
@@ -75,14 +78,36 @@ class PowerupEngine {
                 throw new Error(`Unknown powerup type: ${powerupType}`);
         }
 
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:78',message:'handler completed, creating event',data:{powerupType,payload},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+
         // Create powerup event
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:79',message:'calling createPowerupEvent',data:{sessionId,teamId,powerupType,targetTeamId,payload},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         await classroomAPI.createPowerupEvent(sessionId, teamId, powerupType, targetTeamId, payload);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:79',message:'createPowerupEvent completed',data:{powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
 
         // Remove powerup from inventory
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:82',message:'removing powerup from inventory',data:{teamId,powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
         const team = await classroomAPI.getTeam(teamId);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:83',message:'got team for removal',data:{teamId,hasTeam:!!team,powerupsBefore:team?.powerups?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+        // #endregion
         if (team && team.powerups) {
             const powerups = team.powerups.filter(p => p !== powerupType);
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:85',message:'updating team powerups',data:{teamId,powerupsBefore:team.powerups.length,powerupsAfter:powerups.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
             await classroomAPI.updateTeam(teamId, { powerups });
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'powerups.js:85',message:'updateTeam completed',data:{teamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+            // #endregion
         }
 
         return result;

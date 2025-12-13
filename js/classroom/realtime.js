@@ -132,12 +132,18 @@ class RealtimeManager {
 
         // Poll for powerup events
         this.startPollingFor('powerups', async () => {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:134',message:'powerup polling tick',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
             const sessionId = classroomState.get('sessionId');
             if (!sessionId) return;
 
             const lastUpdate = this.lastUpdateTimes.get('powerups') || new Date(0).toISOString();
             const events = await classroomAPI.getPowerupEvents(sessionId, lastUpdate);
             
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:141',message:'powerup polling got events',data:{eventsCount:events?.length,lastUpdate},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+            // #endregion
             if (events && events.length > 0) {
                 events.forEach(event => {
                     this.onPowerupUsed(event);
@@ -271,6 +277,9 @@ class RealtimeManager {
 
     // Powerup used handler
     async onPowerupUsed(event) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:273',message:'onPowerupUsed entry',data:{powerupType:event.powerup_type,targetTeamId:event.target_team_id,teamId:event.team_id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+        // #endregion
         const teamId = classroomState.get('teamId');
         const question = classroomState.get('currentQuestion');
 
@@ -278,6 +287,9 @@ class RealtimeManager {
         if (event.powerup_type === 'random_chars' && 
             event.target_team_id === teamId && 
             question) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:278',message:'handling random_chars powerup',data:{teamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
             // Visual feedback will be handled in UI
             this.triggerEvent('powerupReceived', {
                 type: 'random_chars',
@@ -288,6 +300,9 @@ class RealtimeManager {
         // Handle early lock powerup if we're the target
         if (event.powerup_type === 'early_lock' && 
             event.target_team_id === teamId) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:289',message:'handling early_lock powerup',data:{teamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
             // Check if answer is now locked
             const sessionId = classroomState.get('sessionId');
             if (question) {
@@ -304,6 +319,9 @@ class RealtimeManager {
         // Handle hard to read powerup if we're the target
         if (event.powerup_type === 'hard_to_read' && 
             event.target_team_id === teamId) {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:305',message:'handling hard_to_read powerup',data:{teamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
             this.triggerEvent('themeForced', {
                 type: 'hard_to_read',
                 targetTeamId: teamId,
@@ -313,6 +331,9 @@ class RealtimeManager {
 
         // Update teams to reflect score changes
         if (event.powerup_type === 'score_bash' || event.powerup_type === 'roll_dice') {
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'realtime.js:315',message:'handling score powerup',data:{powerupType:event.powerup_type},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+            // #endregion
             const sessionId = classroomState.get('sessionId');
             const teams = await classroomAPI.getTeams(sessionId);
             classroomState.set('teams', teams || []);

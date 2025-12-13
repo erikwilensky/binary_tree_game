@@ -654,25 +654,59 @@ class GameController {
     }
 
     async usePowerup(powerupType, index) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:656',message:'usePowerup entry',data:{powerupType,index},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         const teamId = classroomState.get('teamId');
         const teams = classroomState.get('teams');
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:660',message:'usePowerup state check',data:{teamId,teamsCount:teams?.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+        // #endregion
         
         // For powerups that need a target, show team selection
         if (powerupType === 'random_chars' || powerupType === 'score_bash' || powerupType === 'early_lock' || powerupType === 'hard_to_read') {
             const targetTeam = await this.selectTargetTeam(teams, teamId);
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:664',message:'target team selected',data:{targetTeamId:targetTeam?.id,hasTarget:!!targetTeam},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+            // #endregion
             if (!targetTeam) return;
             
             try {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:666',message:'calling powerupEngine.usePowerup',data:{powerupType,teamId,targetTeamId:targetTeam.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 await powerupEngine.usePowerup(powerupType, teamId, targetTeam.id);
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:667',message:'powerupEngine.usePowerup completed',data:{powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 await this.syncState();
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:668',message:'syncState completed',data:{powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+                // #endregion
             } catch (error) {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:669',message:'usePowerup error',data:{powerupType,error:error.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 alert(error.message || 'Failed to use powerup');
             }
         } else {
             try {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:673',message:'calling powerupEngine.usePowerup (no target)',data:{powerupType,teamId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 await powerupEngine.usePowerup(powerupType, teamId);
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:674',message:'powerupEngine.usePowerup completed (no target)',data:{powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 await this.syncState();
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:675',message:'syncState completed (no target)',data:{powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+                // #endregion
             } catch (error) {
+                // #region agent log
+                fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'game.js:676',message:'usePowerup error (no target)',data:{powerupType,error:error.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+                // #endregion
                 alert(error.message || 'Failed to use powerup');
             }
         }

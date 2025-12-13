@@ -169,6 +169,9 @@ class ClassroomAPI {
 
     // Powerup Events
     async createPowerupEvent(sessionId, teamId, powerupType, targetTeamId = null, payload = {}) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:171',message:'createPowerupEvent entry',data:{sessionId,teamId,powerupType,targetTeamId,payload},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         const data = await this.client.post('powerup_events', {
             session_id: sessionId,
             team_id: teamId,
@@ -176,15 +179,25 @@ class ClassroomAPI {
             powerup_type: powerupType,
             payload: payload
         });
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:179',message:'createPowerupEvent API response',data:{hasData:!!data,isArray:Array.isArray(data),powerupType},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         return Array.isArray(data) ? data[0] : data;
     }
 
     async getPowerupEvents(sessionId, since = null) {
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:182',message:'getPowerupEvents entry',data:{sessionId,since},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
         let query = `session_id=eq.${sessionId}&order=created_at.desc`;
         if (since) {
             query += `&created_at=gt.${since}`;
         }
-        return await this.client.get('powerup_events', query);
+        const events = await this.client.get('powerup_events', query);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/00f8a6c5-11de-4519-8b6b-236875d9d19e',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'api.js:187',message:'getPowerupEvents response',data:{sessionId,eventsCount:events?.length,hasEvents:!!events},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        return events;
     }
 }
 
